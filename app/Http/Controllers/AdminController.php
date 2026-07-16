@@ -151,8 +151,10 @@ class AdminController extends Controller
     // ==========================================
     public function products()
     {
-        $products = Product::with('game', 'category')->latest()->get();
-        return view('admin.products.index', compact('products'));
+        $products = Product::with('game', 'category')->latest()->paginate(10);
+        $games = Game::all();
+        $categories = Category::all();
+        return view('admin.products.index', compact('products', 'games', 'categories'));
     }
 
     public function productCreate()
