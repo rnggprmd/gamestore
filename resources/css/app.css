@@ -1,16 +1,160 @@
 @import "tailwindcss";
 
 @theme {
-  --color-watt-bg: #121212;
-  --color-watt-surface: #1E1E1E;
-  --color-watt-cyan: #00E5FF;
-  --color-watt-red: #FF453A;
-  --color-watt-green: #32D74B;
-  --color-watt-border: #2C2C2E;
-  --color-watt-text-sec: #98989D;
-  --color-watt-hover: #252525;
-  --color-watt-alert-bg: #3A1C1C;
+  --color-watt-bg: #09090b;
+  --color-watt-surface: #121214;
+  --color-watt-cyan: #00e5ff;
+  --color-watt-red: #ff453a;
+  --color-watt-green: #32d74b;
+  --color-watt-border: #1f1f23;
+  --color-watt-text-sec: #a1a1aa;
+  --color-watt-hover: #1e1e24;
+  --color-watt-alert-bg: #271212;
 
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
 }
+
+/* Custom Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-watt-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-watt-border);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-watt-hover);
+}
+
+@layer components {
+  .admin-form-card {
+    @apply rounded-[24px] border border-watt-border bg-watt-surface/60 backdrop-blur-md shadow-[0_12px_40px_rgba(0,0,0,0.3)] transition-all duration-300;
+  }
+
+  .admin-form-card:hover {
+    @apply border-watt-cyan/10 shadow-[0_16px_48px_rgba(0,229,255,0.03)];
+  }
+
+  .admin-table-shell {
+    @apply overflow-hidden;
+  }
+
+  .admin-table-scroll {
+    @apply rounded-[18px] border border-watt-border bg-watt-surface/30 overflow-x-auto w-full block;
+  }
+
+  .admin-table {
+    @apply w-full border-collapse text-sm;
+  }
+
+  .admin-table th,
+  .admin-table-head {
+    @apply px-5 py-4 text-left text-[11px] font-bold uppercase tracking-[0.14em] text-watt-text-sec/80 bg-watt-surface/80 border-b border-watt-border;
+  }
+
+  .admin-table td {
+    @apply px-5 py-4 text-sm text-watt-text-sec/90 align-middle;
+  }
+
+  .admin-table-row {
+    @apply border-t border-watt-border/60 transition-colors hover:bg-watt-hover/40;
+  }
+
+  .admin-modal-content {
+    @apply relative w-full max-w-xl rounded-[24px] border border-watt-border bg-watt-surface/60 backdrop-blur-md shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex flex-col max-h-[88vh];
+    animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  /* Sticky header inside modal */
+  .admin-modal-header {
+    @apply flex items-center justify-between border-b border-watt-border px-6 py-5 shrink-0;
+  }
+
+  /* Scrollable form body */
+  .admin-modal-body {
+    @apply flex-1 overflow-y-auto px-6 py-5 space-y-4;
+  }
+
+  /* Sticky footer inside modal */
+  .admin-modal-footer {
+    @apply flex justify-end gap-3 px-6 py-4 border-t border-watt-border shrink-0;
+  }
+
+  .admin-form-page-container {
+    @apply max-w-3xl mx-auto space-y-6;
+  }
+
+  .admin-field-label {
+    @apply block text-xs font-semibold uppercase tracking-wider text-watt-text-sec/90 mb-1.5;
+  }
+
+  .admin-field,
+  .admin-select,
+  .admin-textarea {
+    @apply w-full rounded-xl border border-watt-border bg-watt-bg/50 px-4 py-3 text-sm text-white outline-none transition-all placeholder:text-watt-text-sec/40 focus:border-watt-cyan focus:bg-watt-bg focus:ring-4 focus:ring-watt-cyan/10;
+  }
+
+  .admin-textarea {
+    @apply min-h-28 resize-y;
+  }
+
+  .admin-button-primary,
+  .admin-button-secondary,
+  .admin-action-btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition-all duration-200 active:scale-95;
+  }
+
+  .admin-button-primary {
+    @apply bg-watt-cyan text-watt-bg shadow-[0_4px_20px_rgba(0,229,255,0.25)] hover:opacity-90 hover:shadow-[0_6px_24px_rgba(0,229,255,0.4)];
+  }
+
+  .admin-button-secondary {
+    @apply border border-watt-border bg-watt-bg/80 text-white hover:bg-watt-hover hover:border-watt-text-sec/20;
+  }
+
+  .admin-action-btn {
+    @apply p-2.5 rounded-xl border border-watt-border bg-watt-bg/40 text-watt-text-sec hover:border-watt-cyan/20 hover:bg-watt-hover/80 hover:text-white;
+  }
+
+  .admin-action-btn--edit {
+    @apply text-watt-cyan/80 hover:text-watt-cyan hover:border-watt-cyan/30;
+  }
+
+  .admin-action-btn--delete {
+    @apply text-watt-red/80 hover:border-watt-red/30 hover:bg-watt-red/10 hover:text-watt-red;
+  }
+
+  .admin-pagination nav {
+    @apply flex items-center gap-2;
+  }
+
+  .admin-pagination nav > * {
+    @apply rounded-xl border border-watt-border bg-watt-surface px-4 py-2.5 text-sm text-white transition-colors hover:bg-watt-hover;
+  }
+
+  .admin-pagination nav > *[aria-current="page"] {
+    @apply border-watt-cyan bg-watt-cyan text-watt-bg font-bold shadow-[0_4px_12px_rgba(0,229,255,0.2)];
+  }
+}
+
+/* Modals Slide-up Animation */
+@keyframes slideUp {
+  from {
+    transform: translateY(16px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.admin-modal-panel {
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+

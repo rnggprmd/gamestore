@@ -3,10 +3,10 @@
 @section('page_title', 'Tambah Game Baru')
 
 @section('content')
-<div class="max-w-2xl space-y-6">
-    <div class="bg-watt-surface border border-watt-border rounded-[16px] p-6 space-y-6">
+<div class="admin-form-page-container">
+    <div class="admin-form-card p-6 space-y-6">
         <div class="flex items-center gap-3 border-b border-watt-border pb-4">
-            <a href="{{ route('admin.games.index') }}" class="p-2 rounded-lg bg-watt-hover hover:bg-watt-bg text-watt-text-sec hover:text-white transition-colors">
+            <a href="{{ route('admin.games.index') }}" class="admin-action-btn">
                 <i data-lucide="arrow-left" class="w-4 h-4"></i>
             </a>
             <h3 class="text-base font-bold text-white">Formulir Tambah Game</h3>
@@ -23,26 +23,26 @@
         <form action="{{ route('admin.games.store') }}" method="POST" enctype="multipart/form-data" class="space-y-5">
             @csrf
             <div class="space-y-1.5">
-                <label class="block text-xs font-semibold text-watt-text-sec uppercase tracking-wider">Nama Game <span class="text-watt-red">*</span></label>
+                <label class="admin-field-label">Nama Game <span class="text-watt-red">*</span></label>
                 <input type="text" name="name" value="{{ old('name') }}" required placeholder="Contoh: Mobile Legends: Bang Bang"
-                    class="w-full bg-watt-bg border border-watt-border rounded-xl px-4 py-3 text-sm text-white placeholder-watt-text-sec focus:outline-none focus:border-watt-cyan transition-colors">
+                    class="admin-field">
             </div>
             <div class="space-y-1.5">
-                <label class="block text-xs font-semibold text-watt-text-sec uppercase tracking-wider">Deskripsi Singkat</label>
+                <label class="admin-field-label">Deskripsi Singkat</label>
                 <textarea name="description" rows="3" placeholder="Deskripsi atau instruksi pengisian ID..."
-                    class="w-full bg-watt-bg border border-watt-border rounded-xl px-4 py-3 text-sm text-white placeholder-watt-text-sec focus:outline-none focus:border-watt-cyan transition-colors resize-none">{{ old('description') }}</textarea>
+                    class="admin-textarea">{{ old('description') }}</textarea>
             </div>
             <div class="grid grid-cols-2 gap-4">
                 <div class="space-y-1.5">
-                    <label class="block text-xs font-semibold text-watt-text-sec uppercase tracking-wider">Logo / Thumbnail</label>
+                    <label class="admin-field-label">Logo / Thumbnail</label>
                     <input type="file" name="thumbnail" accept="image/*"
-                        class="w-full bg-watt-bg border border-watt-border rounded-xl px-3 py-2 text-sm text-watt-text-sec file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-watt-cyan file:text-watt-bg hover:file:opacity-90 cursor-pointer">
+                        class="admin-field file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-watt-cyan file:text-watt-bg hover:file:opacity-90 cursor-pointer">
                     <p class="text-[10px] text-watt-text-sec">Rasio 1:1, maks. 2MB.</p>
                 </div>
                 <div class="space-y-1.5">
-                    <label class="block text-xs font-semibold text-watt-text-sec uppercase tracking-wider">Banner Detail</label>
+                    <label class="admin-field-label">Banner Detail</label>
                     <input type="file" name="banner" accept="image/*"
-                        class="w-full bg-watt-bg border border-watt-border rounded-xl px-3 py-2 text-sm text-watt-text-sec file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-watt-cyan file:text-watt-bg hover:file:opacity-90 cursor-pointer">
+                        class="admin-field file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-watt-cyan file:text-watt-bg hover:file:opacity-90 cursor-pointer">
                     <p class="text-[10px] text-watt-text-sec">Landscape, maks. 2MB.</p>
                 </div>
             </div>
@@ -51,10 +51,11 @@
                 <label for="status" class="text-xs font-semibold text-watt-text-sec uppercase tracking-wider select-none cursor-pointer">Game Aktif (Ditampilkan di Landing Page)</label>
             </div>
             <div class="pt-4 border-t border-watt-border flex justify-end gap-3">
-                <a href="{{ route('admin.games.index') }}" class="px-6 py-3 rounded-xl bg-watt-hover hover:bg-[#333] text-watt-text-sec hover:text-white font-semibold text-xs transition-colors">Batal</a>
-                <button type="submit" class="px-6 py-3 rounded-xl bg-watt-cyan hover:opacity-90 text-watt-bg font-bold text-xs transition-colors cursor-pointer">Simpan Game</button>
+                <a href="{{ route('admin.games.index') }}" class="admin-button-secondary">Batal</a>
+                <button type="submit" class="admin-button-primary cursor-pointer">Simpan Game</button>
             </div>
         </form>
     </div>
 </div>
 @endsection
+

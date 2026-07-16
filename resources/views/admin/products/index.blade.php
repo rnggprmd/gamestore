@@ -4,9 +4,50 @@
 
 @section('content')
 <div class="space-y-6">
-    <div class="bg-watt-surface border border-watt-border rounded-[16px] p-5 space-y-6">
+    <div class="admin-form-card p-5 space-y-6">
+        <!-- Search & Filter (Integrated) -->
+        <form method="GET" class="search-filter-form grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 items-end pb-4 border-b border-watt-border">
+            <!-- Search Input -->
+            <div class="sm:col-span-2 lg:col-span-1">
+                <label class="admin-field-label text-xs mb-1.5">🔍 Cari</label>
+                <input type="text" name="search" value="{{ $search ?? '' }}" 
+                    placeholder="Cari..." autocomplete="off"
+                    class="admin-field text-sm h-9 py-2"
+                    onkeyup="autoSubmitForm(this)">
+            </div>
+
+            <!-- Status Filter -->
+            <div>
+                <label class="admin-field-label text-xs mb-1.5">Status</label>
+                <select name="status" class="admin-field text-sm h-9 py-2" onchange="autoSubmitForm(this)">
+                    <option value="">Semua Status</option>
+                    <option value="active" {{ ($status ?? '') === 'active' ? 'selected' : '' }}>Aktif</option>
+                    <option value="inactive" {{ ($status ?? '') === 'inactive' ? 'selected' : '' }}>Non-aktif</option>
+                </select>
+            </div>
+
+            <!-- Sort Filter -->
+            <div>
+                <label class="admin-field-label text-xs mb-1.5">Urutkan</label>
+                <select name="sort" class="admin-field text-sm h-9 py-2" onchange="autoSubmitForm(this)">
+                    <option value="latest" {{ ($sort ?? 'latest') === 'latest' ? 'selected' : '' }}>Terbaru</option>
+                    <option value="oldest" {{ ($sort ?? '') === 'oldest' ? 'selected' : '' }}>Terlama</option>
+                    <option value="price_asc" {{ ($sort ?? '') === 'price_asc' ? 'selected' : '' }}>Harga ↑</option>
+                    <option value="price_desc" {{ ($sort ?? '') === 'price_desc' ? 'selected' : '' }}>Harga ↓</option>
+                </select>
+            </div>
+
+            <!-- Reset Button -->
+            <div>
+                <a href="{{ request()->getBaseUrl() . request()->getPathInfo() }}" class="admin-button-secondary w-full text-xs px-3 py-2 flex items-center justify-center gap-2 border border-watt-border text-watt-text-sec hover:bg-watt-hover rounded-lg transition h-9">
+                    <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                    <span>Reset</span>
+                </a>
+            </div>
+        </form>
+
         <!-- Header -->
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between pt-2">
             <h3 class="text-base font-bold text-white flex items-center gap-2">
                 <i data-lucide="package" class="w-4 h-4 text-watt-cyan"></i>
                 Daftar Produk
@@ -18,32 +59,22 @@
             </button>
         </div>
 
-        <!-- Validation Errors -->
-        @if($errors->any())
-        <div class="p-4 bg-watt-alert-bg border-l-4 border-watt-red text-watt-red rounded-r-xl text-xs">
-            <div class="font-bold flex items-center gap-1.5 mb-1.5"><i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> Terdapat kesalahan:</div>
-            <ul class="list-disc list-inside space-y-0.5">
-                @foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach
-            </ul>
-        </div>
-        @endif
-
         <!-- Table -->
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm text-left">
+        <div class="overflow-auto admin-table-shell admin-table-scroll max-h-[600px]">
+            <table class="admin-table">
                 <thead>
-                    <tr class="text-xs font-bold uppercase text-watt-text-sec border-b border-watt-border">
-                        <th class="pb-3">Game</th>
-                        <th class="pb-3">Nama Produk</th>
-                        <th class="pb-3">Kategori</th>
-                        <th class="pb-3 text-right">Harga</th>
-                        <th class="pb-3">Status</th>
-                        <th class="pb-3 text-right">Aksi</th>
+                    <tr class="admin-table-head">
+                        <th class="admin-table-head">Game</th>
+                        <th class="admin-table-head">Nama Produk</th>
+                        <th class="admin-table-head">Kategori</th>
+                        <th class="admin-table-head text-right">Harga</th>
+                        <th class="admin-table-head">Status</th>
+                        <th class="admin-table-head text-right">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-watt-border">
                     @forelse($products as $product)
-                    <tr class="hover:bg-watt-hover transition-colors">
+                    <tr class="admin-table-row">
                         <td class="py-3.5 font-semibold text-white">{{ $product->game->name ?? '-' }}</td>
                         <td class="py-3.5 text-watt-text-sec">{{ $product->name }}</td>
                         <td class="py-3.5">
@@ -54,11 +85,11 @@
                         </td>
                         <td class="py-3.5">
                             @if($product->status)
-                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-watt-green/10 text-watt-green border border-watt-green/20 text-[10px] font-bold">
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-watt-green/10 text-watt-green border border-watt-green/20 text-[10px] font-bold whitespace-nowrap">
                                     <span class="w-1.5 h-1.5 rounded-full bg-watt-green animate-pulse"></span>Aktif
                                 </span>
                             @else
-                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-watt-hover text-watt-text-sec text-[10px] font-bold">
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-watt-hover text-watt-text-sec text-[10px] font-bold whitespace-nowrap">
                                     <span class="w-1.5 h-1.5 rounded-full bg-watt-text-sec"></span>Nonaktif
                                 </span>
                             @endif
@@ -76,12 +107,12 @@
                                     data-status="{{ $product->status ? '1' : '0' }}"
                                     data-image="{{ $product->image && file_exists(public_path('img/' . $product->image)) ? asset('img/' . $product->image) : '' }}"
                                     data-image-name="{{ $product->image ?? '' }}"
-                                    class="p-2 rounded-lg bg-watt-hover hover:bg-watt-cyan/10 hover:text-watt-cyan text-watt-text-sec transition-all cursor-pointer">
+                                    class="admin-action-btn admin-action-btn--edit">
                                     <i data-lucide="edit-3" class="w-4 h-4"></i>
                                 </button>
                                 <form action="{{ route('admin.products.destroy', $product->id) }}" method="POST" onsubmit="return confirm('Hapus produk \'{{ addslashes($product->name) }}\'?')">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="p-2 rounded-lg bg-watt-hover hover:bg-watt-red/10 hover:text-watt-red text-watt-text-sec transition-all cursor-pointer">
+                                    <button type="submit" class="admin-action-btn admin-action-btn--delete">
                                         <i data-lucide="trash-2" class="w-4 h-4"></i>
                                     </button>
                                 </form>
@@ -100,7 +131,8 @@
             </table>
         </div>
 
-        <div class="mt-4">
+        <!-- Pagination -->
+        <div class="mt-4 px-1">
             {{ $products->links() }}
         </div>
     </div>
@@ -109,8 +141,8 @@
 <!-- ====== MODAL CREATE PRODUK ====== -->
 <div id="modal-create-product" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="closeModal('modal-create-product')"></div>
-    <div class="relative w-full max-w-xl bg-watt-surface border border-watt-border rounded-[16px] p-6 shadow-2xl space-y-5 overflow-y-auto max-h-[90vh]">
-        <div class="flex items-center justify-between border-b border-watt-border pb-4">
+    <div class="admin-modal-content">
+        <div class="admin-modal-header">
             <h3 class="text-base font-semibold text-white flex items-center gap-2">
                 <i data-lucide="plus-circle" class="w-4 h-4 text-watt-cyan"></i>Tambah Produk Baru
             </h3>
@@ -118,56 +150,58 @@
                 <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>
-        <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+        <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data" class="flex flex-col flex-1 min-h-0">
             @csrf
             <input type="hidden" name="_form_type" value="create">
-            <div class="grid grid-cols-2 gap-4">
-                <div class="space-y-1.5">
-                    <label class="block text-xs font-semibold text-watt-text-sec uppercase tracking-wider">Game <span class="text-watt-red">*</span></label>
-                    <select name="game_id" required class="w-full bg-watt-bg border border-watt-border rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-watt-cyan transition-colors">
-                        <option value="">-- Pilih Game --</option>
-                        @foreach($games as $game)
-                            <option value="{{ $game->id }}" {{ (old('_form_type') === 'create' && old('game_id') == $game->id) ? 'selected' : '' }}>{{ $game->name }}</option>
-                        @endforeach
-                    </select>
+            <div class="admin-modal-body">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1.5">
+                        <label class="admin-field-label">Game <span class="text-watt-red">*</span></label>
+                        <select name="game_id" required class="admin-select">
+                            <option value="">-- Pilih Game --</option>
+                            @foreach($games as $game)
+                                <option value="{{ $game->id }}" {{ (old('_form_type') === 'create' && old('game_id') == $game->id) ? 'selected' : '' }}>{{ $game->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="admin-field-label">Kategori <span class="text-watt-red">*</span></label>
+                        <select name="category_id" required class="admin-select">
+                            <option value="">-- Pilih Kategori --</option>
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}" {{ (old('_form_type') === 'create' && old('category_id') == $category->id) ? 'selected' : '' }}>{{ $category->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
                 <div class="space-y-1.5">
-                    <label class="block text-xs font-semibold text-watt-text-sec uppercase tracking-wider">Kategori <span class="text-watt-red">*</span></label>
-                    <select name="category_id" required class="w-full bg-watt-bg border border-watt-border rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-watt-cyan transition-colors">
-                        <option value="">-- Pilih Kategori --</option>
-                        @foreach($categories as $category)
-                            <option value="{{ $category->id }}" {{ (old('_form_type') === 'create' && old('category_id') == $category->id) ? 'selected' : '' }}>{{ $category->name }}</option>
-                        @endforeach
-                    </select>
+                    <label class="admin-field-label">Nama Produk <span class="text-watt-red">*</span></label>
+                    <input type="text" name="name" value="{{ old('_form_type') === 'create' ? old('name') : '' }}" required placeholder="Contoh: Diamond 86 atau Weekly Pass"
+                        class="admin-field">
+                </div>
+                <div class="space-y-1.5">
+                    <label class="admin-field-label">Harga (IDR) <span class="text-watt-red">*</span></label>
+                    <input type="number" name="price" value="{{ old('_form_type') === 'create' ? old('price') : '' }}" required min="0" placeholder="Contoh: 28000"
+                        class="admin-field font-mono">
+                </div>
+                <div class="space-y-1.5">
+                    <label class="admin-field-label">Deskripsi (Opsional)</label>
+                    <textarea name="description" rows="2" placeholder="Deskripsi opsional..."
+                        class="admin-textarea">{{ old('_form_type') === 'create' ? old('description') : '' }}</textarea>
+                </div>
+                <div class="space-y-1.5">
+                    <label class="admin-field-label">Gambar Produk (Opsional)</label>
+                    <input type="file" name="image" accept="image/*"
+                        class="admin-field file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-watt-cyan file:text-watt-bg hover:file:opacity-90 cursor-pointer">
+                </div>
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" name="status" value="1" id="create-product-status" checked class="rounded border-watt-border bg-watt-bg text-watt-cyan focus:ring-watt-cyan">
+                    <label for="create-product-status" class="text-xs font-semibold text-watt-text-sec uppercase tracking-wider select-none cursor-pointer">Produk Aktif</label>
                 </div>
             </div>
-            <div class="space-y-1.5">
-                <label class="block text-xs font-semibold text-watt-text-sec uppercase tracking-wider">Nama Produk <span class="text-watt-red">*</span></label>
-                <input type="text" name="name" value="{{ old('_form_type') === 'create' ? old('name') : '' }}" required placeholder="Contoh: Diamond 86 atau Weekly Pass"
-                    class="w-full bg-watt-bg border border-watt-border rounded-xl px-4 py-3 text-sm text-white placeholder-watt-text-sec focus:outline-none focus:border-watt-cyan transition-colors">
-            </div>
-            <div class="space-y-1.5">
-                <label class="block text-xs font-semibold text-watt-text-sec uppercase tracking-wider">Harga (IDR) <span class="text-watt-red">*</span></label>
-                <input type="number" name="price" value="{{ old('_form_type') === 'create' ? old('price') : '' }}" required min="0" placeholder="Contoh: 28000"
-                    class="w-full bg-watt-bg border border-watt-border rounded-xl px-4 py-3 text-sm text-white placeholder-watt-text-sec focus:outline-none focus:border-watt-cyan transition-colors font-mono">
-            </div>
-            <div class="space-y-1.5">
-                <label class="block text-xs font-semibold text-watt-text-sec uppercase tracking-wider">Deskripsi (Opsional)</label>
-                <textarea name="description" rows="2" placeholder="Deskripsi opsional..."
-                    class="w-full bg-watt-bg border border-watt-border rounded-xl px-4 py-3 text-sm text-white placeholder-watt-text-sec focus:outline-none focus:border-watt-cyan transition-colors resize-none">{{ old('_form_type') === 'create' ? old('description') : '' }}</textarea>
-            </div>
-            <div class="space-y-1.5">
-                <label class="block text-xs font-semibold text-watt-text-sec uppercase tracking-wider">Gambar Produk (Opsional)</label>
-                <input type="file" name="image" accept="image/*"
-                    class="w-full bg-watt-bg border border-watt-border rounded-xl px-3 py-2 text-sm text-watt-text-sec file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-watt-cyan file:text-watt-bg hover:file:opacity-90 cursor-pointer">
-            </div>
-            <div class="flex items-center gap-2">
-                <input type="checkbox" name="status" value="1" id="create-product-status" checked class="rounded border-watt-border bg-watt-bg text-watt-cyan focus:ring-watt-cyan">
-                <label for="create-product-status" class="text-xs font-semibold text-watt-text-sec uppercase tracking-wider select-none cursor-pointer">Produk Aktif</label>
-            </div>
-            <div class="flex justify-end gap-3 pt-4 border-t border-watt-border">
-                <button type="button" onclick="closeModal('modal-create-product')" class="px-5 py-2.5 rounded-xl bg-watt-hover hover:bg-[#333] text-watt-text-sec hover:text-white font-semibold text-xs transition-all cursor-pointer">Batal</button>
-                <button type="submit" class="px-5 py-2.5 rounded-xl bg-watt-cyan hover:opacity-90 text-watt-bg font-bold text-xs transition-all cursor-pointer">Simpan Produk</button>
+            <div class="admin-modal-footer">
+                <button type="button" onclick="closeModal('modal-create-product')" class="admin-button-secondary cursor-pointer">Batal</button>
+                <button type="submit" class="admin-button-primary cursor-pointer">Simpan Produk</button>
             </div>
         </form>
     </div>
@@ -176,8 +210,8 @@
 <!-- ====== MODAL EDIT PRODUK ====== -->
 <div id="modal-edit-product" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="closeModal('modal-edit-product')"></div>
-    <div class="relative w-full max-w-xl bg-watt-surface border border-watt-border rounded-[16px] p-6 shadow-2xl space-y-5 overflow-y-auto max-h-[90vh]">
-        <div class="flex items-center justify-between border-b border-watt-border pb-4">
+    <div class="admin-modal-content">
+        <div class="admin-modal-header">
             <h3 class="text-base font-semibold text-white flex items-center gap-2">
                 <i data-lucide="edit-3" class="w-4 h-4 text-watt-cyan"></i>Edit Produk
             </h3>
@@ -185,64 +219,66 @@
                 <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>
-        <form id="form-edit-product" action="" method="POST" enctype="multipart/form-data" class="space-y-4">
+        <form id="form-edit-product" action="" method="POST" enctype="multipart/form-data" class="flex flex-col flex-1 min-h-0">
             @csrf @method('PUT')
             <input type="hidden" name="_form_type" value="edit">
             <input type="hidden" name="_edit_id" id="edit-product-hidden-id" value="">
-            <div class="grid grid-cols-2 gap-4">
-                <div class="space-y-1.5">
-                    <label class="block text-xs font-semibold text-watt-text-sec uppercase tracking-wider">Game <span class="text-watt-red">*</span></label>
-                    <select id="edit-product-game" name="game_id" required class="w-full bg-watt-bg border border-watt-border rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-watt-cyan transition-colors">
-                        @foreach($games as $game)
-                            <option value="{{ $game->id }}"
-                                {{ (old('_form_type') === 'edit' && old('game_id') == $game->id) ? 'selected' : '' }}>{{ $game->name }}</option>
-                        @endforeach
-                    </select>
+            <div class="admin-modal-body">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1.5">
+                        <label class="admin-field-label">Game <span class="text-watt-red">*</span></label>
+                        <select id="edit-product-game" name="game_id" required class="admin-select">
+                            @foreach($games as $game)
+                                <option value="{{ $game->id }}"
+                                    {{ (old('_form_type') === 'edit' && old('game_id') == $game->id) ? 'selected' : '' }}>{{ $game->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="admin-field-label">Kategori <span class="text-watt-red">*</span></label>
+                        <select id="edit-product-category" name="category_id" required class="admin-select">
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}"
+                                    {{ (old('_form_type') === 'edit' && old('category_id') == $category->id) ? 'selected' : '' }}>{{ $category->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
                 <div class="space-y-1.5">
-                    <label class="block text-xs font-semibold text-watt-text-sec uppercase tracking-wider">Kategori <span class="text-watt-red">*</span></label>
-                    <select id="edit-product-category" name="category_id" required class="w-full bg-watt-bg border border-watt-border rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-watt-cyan transition-colors">
-                        @foreach($categories as $category)
-                            <option value="{{ $category->id }}"
-                                {{ (old('_form_type') === 'edit' && old('category_id') == $category->id) ? 'selected' : '' }}>{{ $category->name }}</option>
-                        @endforeach
-                    </select>
+                    <label class="admin-field-label">Nama Produk <span class="text-watt-red">*</span></label>
+                    <input type="text" id="edit-product-name" name="name" required placeholder="Nama produk..."
+                        value="{{ old('_form_type') === 'edit' ? old('name') : '' }}"
+                        class="admin-field">
+                </div>
+                <div class="space-y-1.5">
+                    <label class="admin-field-label">Harga (IDR) <span class="text-watt-red">*</span></label>
+                    <input type="number" id="edit-product-price" name="price" required min="0"
+                        value="{{ old('_form_type') === 'edit' ? old('price') : '' }}"
+                        class="admin-field font-mono">
+                </div>
+                <div class="space-y-1.5">
+                    <label class="admin-field-label">Deskripsi (Opsional)</label>
+                    <textarea id="edit-product-description" name="description" rows="2"
+                        class="admin-textarea">{{ old('_form_type') === 'edit' ? old('description') : '' }}</textarea>
+                </div>
+                <div class="space-y-1.5">
+                    <label class="admin-field-label">Gambar Baru (Opsional)</label>
+                    <div id="edit-product-img-preview" class="hidden mb-2 flex items-center gap-2 bg-watt-bg border border-watt-border p-2 rounded-xl">
+                        <img id="edit-product-img" src="" alt="" class="w-10 h-10 rounded-lg object-cover">
+                        <span id="edit-product-img-name" class="text-[10px] text-watt-text-sec font-mono truncate flex-1"></span>
+                    </div>
+                    <input type="file" name="image" accept="image/*"
+                        class="admin-field file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-watt-cyan file:text-watt-bg hover:file:opacity-90 cursor-pointer">
+                    <p class="text-[10px] text-watt-text-sec">Kosongkan jika tidak ingin mengganti.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" name="status" value="1" id="edit-product-status" class="rounded border-watt-border bg-watt-bg text-watt-cyan focus:ring-watt-cyan">
+                    <label for="edit-product-status" class="text-xs font-semibold text-watt-text-sec uppercase tracking-wider select-none cursor-pointer">Produk Aktif</label>
                 </div>
             </div>
-            <div class="space-y-1.5">
-                <label class="block text-xs font-semibold text-watt-text-sec uppercase tracking-wider">Nama Produk <span class="text-watt-red">*</span></label>
-                <input type="text" id="edit-product-name" name="name" required placeholder="Nama produk..."
-                    value="{{ old('_form_type') === 'edit' ? old('name') : '' }}"
-                    class="w-full bg-watt-bg border border-watt-border rounded-xl px-4 py-3 text-sm text-white placeholder-watt-text-sec focus:outline-none focus:border-watt-cyan transition-colors">
-            </div>
-            <div class="space-y-1.5">
-                <label class="block text-xs font-semibold text-watt-text-sec uppercase tracking-wider">Harga (IDR) <span class="text-watt-red">*</span></label>
-                <input type="number" id="edit-product-price" name="price" required min="0"
-                    value="{{ old('_form_type') === 'edit' ? old('price') : '' }}"
-                    class="w-full bg-watt-bg border border-watt-border rounded-xl px-4 py-3 text-sm text-white placeholder-watt-text-sec focus:outline-none focus:border-watt-cyan transition-colors font-mono">
-            </div>
-            <div class="space-y-1.5">
-                <label class="block text-xs font-semibold text-watt-text-sec uppercase tracking-wider">Deskripsi (Opsional)</label>
-                <textarea id="edit-product-description" name="description" rows="2"
-                    class="w-full bg-watt-bg border border-watt-border rounded-xl px-4 py-3 text-sm text-white placeholder-watt-text-sec focus:outline-none focus:border-watt-cyan transition-colors resize-none">{{ old('_form_type') === 'edit' ? old('description') : '' }}</textarea>
-            </div>
-            <div class="space-y-1.5">
-                <label class="block text-xs font-semibold text-watt-text-sec uppercase tracking-wider">Gambar Baru (Opsional)</label>
-                <div id="edit-product-img-preview" class="hidden mb-2 flex items-center gap-2 bg-watt-bg border border-watt-border p-2 rounded-xl">
-                    <img id="edit-product-img" src="" alt="" class="w-10 h-10 rounded-lg object-cover">
-                    <span id="edit-product-img-name" class="text-[10px] text-watt-text-sec font-mono truncate flex-1"></span>
-                </div>
-                <input type="file" name="image" accept="image/*"
-                    class="w-full bg-watt-bg border border-watt-border rounded-xl px-3 py-2 text-sm text-watt-text-sec file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-watt-cyan file:text-watt-bg hover:file:opacity-90 cursor-pointer">
-                <p class="text-[10px] text-watt-text-sec">Kosongkan jika tidak ingin mengganti.</p>
-            </div>
-            <div class="flex items-center gap-2">
-                <input type="checkbox" name="status" value="1" id="edit-product-status" class="rounded border-watt-border bg-watt-bg text-watt-cyan focus:ring-watt-cyan">
-                <label for="edit-product-status" class="text-xs font-semibold text-watt-text-sec uppercase tracking-wider select-none cursor-pointer">Produk Aktif</label>
-            </div>
-            <div class="flex justify-end gap-3 pt-4 border-t border-watt-border">
-                <button type="button" onclick="closeModal('modal-edit-product')" class="px-5 py-2.5 rounded-xl bg-watt-hover hover:bg-[#333] text-watt-text-sec hover:text-white font-semibold text-xs transition-all cursor-pointer">Batal</button>
-                <button type="submit" class="px-5 py-2.5 rounded-xl bg-watt-cyan hover:opacity-90 text-watt-bg font-bold text-xs transition-all cursor-pointer">Simpan Perubahan</button>
+            <div class="admin-modal-footer">
+                <button type="button" onclick="closeModal('modal-edit-product')" class="admin-button-secondary cursor-pointer">Batal</button>
+                <button type="submit" class="admin-button-primary cursor-pointer">Simpan Perubahan</button>
             </div>
         </form>
     </div>
@@ -294,5 +330,14 @@ document.addEventListener('DOMContentLoaded', function() {
     @endif
 });
 @endif
+
+let searchTimeout;
+function autoSubmitForm(button) {
+    clearTimeout(searchTimeout);
+    const form = button.closest('.search-filter-form');
+    searchTimeout = setTimeout(() => {
+        form.submit();
+    }, 500);
+}
 </script>
 @endsection

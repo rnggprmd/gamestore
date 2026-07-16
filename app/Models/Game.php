@@ -3,13 +3,33 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Traits\Searchable;
 
 class Game extends Model
 {
-    protected $guarded = [];
+    use Searchable;
+    
+    protected $fillable = [
+        'name',
+        'slug',
+        'thumbnail',
+        'banner',
+        'description',
+        'status'
+    ];
 
-    public function products()
+    protected $casts = [
+        'status' => 'boolean',
+    ];
+
+    public function products(): HasMany
     {
         return $this->hasMany(Product::class);
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('status', true);
     }
 }

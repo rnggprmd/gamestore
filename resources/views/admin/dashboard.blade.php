@@ -8,7 +8,7 @@
     <!-- Stats Cards Grid - Vista de 3 columnas (KPI, KPI, KPI) -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <!-- Card 1: Total Game -->
-        <div class="bg-watt-surface border border-watt-border rounded-[16px] p-5 flex items-center justify-between">
+        <div class="admin-form-card p-5 flex items-center justify-between">
             <div class="space-y-2">
                 <span class="text-xs font-semibold text-watt-text-sec uppercase tracking-wider">Total Game</span>
                 <div class="flex items-baseline gap-2">
@@ -22,7 +22,7 @@
         </div>
 
         <!-- Card 2: Total Produk (con indicador En Vivo para activos) -->
-        <div class="bg-watt-surface border border-watt-border rounded-[16px] p-5 flex items-center justify-between">
+        <div class="admin-form-card p-5 flex items-center justify-between">
             <div class="space-y-2">
                 <span class="text-xs font-semibold text-watt-text-sec uppercase tracking-wider">Total Produk</span>
                 <div class="flex items-baseline gap-3">
@@ -39,7 +39,7 @@
         </div>
 
         <!-- Card 3: WhatsApp Clicks -->
-        <div class="bg-watt-surface border border-watt-border rounded-[16px] p-5 flex items-center justify-between">
+        <div class="admin-form-card p-5 flex items-center justify-between">
             <div class="space-y-2">
                 <span class="text-xs font-semibold text-watt-text-sec uppercase tracking-wider">Klik WhatsApp</span>
                 <div class="flex items-baseline gap-2">
@@ -60,7 +60,7 @@
         <div class="lg:col-span-8 space-y-8">
             
             <!-- Custom Area Chart - Gráficos (Charts) -->
-            <div class="bg-watt-surface border border-watt-border rounded-[16px] p-5 space-y-4">
+            <div class="admin-form-card p-5 space-y-4">
                 <div class="flex items-center justify-between">
                     <div class="space-y-1">
                         <h3 class="text-base font-bold text-white flex items-center gap-2">
@@ -120,7 +120,7 @@
             </div>
 
             <!-- Top Products List Table -->
-            <div class="bg-watt-surface border border-watt-border rounded-[16px] p-5 space-y-6">
+            <div class="admin-form-card p-5 space-y-6 admin-table-shell">
                 <div class="flex items-center justify-between">
                     <h3 class="text-base font-bold text-white flex items-center gap-2">
                         <i data-lucide="trending-up" class="w-4 h-4 text-watt-cyan"></i>
@@ -129,19 +129,19 @@
                     <span class="text-[10px] bg-watt-hover px-2 py-1 rounded text-watt-text-sec font-mono">Total Order</span>
                 </div>
 
-                @if(count($topProducts) > 0)
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm text-left">
+                @if($topProducts->count() > 0)
+                    <div class="overflow-x-auto admin-table-shell admin-table-scroll">
+                        <table class="admin-table">
                             <thead>
-                                <tr class="text-xs font-bold uppercase text-watt-text-sec border-b border-watt-border pb-3">
-                                    <th class="pb-3">Nama Produk</th>
-                                    <th class="pb-3">Game</th>
-                                    <th class="pb-3 text-right">Jumlah Pembelian</th>
+                                <tr class="admin-table-head">
+                                    <th class="admin-table-head">Nama Produk</th>
+                                    <th class="admin-table-head">Game</th>
+                                    <th class="admin-table-head text-right">Jumlah Pembelian</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-watt-border">
                                 @foreach($topProducts as $prod)
-                                    <tr class="text-watt-text-sec hover:bg-watt-hover transition-colors">
+                                    <tr class="admin-table-row text-watt-text-sec">
                                         <td class="py-4 font-semibold text-white">{{ $prod->product_name }}</td>
                                         <td class="py-4 text-xs font-mono">{{ $prod->game_name }}</td>
                                         <td class="py-4 text-right font-bold text-watt-cyan text-base font-mono">{{ $prod->total_qty }}x</td>
@@ -149,6 +149,10 @@
                                 @endforeach
                             </tbody>
                         </table>
+                    </div>
+                    <div class="mt-4 flex justify-between items-center px-4 py-3 rounded-xl border border-watt-border bg-watt-bg/40">
+                        <span class="text-[11px] text-watt-text-sec font-mono">Menampilkan 5 produk dengan performa penjualan terbaik</span>
+                        <span class="text-[10px] bg-watt-cyan/10 text-watt-cyan px-2 py-0.5 rounded-full font-mono font-bold">Top 5</span>
                     </div>
                 @else
                     <div class="py-12 text-center text-watt-text-sec text-xs">
@@ -163,7 +167,7 @@
         <div class="lg:col-span-4 space-y-8">
             
             <!-- Panel Alertas / Logs System (Strictly themed box #3A1C1C, text #FF453A, left border 4px #FF453A) -->
-            <div class="bg-watt-surface border border-watt-border rounded-[16px] p-5 space-y-4">
+            <div class="admin-form-card p-5 space-y-4">
                 <h3 class="text-base font-bold text-white flex items-center gap-2">
                     <i data-lucide="bell" class="w-4 h-4 text-watt-red"></i>
                     Status & Log Pemantauan
@@ -195,7 +199,7 @@
             </div>
 
             <!-- Quick Actions / Pintasan Cepat -->
-            <div class="bg-watt-surface border border-watt-border rounded-[16px] p-5 space-y-6">
+            <div class="admin-form-card p-5 space-y-6 admin-table-shell">
                 <h3 class="text-base font-bold text-white flex items-center gap-2">
                     <i data-lucide="compass" class="w-4 h-4 text-watt-cyan"></i>
                     Pintasan Cepat
@@ -231,3 +235,12 @@
     </div>
 </div>
 @endsection
+
+
+
+
+
+
+
+
+

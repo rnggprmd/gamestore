@@ -2,47 +2,37 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AdminController;
-use Illuminate\Support\Facades\Route;
-use App\Models\Game;
-use App\Models\Banner;
+use App\Http\Controllers\Admin\GameController;
+use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Admin\TestimonialController;
+use App\Http\Controllers\Admin\SettingController;
+use App\Services\GameService;
 use App\Models\Setting;
-use App\Models\Testimonial;
+use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    $games = Game::where('status', true)->with(['products' => function ($q) {
-        $q->where('status', true);
-    }])->get();
-    
-    $banners = Banner::where('status', true)->get();
-    $setting = Setting::first() ?? new Setting([
-        'store_name' => 'Gamestore Indonesia',
-        'whatsapp' => '628123456789',
-        'footer' => 'Gamestore Indonesia - Penyedia Top Up Game Instan Terlengkap & Terpercaya.',
-    ]);
-    $testimonials = Testimonial::where('status', true)->get();
+Route::get('/', function (GameService $gameService) {
+    $games = $gameService->getActiveGamesWithProducts();
+    $banners = $gameService->getActiveBanners();
+    $setting = $gameService->getSettings();
+    $testimonials = $gameService->getActiveTestimonials();
 
     return view('landing.index', compact('games', 'banners', 'setting', 'testimonials'));
 })->name('home');
 
-Route::get('/game/{slug}', function (string $slug) {
-    $game = Game::where('slug', $slug)->where('status', true)->with(['products' => function ($q) {
-        $q->where('status', true);
-    }])->firstOrFail();
-    
-    $setting = Setting::first() ?? new Setting([
-        'store_name' => 'Gamestore Indonesia',
-        'whatsapp' => '628123456789',
-        'footer' => 'Gamestore Indonesia - Penyedia Top Up Game Instan Terlengkap & Terpercaya.',
-    ]);
+Route::get('/game/{slug}', function (string $slug, GameService $gameService) {
+    $game = $gameService->getGameBySlug($slug);
+    $setting = $gameService->getSettings();
 
     return view('landing.game', compact('game', 'setting'));
 })->name('game.show');
 
 // WhatsApp click logger (Ajax endpoint)
-Route::post('/log-click', function () {
+Route::post('/log-click', function (GameService $gameService) {
     $setting = Setting::first();
     if ($setting) {
         $setting->increment('whatsapp_clicks');
+        $gameService->clearCache();
     }
     return response()->json(['success' => true]);
 })->name('log-click');
@@ -57,40 +47,20 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
 
     // Games Management CRUD
-    Route::get('/games', [AdminController::class, 'games'])->name('games.index');
-    Route::get('/games/create', [AdminController::class, 'gameCreate'])->name('games.create');
-    Route::post('/games', [AdminController::class, 'gameStore'])->name('games.store');
-    Route::get('/games/{game}/edit', [AdminController::class, 'gameEdit'])->name('games.edit');
-    Route::put('/games/{game}', [AdminController::class, 'gameUpdate'])->name('games.update');
-    Route::delete('/games/{game}', [AdminController::class, 'gameDestroy'])->name('games.destroy');
+    Route::resource('games', GameController::class);
 
     // Products Management CRUD
-    Route::get('/products', [AdminController::class, 'products'])->name('products.index');
-    Route::get('/products/create', [AdminController::class, 'productCreate'])->name('products.create');
-    Route::post('/products', [AdminController::class, 'productStore'])->name('products.store');
-    Route::get('/products/{product}/edit', [AdminController::class, 'productEdit'])->name('products.edit');
-    Route::put('/products/{product}', [AdminController::class, 'productUpdate'])->name('products.update');
-    Route::delete('/products/{product}', [AdminController::class, 'productDestroy'])->name('products.destroy');
+    Route::resource('products', ProductController::class);
 
     // Banners Management CRUD
-    Route::get('/banners', [AdminController::class, 'banners'])->name('banners.index');
-    Route::get('/banners/create', [AdminController::class, 'bannerCreate'])->name('banners.create');
-    Route::post('/banners', [AdminController::class, 'bannerStore'])->name('banners.store');
-    Route::get('/banners/{banner}/edit', [AdminController::class, 'bannerEdit'])->name('banners.edit');
-    Route::put('/banners/{banner}', [AdminController::class, 'bannerUpdate'])->name('banners.update');
-    Route::delete('/banners/{banner}', [AdminController::class, 'bannerDestroy'])->name('banners.destroy');
+    Route::resource('banners', BannerController::class);
 
     // Testimonials Management CRUD
-    Route::get('/testimonials', [AdminController::class, 'testimonials'])->name('testimonials.index');
-    Route::get('/testimonials/create', [AdminController::class, 'testimonialCreate'])->name('testimonials.create');
-    Route::post('/testimonials', [AdminController::class, 'testimonialStore'])->name('testimonials.store');
-    Route::get('/testimonials/{testimonial}/edit', [AdminController::class, 'testimonialEdit'])->name('testimonials.edit');
-    Route::put('/testimonials/{testimonial}', [AdminController::class, 'testimonialUpdate'])->name('testimonials.update');
-    Route::delete('/testimonials/{testimonial}', [AdminController::class, 'testimonialDestroy'])->name('testimonials.destroy');
+    Route::resource('testimonials', TestimonialController::class);
 
     // Site Settings Management
-    Route::get('/settings', [AdminController::class, 'settings'])->name('settings');
-    Route::put('/settings', [AdminController::class, 'settingsUpdate'])->name('settings.update');
+    Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+    Route::put('/settings', [SettingController::class, 'update'])->name('settings.update');
     
     // Default profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

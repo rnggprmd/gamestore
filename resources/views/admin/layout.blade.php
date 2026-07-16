@@ -16,51 +16,99 @@
 
     <!-- Tailwind & Vite -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <!-- Custom Scrollbar Styling -->
+    <style>
+        /* Scrollbar styling for sidebar */
+        aside::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        aside::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        aside::-webkit-scrollbar-thumb {
+            background: #00E5FF;
+            border-radius: 4px;
+        }
+
+        aside::-webkit-scrollbar-thumb:hover {
+            background: #00D9F1;
+        }
+
+        /* For Firefox */
+        aside {
+            scrollbar-color: #00E5FF transparent;
+            scrollbar-width: thin;
+        }
+
+        /* Main content scrollbar */
+        main::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        main::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        main::-webkit-scrollbar-thumb {
+            background: #00E5FF;
+            border-radius: 4px;
+        }
+
+        main::-webkit-scrollbar-thumb:hover {
+            background: #00D9F1;
+        }
+
+        /* For Firefox */
+        main {
+            scrollbar-color: #00E5FF transparent;
+            scrollbar-width: thin;
+        }
+    </style>
 </head>
-<body class="bg-watt-bg text-white min-h-screen flex flex-col">
+<body class="bg-watt-bg text-white h-screen overflow-hidden flex flex-col">
     <!-- Main Outer Wrapper -->
     <div class="flex flex-1 overflow-hidden">
         
         <!-- Sidebar (Desktop) -->
         <aside class="hidden lg:flex flex-col w-64 bg-watt-surface text-watt-text-sec border-r border-watt-border">
             <!-- Sidebar Header -->
-            <div class="h-16 flex items-center px-6 border-b border-watt-border">
+            <div class="h-28 flex items-center justify-center px-6 pt-4">
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-lg bg-watt-cyan flex items-center justify-center text-watt-bg font-bold">
-                        <i data-lucide="zap" class="w-4 h-4"></i>
-                    </div>
-                    <span class="font-bold text-white text-base">ADMIN PANEL</span>
+                    <img src="{{ asset('img/logo gamestore.png') }}" alt="Gamestore Logo" class="h-20 w-auto">
                 </a>
             </div>
 
             <!-- Sidebar Navigation Links -->
-            <nav class="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
-                <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-watt-hover hover:text-white transition-all {{ request()->routeIs('admin.dashboard') ? 'bg-watt-cyan text-watt-bg' : '' }}">
+            <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+                <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 hover:translate-x-1 {{ request()->routeIs('admin.dashboard') ? 'bg-watt-cyan text-watt-bg shadow-[0_4px_20px_rgba(0,229,255,0.25)] font-semibold' : 'text-watt-text-sec hover:bg-watt-hover/60 hover:text-white' }}">
                     <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
                     Dashboard
                 </a>
 
-                <a href="{{ route('admin.games.index') }}" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-watt-hover hover:text-white transition-all {{ request()->routeIs('admin.games.*') ? 'bg-watt-cyan text-watt-bg' : '' }}">
+                <a href="{{ route('admin.games.index') }}" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 hover:translate-x-1 {{ request()->routeIs('admin.games.*') ? 'bg-watt-cyan text-watt-bg shadow-[0_4px_20px_rgba(0,229,255,0.25)] font-semibold' : 'text-watt-text-sec hover:bg-watt-hover/60 hover:text-white' }}">
                     <i data-lucide="gamepad-2" class="w-4 h-4"></i>
                     Manajemen Game
                 </a>
 
-                <a href="{{ route('admin.products.index') }}" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-watt-hover hover:text-white transition-all {{ request()->routeIs('admin.products.*') ? 'bg-watt-cyan text-watt-bg' : '' }}">
+                <a href="{{ route('admin.products.index') }}" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 hover:translate-x-1 {{ request()->routeIs('admin.products.*') ? 'bg-watt-cyan text-watt-bg shadow-[0_4px_20px_rgba(0,229,255,0.25)] font-semibold' : 'text-watt-text-sec hover:bg-watt-hover/60 hover:text-white' }}">
                     <i data-lucide="package" class="w-4 h-4"></i>
                     Manajemen Produk
                 </a>
 
-                <a href="{{ route('admin.banners.index') }}" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-watt-hover hover:text-white transition-all {{ request()->routeIs('admin.banners.*') ? 'bg-watt-cyan text-watt-bg' : '' }}">
+                <a href="{{ route('admin.banners.index') }}" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 hover:translate-x-1 {{ request()->routeIs('admin.banners.*') ? 'bg-watt-cyan text-watt-bg shadow-[0_4px_20px_rgba(0,229,255,0.25)] font-semibold' : 'text-watt-text-sec hover:bg-watt-hover/60 hover:text-white' }}">
                     <i data-lucide="image" class="w-4 h-4"></i>
                     Manajemen Banner
                 </a>
 
-                <a href="{{ route('admin.testimonials.index') }}" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-watt-hover hover:text-white transition-all {{ request()->routeIs('admin.testimonials.*') ? 'bg-watt-cyan text-watt-bg' : '' }}">
+                <a href="{{ route('admin.testimonials.index') }}" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 hover:translate-x-1 {{ request()->routeIs('admin.testimonials.*') ? 'bg-watt-cyan text-watt-bg shadow-[0_4px_20px_rgba(0,229,255,0.25)] font-semibold' : 'text-watt-text-sec hover:bg-watt-hover/60 hover:text-white' }}">
                     <i data-lucide="message-square" class="w-4 h-4"></i>
                     Ulasan / Testimoni
                 </a>
 
-                <a href="{{ route('admin.settings') }}" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-watt-hover hover:text-white transition-all {{ request()->routeIs('admin.settings') ? 'bg-watt-cyan text-watt-bg' : '' }}">
+                <a href="{{ route('admin.settings.index') }}" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 hover:translate-x-1 {{ request()->routeIs('admin.settings.*') ? 'bg-watt-cyan text-watt-bg shadow-[0_4px_20px_rgba(0,229,255,0.25)] font-semibold' : 'text-watt-text-sec hover:bg-watt-hover/60 hover:text-white' }}">
                     <i data-lucide="settings" class="w-4 h-4"></i>
                     Pengaturan Toko
                 </a>
@@ -137,28 +185,28 @@
                             <i data-lucide="x" class="w-5 h-5"></i>
                         </button>
                     </div>
-                    <nav class="flex-grow px-4 py-6 space-y-1.5 overflow-y-auto">
-                        <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-watt-hover hover:text-white transition-all {{ request()->routeIs('admin.dashboard') ? 'bg-watt-cyan text-watt-bg' : '' }}">
+                    <nav class="flex-grow px-4 py-6 space-y-2 overflow-y-auto">
+                        <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('admin.dashboard') ? 'bg-watt-cyan text-watt-bg shadow-[0_4px_20px_rgba(0,229,255,0.25)] font-semibold' : 'text-watt-text-sec hover:bg-watt-hover/60 hover:text-white' }}">
                             <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
                             Dashboard
                         </a>
-                        <a href="{{ route('admin.games.index') }}" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-watt-hover hover:text-white transition-all {{ request()->routeIs('admin.games.*') ? 'bg-watt-cyan text-watt-bg' : '' }}">
+                        <a href="{{ route('admin.games.index') }}" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('admin.games.*') ? 'bg-watt-cyan text-watt-bg shadow-[0_4px_20px_rgba(0,229,255,0.25)] font-semibold' : 'text-watt-text-sec hover:bg-watt-hover/60 hover:text-white' }}">
                             <i data-lucide="gamepad-2" class="w-4 h-4"></i>
                             Manajemen Game
                         </a>
-                        <a href="{{ route('admin.products.index') }}" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-watt-hover hover:text-white transition-all {{ request()->routeIs('admin.products.*') ? 'bg-watt-cyan text-watt-bg' : '' }}">
+                        <a href="{{ route('admin.products.index') }}" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('admin.products.*') ? 'bg-watt-cyan text-watt-bg shadow-[0_4px_20px_rgba(0,229,255,0.25)] font-semibold' : 'text-watt-text-sec hover:bg-watt-hover/60 hover:text-white' }}">
                             <i data-lucide="package" class="w-4 h-4"></i>
                             Manajemen Produk
                         </a>
-                        <a href="{{ route('admin.banners.index') }}" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-watt-hover hover:text-white transition-all {{ request()->routeIs('admin.banners.*') ? 'bg-watt-cyan text-watt-bg' : '' }}">
+                        <a href="{{ route('admin.banners.index') }}" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('admin.banners.*') ? 'bg-watt-cyan text-watt-bg shadow-[0_4px_20px_rgba(0,229,255,0.25)] font-semibold' : 'text-watt-text-sec hover:bg-watt-hover/60 hover:text-white' }}">
                             <i data-lucide="image" class="w-4 h-4"></i>
                             Manajemen Banner
                         </a>
-                        <a href="{{ route('admin.testimonials.index') }}" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-watt-hover hover:text-white transition-all {{ request()->routeIs('admin.testimonials.*') ? 'bg-watt-cyan text-watt-bg' : '' }}">
+                        <a href="{{ route('admin.testimonials.index') }}" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('admin.testimonials.*') ? 'bg-watt-cyan text-watt-bg shadow-[0_4px_20px_rgba(0,229,255,0.25)] font-semibold' : 'text-watt-text-sec hover:bg-watt-hover/60 hover:text-white' }}">
                             <i data-lucide="message-square" class="w-4 h-4"></i>
                             Ulasan / Testimoni
                         </a>
-                        <a href="{{ route('admin.settings') }}" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-watt-hover hover:text-white transition-all {{ request()->routeIs('admin.settings') ? 'bg-watt-cyan text-watt-bg' : '' }}">
+                        <a href="{{ route('admin.settings.index') }}" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('admin.settings.*') ? 'bg-watt-cyan text-watt-bg shadow-[0_4px_20px_rgba(0,229,255,0.25)] font-semibold' : 'text-watt-text-sec hover:bg-watt-hover/60 hover:text-white' }}">
                             <i data-lucide="settings" class="w-4 h-4"></i>
                             Pengaturan Toko
                         </a>
