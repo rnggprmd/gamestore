@@ -10,6 +10,20 @@ class Setting extends Model
         'key',
         'value',
         'type',
+        'store_name',
+        'whatsapp',
+        'whatsapp_channel',
+        'youtube_tutorial',
+        'instagram',
+        'facebook',
+        'discord',
+        'address',
+        'footer',
+        'operating_hours',
+        'meta_description',
+        'meta_keywords',
+        'logo',
+        'favicon',
         'whatsapp_clicks'
     ];
 

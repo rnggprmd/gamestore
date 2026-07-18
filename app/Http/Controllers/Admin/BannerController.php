@@ -7,6 +7,8 @@ use App\Models\Banner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Cache;
+
 
 class BannerController extends Controller
 {
@@ -40,25 +42,34 @@ class BannerController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'link' => 'nullable|string|max:255',
-            'order' => 'nullable|integer|min:0',
-        ]);
+        try {
+            $validated = $request->validate([
+                'title' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'link' => 'nullable|string|max:255',
+                'order' => 'nullable|integer|min:0',
+            ]);
 
-        $data = $validated;
-        $data['status'] = $request->has('status');
-        $data['order'] = $request->input('order', 0);
+            $data = $validated;
+            $data['status'] = $request->has('status');
+            $data['order'] = $request->input('order', 0);
 
-        if ($request->hasFile('image')) {
-            $data['image'] = $this->uploadFile($request->file('image'));
+            if ($request->hasFile('image')) {
+                $data['image'] = $this->uploadFile($request->file('image'));
+            }
+
+            Banner::create($data);
+
+            Cache::forget('active_banners');
+
+            return redirect()->route('admin.banners.index')->with('success', 'Banner berhasil ditambahkan.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->route('admin.banners.index')
+                ->withErrors($e->errors())
+                ->withInput($request->all())
+                ->with('_form_type', 'create');
         }
-
-        Banner::create($data);
-
-        return redirect()->route('admin.banners.index')->with('success', 'Banner berhasil ditambahkan.');
     }
 
     public function edit(Banner $banner)
@@ -68,34 +79,47 @@ class BannerController extends Controller
 
     public function update(Request $request, Banner $banner)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'link' => 'nullable|string|max:255',
-            'order' => 'nullable|integer|min:0',
-        ]);
+        try {
+            $validated = $request->validate([
+                'title' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'link' => 'nullable|string|max:255',
+                'order' => 'nullable|integer|min:0',
+            ]);
 
-        $data = $validated;
-        $data['status'] = $request->has('status');
-        $data['order'] = $request->input('order', 0);
+            $data = $validated;
+            $data['status'] = $request->has('status');
+            $data['order'] = $request->input('order', 0);
 
-        if ($request->hasFile('image')) {
-            $this->deleteFile($banner->image);
-            $data['image'] = $this->uploadFile($request->file('image'));
+            if ($request->hasFile('image')) {
+                $this->deleteFile($banner->image);
+                $data['image'] = $this->uploadFile($request->file('image'));
+            }
+
+            $banner->update($data);
+
+            Cache::forget('active_banners');
+
+            return redirect()->route('admin.banners.index')->with('success', 'Banner berhasil diperbarui.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->route('admin.banners.index')
+                ->withErrors($e->errors())
+                ->withInput($request->all())
+                ->with('_form_type', 'edit')
+                ->with('_edit_id', $banner->id);
         }
-
-        $banner->update($data);
-
-        return redirect()->route('admin.banners.index')->with('success', 'Banner berhasil diperbarui.');
     }
 
     public function destroy(Banner $banner)
     {
         $this->deleteFile($banner->image);
         $banner->delete();
+
+        Cache::forget('active_banners');
         
         return redirect()->route('admin.banners.index')->with('success', 'Banner berhasil dihapus.');
+
     }
 
     private function uploadFile($file)

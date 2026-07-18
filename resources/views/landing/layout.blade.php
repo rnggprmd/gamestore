@@ -14,6 +14,9 @@
     <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ asset('img/logo gamestore.png') }}">
+
     <!-- Alpine.js -->
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
@@ -57,9 +60,7 @@
                 <!-- Logo / Title -->
                 <div class="flex items-center gap-3">
                     <a href="{{ route('home') }}" class="flex items-center gap-2 group">
-                        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-violet-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-500/20 group-hover:scale-105 transition-transform duration-300">
-                            <i data-lucide="gamepad-2" class="w-5 h-5 text-white"></i>
-                        </div>
+                        <img src="{{ asset('img/logo gamestore.png') }}" alt="Logo" class="w-10 h-10 rounded-xl group-hover:scale-105 transition-transform duration-300">
                         <span class="text-xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-200 to-violet-400 bg-clip-text text-transparent">
                             {{ $setting->store_name ?? 'Gamestore Indonesia' }}
                         </span>
@@ -67,13 +68,14 @@
                 </div>
 
                 <!-- Navigation Links (Desktop) -->
-                <div class="hidden md:flex items-center gap-8 text-sm font-medium">
-                    <a href="{{ route('home') }}" class="text-slate-300 hover:text-white transition-colors">Beranda</a>
-                    <a href="{{ route('home') }}#games" class="text-slate-300 hover:text-white transition-colors">Daftar Game</a>
-                    <a href="{{ route('home') }}#features" class="text-slate-300 hover:text-white transition-colors">Tentang Kami</a>
-                    <a href="{{ route('home') }}#cara-order" class="text-slate-300 hover:text-white transition-colors">Cara Order</a>
-                    <a href="{{ route('home') }}#testimonials" class="text-slate-300 hover:text-white transition-colors">Ulasan</a>
+                <div class="hidden md:flex items-center gap-8 text-sm font-medium" x-data="activeMenuHandler()" x-init="init()">
+                    <a href="{{ route('home') }}" :class="activeSection === 'beranda' ? 'text-white border-b-2 border-violet-500' : 'text-slate-300 hover:text-white'" class="pb-1 transition-colors">Beranda</a>
+                    <a href="{{ route('home') }}#games" :class="activeSection === 'games' ? 'text-white border-b-2 border-violet-500' : 'text-slate-300 hover:text-white'" class="pb-1 transition-colors">Daftar Game</a>
+                    <a href="{{ route('home') }}#features" :class="activeSection === 'features' ? 'text-white border-b-2 border-violet-500' : 'text-slate-300 hover:text-white'" class="pb-1 transition-colors">Tentang Kami</a>
+                    <a href="{{ route('home') }}#cara-order" :class="activeSection === 'cara-order' ? 'text-white border-b-2 border-violet-500' : 'text-slate-300 hover:text-white'" class="pb-1 transition-colors">Cara Order</a>
+                    <a href="{{ route('home') }}#testimonials" :class="activeSection === 'testimonials' ? 'text-white border-b-2 border-violet-500' : 'text-slate-300 hover:text-white'" class="pb-1 transition-colors">Ulasan</a>
                 </div>
+
 
                 <!-- Cart Button & Mobile Menu -->
                 <div class="flex items-center gap-4">
@@ -126,13 +128,14 @@
                     </ul>
                 </div>
 
+
                 <!-- Socials & Channel -->
                 <div>
                     <h3 class="text-white font-semibold mb-6">Hubungi Kami & Saluran</h3>
                     <div class="flex gap-3 mb-6">
                         @if($setting->whatsapp)
-                            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $setting->whatsapp) }}" target="_blank" class="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center hover:bg-violet-600 hover:text-white transition-all text-slate-400">
-                                <i data-lucide="phone" class="w-5 h-5"></i>
+                            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $setting->whatsapp) }}" target="_blank" class="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center hover:bg-emerald-600 hover:scale-110 transition-all">
+                                <img src="{{ asset('img/whatsapp-icon-seeklogo.svg') }}" alt="WhatsApp" class="w-5 h-5">
                             </a>
                         @endif
                         @if($setting->instagram)
@@ -164,7 +167,6 @@
             <!-- Bottom Copyright -->
             <div class="border-t border-slate-900/60 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
                 <span>&copy; {{ date('Y') }} {{ $setting->store_name ?? 'Gamestore Indonesia' }}. All rights reserved.</span>
-                <span class="flex items-center gap-1">Dibuat dengan <i data-lucide="heart" class="w-3.5 h-3.5 text-rose-500 fill-rose-500"></i> untuk Gamers</span>
             </div>
         </div>
     </footer>
@@ -278,13 +280,13 @@
             </button>
             <div class="flex items-start gap-2.5">
                 <div class="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <i data-lucide="message-circle" class="w-4 h-4 text-white"></i>
+                    <img src="{{ asset('img/whatsapp-icon-seeklogo.svg') }}" alt="WhatsApp" class="w-4 h-4">
                 </div>
                 <div>
                     <h5 class="text-xs font-bold text-slate-200">Ada yang ingin ditanyakan?</h5>
                     <p class="text-[10px] text-slate-400 mt-1 leading-relaxed">Konsultasi atau tanyakan mengenai produk kami langsung kepada Admin.</p>
                     <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $setting->whatsapp) }}?text=Halo%20Admin%20saya%20ingin%20tanya%20mengenai%20produk%20game." target="_blank" class="mt-2.5 inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg transition-all">
-                        <i data-lucide="message-square" class="w-3 h-3"></i>
+                        <img src="{{ asset('img/whatsapp-icon-seeklogo.svg') }}" alt="WhatsApp" class="w-3 h-3">
                         Chat Admin
                     </a>
                 </div>
@@ -293,8 +295,8 @@
 
         <!-- Big Floating Button -->
         <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $setting->whatsapp) }}?text=Halo%20Admin%20saya%20ingin%20tanya%20mengenai%20produk%20game." target="_blank" class="w-14 h-14 rounded-full bg-emerald-600 flex items-center justify-center text-white shadow-2xl hover:bg-emerald-500 hover:scale-105 hover:rotate-6 transition-all duration-300 shadow-emerald-500/20 group relative cursor-pointer">
-            <i data-lucide="message-circle" class="w-7 h-7"></i>
-            <span class="absolute right-16 scale-90 opacity-0 group-hover:scale-100 group-hover:opacity-100 bg-[#090d16] text-white border border-slate-800 text-xs py-1.5 px-3 rounded-lg font-medium whitespace-nowrap transition-all duration-300 shadow-lg">Chat Admin</span>
+            <img src="{{ asset('img/whatsapp-icon-seeklogo.svg') }}" alt="WhatsApp" class="w-7 h-7">
+            <span class="absolute right-16 scale-90 opacity-0 group-hover:scale-100 group-hover:opacity-100 bg-[#020617] text-white border border-slate-800 text-xs py-1.5 px-3 rounded-lg font-medium whitespace-nowrap transition-all duration-300 shadow-lg">Chat Admin</span>
         </a>
     </div>
 
@@ -400,6 +402,43 @@
 
                     let url = `https://wa.me/${this.storeWhatsapp}?text=${encodeURIComponent(message)}`;
                     window.open(url, '_blank');
+                }
+            };
+        }
+
+        // Active menu handler
+        function activeMenuHandler() {
+            return {
+                activeSection: 'beranda',
+                
+                init() {
+                    this.updateActiveSection();
+                    window.addEventListener('scroll', () => this.updateActiveSection());
+                    window.addEventListener('hashchange', () => this.updateActiveSection());
+                },
+
+                updateActiveSection() {
+                    const sections = ['beranda', 'games', 'features', 'cara-order', 'testimonials'];
+                    const scrollPosition = window.scrollY + 100;
+
+                    for (let section of sections) {
+                        const element = document.getElementById(section);
+                        if (element) {
+                            const rect = element.getBoundingClientRect();
+                            const elementTop = rect.top + window.scrollY;
+                            const elementBottom = elementTop + element.offsetHeight;
+
+                            if (scrollPosition >= elementTop && scrollPosition < elementBottom) {
+                                this.activeSection = section;
+                                return;
+                            }
+                        }
+                    }
+
+                    // Default to beranda if at top
+                    if (window.scrollY < 100) {
+                        this.activeSection = 'beranda';
+                    }
                 }
             };
         }

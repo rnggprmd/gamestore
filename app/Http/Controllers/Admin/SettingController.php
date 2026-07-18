@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
+use App\Services\GameService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Cache;
@@ -19,8 +20,6 @@ class SettingController extends Controller
     public function update(Request $request)
     {
         $validated = $request->validate([
-            'key' => 'required|string|max:100',
-            'value' => 'required|string',
             'store_name' => 'required|string|max:255',
             'whatsapp' => 'required|string|max:20',
             'whatsapp_channel' => 'nullable|url|max:255',
@@ -52,8 +51,17 @@ class SettingController extends Controller
 
         $setting->fill($data)->save();
 
-        // Clear settings cache after update
-        Cache::forget('site_settings');
+        // Clear all related caches after update
+        try {
+            $gameService = app(GameService::class);
+            $gameService->clearCache();
+        } catch (\Exception $e) {
+            // If service injection fails, clear caches manually
+            Cache::forget('site_settings');
+            Cache::forget('active_games_with_products');
+            Cache::forget('active_banners');
+            Cache::forget('active_testimonials');
+        }
 
         return redirect()->route('admin.settings.index')->with('success', 'Pengaturan website berhasil diperbarui.');
     }

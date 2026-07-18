@@ -25,7 +25,7 @@ class GameService
 
     public function getGameBySlug(string $slug)
     {
-        return Cache::remember("game_slug_{$slug}", self::CACHE_TTL, function () {
+        return Cache::remember("game_slug_{$slug}", self::CACHE_TTL, function () use ($slug) {
             return Game::where('slug', $slug)
                 ->where('status', true)
                 ->with(['products' => function ($q) {

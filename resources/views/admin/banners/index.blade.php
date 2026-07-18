@@ -4,7 +4,14 @@
 
 @section('content')
 <div class="space-y-6">
-    <div class="admin-form-card p-5 space-y-6">
+    <div class="admin-form-card p-5 space-y-4">
+        <!-- Filter Section Marker -->
+        <div class="flex items-center gap-2">
+            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-watt-cyan/10 border border-watt-cyan/20">
+                <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5 text-watt-cyan"></i>
+                <span class="text-[11px] font-bold text-watt-cyan uppercase tracking-widest">Filter & Pencarian</span>
+            </div>
+        </div>
         <!-- Search & Filter (Integrated) -->
         <form method="GET" class="search-filter-form grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 items-end pb-4 border-b border-watt-border">
             <!-- Search Input -->
@@ -45,14 +52,13 @@
             </div>
         </form>
 
-        <!-- Header -->
+        <!-- Header with Add Button -->
         <div class="flex items-center justify-between pt-2">
-            <h3 class="text-base font-bold text-white flex items-center gap-2">
+            <div class="flex items-center gap-2">
                 <i data-lucide="image" class="w-4 h-4 text-watt-cyan"></i>
-                Daftar Banner
-                <span class="font-mono text-sm text-watt-text-sec">({{ count($banners) }})</span>
-            </h3>
-            <button onclick="openModal('modal-create-banner')" class="inline-flex items-center gap-1.5 bg-watt-cyan hover:opacity-90 text-watt-bg text-xs font-bold px-4 py-2.5 rounded-xl transition-all cursor-pointer">
+                <span class="text-sm font-semibold text-white">Daftar Banner <span class="font-mono text-xs text-watt-text-sec">({{ count($banners) }})</span></span>
+            </div>
+            <button onclick="openModal('modal-create-banner')" class="inline-flex items-center gap-1.5 bg-watt-cyan hover:opacity-90 text-watt-bg text-xs font-bold px-4 py-2.5 rounded-xl transition-all cursor-pointer flex-shrink-0">
                 <i data-lucide="plus" class="w-4 h-4"></i>
                 Tambah Banner
             </button>
@@ -63,16 +69,19 @@
             <table class="admin-table">
                 <thead>
                     <tr class="admin-table-head">
+                        <th class="admin-table-head w-16">No.</th>
                         <th class="admin-table-head">Preview</th>
                         <th class="admin-table-head">Judul</th>
                         <th class="admin-table-head">Subtitle</th>
+                        <th class="admin-table-head">Waktu Ditambah</th>
                         <th class="admin-table-head">Status</th>
                         <th class="admin-table-head text-right">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-watt-border">
-                    @forelse($banners as $banner)
+                    @forelse($banners as $index => $banner)
                     <tr class="admin-table-row">
+                        <td class="py-3.5 text-center text-sm font-medium text-watt-text-sec">{{ $index + 1 }}</td>
                         <td class="py-3.5">
                             @if($banner->image && file_exists(public_path('img/' . $banner->image)))
                                 <img src="{{ asset('img/' . $banner->image) }}" alt="{{ $banner->title }}" class="w-24 h-14 rounded-xl object-cover border border-watt-border">
@@ -84,6 +93,12 @@
                         </td>
                         <td class="py-3.5 font-semibold text-white">{{ $banner->title }}</td>
                         <td class="py-3.5 text-xs text-watt-text-sec max-w-xs truncate">{{ $banner->subtitle }}</td>
+                        <td class="py-3.5 text-xs text-watt-text-sec">
+                            <div class="flex flex-col">
+                                <span>{{ $banner->created_at->format('d M Y') }}</span>
+                                <span class="text-[10px] text-watt-text-sec/70">{{ $banner->created_at->format('H:i') }}</span>
+                            </div>
+                        </td>
                         <td class="py-3.5">
                             @if($banner->status)
                                 <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-watt-green/10 text-watt-green border border-watt-green/20 text-[10px] font-bold whitespace-nowrap">
@@ -121,7 +136,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" class="py-16 text-center text-watt-text-sec text-xs">
+                        <td colspan="7" class="py-16 text-center text-watt-text-sec text-xs">
                             <i data-lucide="image" class="w-10 h-10 mx-auto mb-3 opacity-30"></i>
                             <p>Belum ada banner yang ditambahkan.</p>
                         </td>
@@ -151,13 +166,21 @@
             <div class="admin-modal-body">
                 <div class="space-y-1.5">
                     <label class="admin-field-label">Judul Banner <span class="text-watt-red">*</span></label>
-                    <input type="text" name="title" value="{{ old('_form_type') === 'create' ? old('title') : '' }}" required placeholder="Contoh: Promo Spesial!"
-                        class="admin-field">
+                    <input type="text" name="title" value="{{ session('_form_type') === 'create' ? old('title') : '' }}" required placeholder="Contoh: Promo Spesial!"
+                        class="admin-field @if(session('_form_type') === 'create') @error('title') border-watt-red focus:border-watt-red focus:ring-watt-red @enderror @endif">
+                    @if(session('_form_type') === 'create')
+                        @error('title')
+                            <p class="text-xs font-semibold text-watt-red mt-1 flex items-center gap-1">
+                                <i data-lucide="alert-circle" class="w-3.5 h-3.5 flex-shrink-0"></i>
+                                {{ $message }}
+                            </p>
+                        @enderror
+                    @endif
                 </div>
                 <div class="space-y-1.5">
                     <label class="admin-field-label">Subtitle / Keterangan</label>
                     <textarea name="subtitle" rows="2" placeholder="Keterangan singkat..."
-                        class="admin-textarea">{{ old('_form_type') === 'create' ? old('subtitle') : '' }}</textarea>
+                        class="admin-textarea">{{ session('_form_type') === 'create' ? old('subtitle') : '' }}</textarea>
                 </div>
                 <div class="space-y-1.5">
                     <label class="admin-field-label">Gambar Banner <span class="text-watt-red">*</span></label>
@@ -168,12 +191,12 @@
                 <div class="grid grid-cols-2 gap-4">
                     <div class="space-y-1.5">
                         <label class="admin-field-label">Teks Tombol</label>
-                        <input type="text" name="button_text" value="{{ old('_form_type') === 'create' ? old('button_text') : '' }}" placeholder="Beli Sekarang"
+                        <input type="text" name="button_text" value="{{ session('_form_type') === 'create' ? old('button_text') : '' }}" placeholder="Beli Sekarang"
                             class="admin-field">
                     </div>
                     <div class="space-y-1.5">
                         <label class="admin-field-label">Link Tombol</label>
-                        <input type="text" name="button_link" value="{{ old('_form_type') === 'create' ? old('button_link') : '' }}" placeholder="/game/mobile-legends"
+                        <input type="text" name="button_link" value="{{ session('_form_type') === 'create' ? old('button_link') : '' }}" placeholder="/game/mobile-legends"
                             class="admin-field">
                     </div>
                 </div>
@@ -210,13 +233,21 @@
                 <div class="space-y-1.5">
                     <label class="admin-field-label">Judul Banner <span class="text-watt-red">*</span></label>
                     <input type="text" id="edit-banner-title" name="title" required placeholder="Judul banner..."
-                        value="{{ old('_form_type') === 'edit' ? old('title') : '' }}"
-                        class="admin-field">
+                        value="{{ session('_form_type') === 'edit' ? old('title') : '' }}"
+                        class="admin-field @if(session('_form_type') === 'edit') @error('title') border-watt-red focus:border-watt-red focus:ring-watt-red @enderror @endif">
+                    @if(session('_form_type') === 'edit')
+                        @error('title')
+                            <p class="text-xs font-semibold text-watt-red mt-1 flex items-center gap-1">
+                                <i data-lucide="alert-circle" class="w-3.5 h-3.5 flex-shrink-0"></i>
+                                {{ $message }}
+                            </p>
+                        @enderror
+                    @endif
                 </div>
                 <div class="space-y-1.5">
                     <label class="admin-field-label">Subtitle / Keterangan</label>
                     <textarea id="edit-banner-subtitle" name="subtitle" rows="2"
-                        class="admin-textarea">{{ old('_form_type') === 'edit' ? old('subtitle') : '' }}</textarea>
+                        class="admin-textarea">{{ session('_form_type') === 'edit' ? old('subtitle') : '' }}</textarea>
                 </div>
                 <div class="space-y-1.5">
                     <label class="admin-field-label">Gambar Banner Baru</label>
@@ -231,13 +262,13 @@
                     <div class="space-y-1.5">
                         <label class="admin-field-label">Teks Tombol</label>
                         <input type="text" id="edit-banner-btn-text" name="button_text"
-                            value="{{ old('_form_type') === 'edit' ? old('button_text') : '' }}"
+                            value="{{ session('_form_type') === 'edit' ? old('button_text') : '' }}"
                             class="admin-field">
                     </div>
                     <div class="space-y-1.5">
                         <label class="admin-field-label">Link Tombol</label>
                         <input type="text" id="edit-banner-btn-link" name="button_link"
-                            value="{{ old('_form_type') === 'edit' ? old('button_link') : '' }}"
+                            value="{{ session('_form_type') === 'edit' ? old('button_link') : '' }}"
                             class="admin-field">
                     </div>
                 </div>
@@ -281,22 +312,32 @@ function openBannerEditModal(btn) {
 
     openModal('modal-edit-banner');
 }
-@if($errors->any())
 document.addEventListener('DOMContentLoaded', function() {
-    @if(old('_form_type') === 'edit')
-        openModal('modal-edit-banner');
-        document.getElementById('form-edit-banner').action = '{{ url("admin/banners") }}/{{ old("_edit_id") }}';
-        document.getElementById('edit-banner-hidden-id').value = '{{ old("_edit_id") }}';
-        document.getElementById('edit-banner-title').value = @json(old('title') ?? '');
-        document.getElementById('edit-banner-subtitle').value = @json(old('subtitle') ?? '');
-        document.getElementById('edit-banner-btn-text').value = @json(old('button_text') ?? '');
-        document.getElementById('edit-banner-btn-link').value = @json(old('button_link') ?? '');
-        document.getElementById('edit-banner-status').checked = {{ old('status') ? 'true' : 'false' }};
-    @else
-        openModal('modal-create-banner');
+    @if($errors->any())
+        @if(session('_form_type') === 'edit')
+            document.body.style.overflow = 'hidden';
+            document.getElementById('form-edit-banner').action = '{{ url("admin/banners") }}/{{ session("_edit_id") }}';
+            document.getElementById('edit-banner-hidden-id').value = '{{ session("_edit_id") }}';
+            document.getElementById('edit-banner-title').value = @json(old('title') ?? '');
+            document.getElementById('edit-banner-subtitle').value = @json(old('subtitle') ?? '');
+            document.getElementById('edit-banner-btn-text').value = @json(old('button_text') ?? '');
+            document.getElementById('edit-banner-btn-link').value = @json(old('button_link') ?? '');
+            document.getElementById('edit-banner-status').checked = {{ old('status') ? 'true' : 'false' }};
+            openModal('modal-edit-banner');
+        @else
+            openModal('modal-create-banner');
+        @endif
+
+        lucide.createIcons();
+
+        // Tampilkan error toast dengan delay untuk memastikan modal sudah visible
+        setTimeout(() => {
+            @foreach($errors->all() as $error)
+                showToast('{{ $error }}', 'error', 5000);
+            @endforeach
+        }, 300);
     @endif
 });
-@endif
 
 let searchTimeout;
 function autoSubmitForm(button) {

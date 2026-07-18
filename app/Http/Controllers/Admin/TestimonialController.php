@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Testimonial;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+
 
 class TestimonialController extends Controller
 {
@@ -45,23 +47,32 @@ class TestimonialController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'message' => 'required|string',
-            'rating' => 'required|integer|min:1|max:5',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+        try {
+            $validated = $request->validate([
+                'customer_name' => 'required|string|max:255',
+                'message' => 'required|string',
+                'rating' => 'required|integer|min:1|max:5',
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            ]);
 
-        $data = $validated;
-        $data['status'] = $request->has('status');
+            $data = $validated;
+            $data['status'] = $request->has('status');
 
-        if ($request->hasFile('image')) {
-            $data['image'] = $this->uploadFile($request->file('image'));
+            if ($request->hasFile('image')) {
+                $data['image'] = $this->uploadFile($request->file('image'));
+            }
+
+            Testimonial::create($data);
+
+            Cache::forget('active_testimonials');
+
+            return redirect()->route('admin.testimonials.index')->with('success', 'Testimoni berhasil ditambahkan.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->route('admin.testimonials.index')
+                ->withErrors($e->errors())
+                ->withInput($request->all())
+                ->with('_form_type', 'create');
         }
-
-        Testimonial::create($data);
-
-        return redirect()->route('admin.testimonials.index')->with('success', 'Testimoni berhasil ditambahkan.');
     }
 
     public function edit(Testimonial $testimonial)
@@ -71,32 +82,45 @@ class TestimonialController extends Controller
 
     public function update(Request $request, Testimonial $testimonial)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'message' => 'required|string',
-            'rating' => 'required|integer|min:1|max:5',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+        try {
+            $validated = $request->validate([
+                'customer_name' => 'required|string|max:255',
+                'message' => 'required|string',
+                'rating' => 'required|integer|min:1|max:5',
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            ]);
 
-        $data = $validated;
-        $data['status'] = $request->has('status');
+            $data = $validated;
+            $data['status'] = $request->has('status');
 
-        if ($request->hasFile('image')) {
-            $this->deleteFile($testimonial->image);
-            $data['image'] = $this->uploadFile($request->file('image'));
+            if ($request->hasFile('image')) {
+                $this->deleteFile($testimonial->image);
+                $data['image'] = $this->uploadFile($request->file('image'));
+            }
+
+            $testimonial->update($data);
+
+            Cache::forget('active_testimonials');
+
+            return redirect()->route('admin.testimonials.index')->with('success', 'Testimoni berhasil diperbarui.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->route('admin.testimonials.index')
+                ->withErrors($e->errors())
+                ->withInput($request->all())
+                ->with('_form_type', 'edit')
+                ->with('_edit_id', $testimonial->id);
         }
-
-        $testimonial->update($data);
-
-        return redirect()->route('admin.testimonials.index')->with('success', 'Testimoni berhasil diperbarui.');
     }
 
     public function destroy(Testimonial $testimonial)
     {
         $this->deleteFile($testimonial->image);
         $testimonial->delete();
+
+        Cache::forget('active_testimonials');
         
         return redirect()->route('admin.testimonials.index')->with('success', 'Testimoni berhasil dihapus.');
+
     }
 
     private function uploadFile($file)

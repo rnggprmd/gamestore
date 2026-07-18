@@ -53,26 +53,33 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'game_id' => 'required|exists:games,id',
-            'category_id' => 'required|exists:categories,id',
-            'name' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
-            'description' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+        try {
+            $validated = $request->validate([
+                'game_id' => 'required|exists:games,id',
+                'category_id' => 'required|exists:categories,id',
+                'name' => 'required|string|max:255',
+                'price' => 'required|numeric|min:0',
+                'description' => 'nullable|string',
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            ]);
 
-        $data = $validated;
-        $data['status'] = $request->has('status');
+            $data = $validated;
+            $data['status'] = $request->has('status');
 
-        if ($request->hasFile('image')) {
-            $data['image'] = $this->uploadFile($request->file('image'));
+            if ($request->hasFile('image')) {
+                $data['image'] = $this->uploadFile($request->file('image'));
+            }
+
+            Product::create($data);
+            $this->gameService->clearCache();
+
+            return redirect()->route('admin.products.index')->with('success', 'Produk berhasil ditambahkan.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->route('admin.products.index')
+                ->withErrors($e->errors())
+                ->withInput($request->all())
+                ->with('_form_type', 'create');
         }
-
-        Product::create($data);
-        $this->gameService->clearCache();
-
-        return redirect()->route('admin.products.index')->with('success', 'Produk berhasil ditambahkan.');
     }
 
     public function edit(Product $product)
@@ -85,27 +92,35 @@ class ProductController extends Controller
 
     public function update(Request $request, Product $product)
     {
-        $validated = $request->validate([
-            'game_id' => 'required|exists:games,id',
-            'category_id' => 'required|exists:categories,id',
-            'name' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
-            'description' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+        try {
+            $validated = $request->validate([
+                'game_id' => 'required|exists:games,id',
+                'category_id' => 'required|exists:categories,id',
+                'name' => 'required|string|max:255',
+                'price' => 'required|numeric|min:0',
+                'description' => 'nullable|string',
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            ]);
 
-        $data = $validated;
-        $data['status'] = $request->has('status');
+            $data = $validated;
+            $data['status'] = $request->has('status');
 
-        if ($request->hasFile('image')) {
-            $this->deleteFile($product->image);
-            $data['image'] = $this->uploadFile($request->file('image'));
+            if ($request->hasFile('image')) {
+                $this->deleteFile($product->image);
+                $data['image'] = $this->uploadFile($request->file('image'));
+            }
+
+            $product->update($data);
+            $this->gameService->clearCache();
+
+            return redirect()->route('admin.products.index')->with('success', 'Produk berhasil diperbarui.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->route('admin.products.index')
+                ->withErrors($e->errors())
+                ->withInput($request->all())
+                ->with('_form_type', 'edit')
+                ->with('_edit_id', $product->id);
         }
-
-        $product->update($data);
-        $this->gameService->clearCache();
-
-        return redirect()->route('admin.products.index')->with('success', 'Produk berhasil diperbarui.');
     }
 
     public function destroy(Product $product)

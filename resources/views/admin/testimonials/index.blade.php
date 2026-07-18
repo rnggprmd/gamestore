@@ -4,11 +4,18 @@
 
 @section('content')
 <div class="space-y-6">
-    <div class="admin-form-card p-5 space-y-6">
+    <div class="admin-form-card p-5 space-y-4">
+        <!-- Filter Section Marker -->
+        <div class="flex items-center gap-2">
+            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-watt-cyan/10 border border-watt-cyan/20">
+                <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5 text-watt-cyan"></i>
+                <span class="text-[11px] font-bold text-watt-cyan uppercase tracking-widest">Filter & Pencarian</span>
+            </div>
+        </div>
         <!-- Search & Filter (Integrated) -->
-        <form method="GET" class="search-filter-form grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 items-end pb-4 border-b border-watt-border">
+        <form method="GET" class="search-filter-form grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end pb-4 border-b border-watt-border">
             <!-- Search Input -->
-            <div class="sm:col-span-2 lg:col-span-1">
+            <div>
                 <label class="admin-field-label text-xs mb-1.5">🔍 Cari</label>
                 <input type="text" name="search" value="{{ $search ?? '' }}" 
                     placeholder="Cari..." autocomplete="off"
@@ -59,14 +66,13 @@
             </div>
         </form>
 
-        <!-- Header -->
+        <!-- Header with Add Button -->
         <div class="flex items-center justify-between pt-2">
-            <h3 class="text-base font-bold text-white flex items-center gap-2">
+            <div class="flex items-center gap-2">
                 <i data-lucide="message-square" class="w-4 h-4 text-watt-cyan"></i>
-                Daftar Testimoni
-                <span class="font-mono text-sm text-watt-text-sec">({{ count($testimonials) }})</span>
-            </h3>
-            <button onclick="openModal('modal-create-testimonial')" class="inline-flex items-center gap-1.5 bg-watt-cyan hover:opacity-90 text-watt-bg text-xs font-bold px-4 py-2.5 rounded-xl transition-all cursor-pointer">
+                <span class="text-sm font-semibold text-white">Daftar Testimoni <span class="font-mono text-xs text-watt-text-sec">({{ count($testimonials) }})</span></span>
+            </div>
+            <button onclick="openModal('modal-create-testimonial')" class="inline-flex items-center gap-1.5 bg-watt-cyan hover:opacity-90 text-watt-bg text-xs font-bold px-4 py-2.5 rounded-xl transition-all cursor-pointer flex-shrink-0">
                 <i data-lucide="plus" class="w-4 h-4"></i>
                 Tambah Testimoni
             </button>
@@ -77,16 +83,19 @@
             <table class="admin-table">
                 <thead>
                     <tr class="admin-table-head">
+                        <th class="admin-table-head w-16">No.</th>
                         <th class="admin-table-head">Nama Pelanggan</th>
                         <th class="admin-table-head">Pesan</th>
                         <th class="admin-table-head">Rating</th>
+                        <th class="admin-table-head">Waktu Ditambah</th>
                         <th class="admin-table-head">Status</th>
                         <th class="admin-table-head text-right">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-watt-border">
-                    @forelse($testimonials as $testimonial)
+                    @forelse($testimonials as $index => $testimonial)
                     <tr class="admin-table-row">
+                        <td class="py-3.5 text-center text-sm font-medium text-watt-text-sec">{{ $index + 1 }}</td>
                         <td class="py-3.5 font-semibold text-white">{{ $testimonial->customer_name }}</td>
                         <td class="py-3.5 text-xs text-watt-text-sec max-w-xs">
                             <span class="line-clamp-2">{{ $testimonial->message }}</span>
@@ -97,6 +106,12 @@
                                     <svg class="w-3.5 h-3.5 {{ $i <= $testimonial->rating ? 'text-yellow-400 fill-yellow-400' : 'fill-watt-border text-watt-border' }}" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                                 @endfor
                                 <span class="ml-1 text-xs text-watt-text-sec font-mono font-bold">{{ $testimonial->rating }}/5</span>
+                            </div>
+                        </td>
+                        <td class="py-3.5 text-xs text-watt-text-sec">
+                            <div class="flex flex-col">
+                                <span>{{ $testimonial->created_at->format('d M Y') }}</span>
+                                <span class="text-[10px] text-watt-text-sec/70">{{ $testimonial->created_at->format('H:i') }}</span>
                             </div>
                         </td>
                         <td class="py-3.5">
@@ -133,7 +148,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" class="py-16 text-center text-watt-text-sec text-xs">
+                        <td colspan="7" class="py-16 text-center text-watt-text-sec text-xs">
                             <i data-lucide="message-square" class="w-10 h-10 mx-auto mb-3 opacity-30"></i>
                             <p>Belum ada testimoni yang ditambahkan.</p>
                         </td>
@@ -163,20 +178,36 @@
             <div class="admin-modal-body">
                 <div class="space-y-1.5">
                     <label class="admin-field-label">Nama Pelanggan <span class="text-watt-red">*</span></label>
-                    <input type="text" name="customer_name" value="{{ old('_form_type') === 'create' ? old('customer_name') : '' }}" required placeholder="Contoh: Budi Santoso"
-                        class="admin-field">
+                    <input type="text" name="customer_name" value="{{ session('_form_type') === 'create' ? old('customer_name') : '' }}" required placeholder="Contoh: Budi Santoso"
+                        class="admin-field @if(session('_form_type') === 'create') @error('customer_name') border-watt-red focus:border-watt-red focus:ring-watt-red @enderror @endif">
+                    @if(session('_form_type') === 'create')
+                        @error('customer_name')
+                            <p class="text-xs font-semibold text-watt-red mt-1 flex items-center gap-1">
+                                <i data-lucide="alert-circle" class="w-3.5 h-3.5 flex-shrink-0"></i>
+                                {{ $message }}
+                            </p>
+                        @enderror
+                    @endif
                 </div>
                 <div class="space-y-1.5">
                     <label class="admin-field-label">Pesan / Ulasan <span class="text-watt-red">*</span></label>
                     <textarea name="message" rows="4" required placeholder="Contoh: Proses top up sangat cepat!"
-                        class="admin-textarea">{{ old('_form_type') === 'create' ? old('message') : '' }}</textarea>
+                        class="admin-textarea @if(session('_form_type') === 'create') @error('message') border-watt-red focus:border-watt-red focus:ring-watt-red @enderror @endif">{{ session('_form_type') === 'create' ? old('message') : '' }}</textarea>
+                    @if(session('_form_type') === 'create')
+                        @error('message')
+                            <p class="text-xs font-semibold text-watt-red mt-1 flex items-center gap-1">
+                                <i data-lucide="alert-circle" class="w-3.5 h-3.5 flex-shrink-0"></i>
+                                {{ $message }}
+                            </p>
+                        @enderror
+                    @endif
                 </div>
                 <div class="space-y-1.5">
                     <label class="admin-field-label">Rating <span class="text-watt-red">*</span></label>
                     <select name="rating" required class="admin-select">
                         <option value="">-- Pilih Rating --</option>
                         @for($i = 5; $i >= 1; $i--)
-                            <option value="{{ $i }}" {{ (old('_form_type') === 'create' && old('rating') == $i) ? 'selected' : '' }}>
+                            <option value="{{ $i }}" {{ (session('_form_type') === 'create' && old('rating') == $i) ? 'selected' : '' }}>
                                 {{ $i }} Bintang {{ str_repeat('⭐', $i) }}
                             </option>
                         @endfor
@@ -215,19 +246,35 @@
                 <div class="space-y-1.5">
                     <label class="admin-field-label">Nama Pelanggan <span class="text-watt-red">*</span></label>
                     <input type="text" id="edit-testi-name" name="customer_name" required placeholder="Nama pelanggan..."
-                        value="{{ old('_form_type') === 'edit' ? old('customer_name') : '' }}"
-                        class="admin-field">
+                        value="{{ session('_form_type') === 'edit' ? old('customer_name') : '' }}"
+                        class="admin-field @if(session('_form_type') === 'edit') @error('customer_name') border-watt-red focus:border-watt-red focus:ring-watt-red @enderror @endif">
+                    @if(session('_form_type') === 'edit')
+                        @error('customer_name')
+                            <p class="text-xs font-semibold text-watt-red mt-1 flex items-center gap-1">
+                                <i data-lucide="alert-circle" class="w-3.5 h-3.5 flex-shrink-0"></i>
+                                {{ $message }}
+                            </p>
+                        @enderror
+                    @endif
                 </div>
                 <div class="space-y-1.5">
                     <label class="admin-field-label">Pesan / Ulasan <span class="text-watt-red">*</span></label>
                     <textarea id="edit-testi-message" name="message" rows="4" required
-                        class="admin-textarea">{{ old('_form_type') === 'edit' ? old('message') : '' }}</textarea>
+                        class="admin-textarea @if(session('_form_type') === 'edit') @error('message') border-watt-red focus:border-watt-red focus:ring-watt-red @enderror @endif">{{ session('_form_type') === 'edit' ? old('message') : '' }}</textarea>
+                    @if(session('_form_type') === 'edit')
+                        @error('message')
+                            <p class="text-xs font-semibold text-watt-red mt-1 flex items-center gap-1">
+                                <i data-lucide="alert-circle" class="w-3.5 h-3.5 flex-shrink-0"></i>
+                                {{ $message }}
+                            </p>
+                        @enderror
+                    @endif
                 </div>
                 <div class="space-y-1.5">
                     <label class="admin-field-label">Rating <span class="text-watt-red">*</span></label>
                     <select id="edit-testi-rating" name="rating" required class="admin-select">
                         @for($i = 5; $i >= 1; $i--)
-                            <option value="{{ $i }}" {{ (old('_form_type') === 'edit' && old('rating') == $i) ? 'selected' : '' }}>
+                            <option value="{{ $i }}" {{ (session('_form_type') === 'edit' && old('rating') == $i) ? 'selected' : '' }}>
                                 {{ $i }} Bintang {{ str_repeat('⭐', $i) }}
                             </option>
                         @endfor
@@ -265,21 +312,31 @@ function openTestimonialEditModal(btn) {
     document.getElementById('edit-testi-status').checked = btn.dataset.status === '1';
     openModal('modal-edit-testimonial');
 }
-@if($errors->any())
 document.addEventListener('DOMContentLoaded', function() {
-    @if(old('_form_type') === 'edit')
-        openModal('modal-edit-testimonial');
-        document.getElementById('form-edit-testimonial').action = '{{ url("admin/testimonials") }}/{{ old("_edit_id") }}';
-        document.getElementById('edit-testi-hidden-id').value = '{{ old("_edit_id") }}';
-        document.getElementById('edit-testi-name').value = @json(old('customer_name') ?? '');
-        document.getElementById('edit-testi-message').value = @json(old('message') ?? '');
-        document.getElementById('edit-testi-rating').value = '{{ old("rating") }}';
-        document.getElementById('edit-testi-status').checked = {{ old('status') ? 'true' : 'false' }};
-    @else
-        openModal('modal-create-testimonial');
+    @if($errors->any())
+        @if(session('_form_type') === 'edit')
+            document.body.style.overflow = 'hidden';
+            document.getElementById('form-edit-testimonial').action = '{{ url("admin/testimonials") }}/{{ session("_edit_id") }}';
+            document.getElementById('edit-testi-hidden-id').value = '{{ session("_edit_id") }}';
+            document.getElementById('edit-testi-name').value = @json(old('customer_name') ?? '');
+            document.getElementById('edit-testi-message').value = @json(old('message') ?? '');
+            document.getElementById('edit-testi-rating').value = '{{ old("rating") }}';
+            document.getElementById('edit-testi-status').checked = {{ old('status') ? 'true' : 'false' }};
+            openModal('modal-edit-testimonial');
+        @else
+            openModal('modal-create-testimonial');
+        @endif
+
+        lucide.createIcons();
+
+        // Tampilkan error toast dengan delay untuk memastikan modal sudah visible
+        setTimeout(() => {
+            @foreach($errors->all() as $error)
+                showToast('{{ $error }}', 'error', 5000);
+            @endforeach
+        }, 300);
     @endif
 });
-@endif
 
 let searchTimeout;
 function autoSubmitForm(button) {

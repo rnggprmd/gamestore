@@ -41,29 +41,50 @@ class GameController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'banner' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+        try {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'banner' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            ]);
+            
+            // Generate slug dari nama game
+            $slug = Str::slug($request->name);
+            
+            // Cek apakah game dengan nama tersebut sudah ada
+            if (Game::where('slug', $slug)->exists()) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'name' => 'Game dengan nama tersebut sudah ada.'
+                ]);
+            }
 
-        $data = $validated;
-        $data['slug'] = Str::slug($request->name);
-        $data['status'] = $request->has('status');
+            $data = $validated;
+            $data['slug'] = $slug;
+            $data['status'] = $request->has('status');
 
-        if ($request->hasFile('thumbnail')) {
-            $data['thumbnail'] = $this->uploadFile($request->file('thumbnail'), 'thumb');
+            if ($request->hasFile('thumbnail')) {
+                $data['thumbnail'] = $this->uploadFile($request->file('thumbnail'), 'thumb');
+            }
+
+            if ($request->hasFile('banner')) {
+                $data['banner'] = $this->uploadFile($request->file('banner'), 'banner');
+            }
+
+            Game::create($data);
+            $this->gameService->clearCache();
+
+            return redirect()->route('admin.games.index')->with('success', 'Game berhasil ditambahkan.');
+            
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Merge _form_type ke dalam input data
+            $inputData = $request->all();
+            $inputData['_form_type'] = 'create';
+            
+            return redirect()->route('admin.games.index')
+                ->withErrors($e->errors())
+                ->withInput($inputData);
         }
-
-        if ($request->hasFile('banner')) {
-            $data['banner'] = $this->uploadFile($request->file('banner'), 'banner');
-        }
-
-        Game::create($data);
-        $this->gameService->clearCache();
-
-        return redirect()->route('admin.games.index')->with('success', 'Game berhasil ditambahkan.');
     }
 
     public function edit(Game $game)
@@ -73,31 +94,54 @@ class GameController extends Controller
 
     public function update(Request $request, Game $game)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'banner' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+        try {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'banner' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            ]);
+            
+            // Generate slug dari nama game
+            $slug = Str::slug($request->name);
+            
+            // Cek apakah game dengan nama tersebut sudah ada (kecuali milik game ini sendiri)
+            if (Game::where('slug', $slug)->where('id', '!=', $game->id)->exists()) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'name' => 'Game dengan nama tersebut sudah ada.'
+                ]);
+            }
 
-        $data = $validated;
-        $data['slug'] = Str::slug($request->name);
-        $data['status'] = $request->has('status');
+            $data = $validated;
+            $data['slug'] = $slug;
+            $data['status'] = $request->has('status');
 
-        if ($request->hasFile('thumbnail')) {
-            $this->deleteFile($game->thumbnail);
-            $data['thumbnail'] = $this->uploadFile($request->file('thumbnail'), 'thumb');
+            if ($request->hasFile('thumbnail')) {
+                $this->deleteFile($game->thumbnail);
+                $data['thumbnail'] = $this->uploadFile($request->file('thumbnail'), 'thumb');
+            }
+
+            if ($request->hasFile('banner')) {
+                $this->deleteFile($game->banner);
+                $data['banner'] = $this->uploadFile($request->file('banner'), 'banner');
+            }
+
+            $game->update($data);
+            $this->gameService->clearGameCache($game->slug);
+
+            return redirect()->route('admin.games.index')->with('success', 'Game berhasil diperbarui.');
+            
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            
+            // Merge _form_type ke dalam input data  
+            $inputData = $request->all();
+            $inputData['_form_type'] = 'edit';
+            $inputData['_edit_id'] = $game->id;
+            
+            return redirect()->route('admin.games.index')
+                ->withErrors($e->errors())
+                ->withInput($inputData);
         }
-
-        if ($request->hasFile('banner')) {
-            $this->deleteFile($game->banner);
-            $data['banner'] = $this->uploadFile($request->file('banner'), 'banner');
-        }
-
-        $game->update($data);
-        $this->gameService->clearGameCache($game->slug);
-
-        return redirect()->route('admin.games.index')->with('success', 'Game berhasil diperbarui.');
     }
 
     public function destroy(Game $game)

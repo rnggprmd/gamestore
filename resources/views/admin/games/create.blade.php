@@ -25,31 +25,56 @@
             <div class="space-y-1.5">
                 <label class="admin-field-label">Nama Game <span class="text-watt-red">*</span></label>
                 <input type="text" name="name" value="{{ old('name') }}" required placeholder="Contoh: Mobile Legends: Bang Bang"
-                    class="admin-field">
+                    class="admin-field @error('name') border-watt-red focus:border-watt-red focus:ring-watt-red @enderror">
+                @error('name')
+                    <p class="text-xs font-semibold text-watt-red mt-1 flex items-center gap-1">
+                        <i data-lucide="alert-circle" class="w-3.5 h-3.5 flex-shrink-0"></i>
+                        {{ $message }}
+                    </p>
+                @enderror
             </div>
             <div class="space-y-1.5">
                 <label class="admin-field-label">Deskripsi Singkat</label>
                 <textarea name="description" rows="3" placeholder="Deskripsi atau instruksi pengisian ID..."
-                    class="admin-textarea">{{ old('description') }}</textarea>
+                    class="admin-textarea @error('description') border-watt-red focus:border-watt-red focus:ring-watt-red @enderror">{{ old('description') }}</textarea>
+                @error('description')
+                    <p class="text-xs font-semibold text-watt-red mt-1 flex items-center gap-1">
+                        <i data-lucide="alert-circle" class="w-3.5 h-3.5 flex-shrink-0"></i>
+                        {{ $message }}
+                    </p>
+                @enderror
             </div>
             <div class="grid grid-cols-2 gap-4">
                 <div class="space-y-1.5">
                     <label class="admin-field-label">Logo / Thumbnail</label>
                     <input type="file" name="thumbnail" accept="image/*"
-                        class="admin-field file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-watt-cyan file:text-watt-bg hover:file:opacity-90 cursor-pointer">
+                        class="admin-field @error('thumbnail') border-watt-red @enderror file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-watt-cyan file:text-watt-bg hover:file:opacity-90 cursor-pointer">
                     <p class="text-[10px] text-watt-text-sec">Rasio 1:1, maks. 2MB.</p>
+                    @error('thumbnail')
+                        <p class="text-xs font-semibold text-watt-red mt-1 flex items-center gap-1">
+                            <i data-lucide="alert-circle" class="w-3.5 h-3.5 flex-shrink-0"></i>
+                            {{ $message }}
+                        </p>
+                    @enderror
                 </div>
                 <div class="space-y-1.5">
                     <label class="admin-field-label">Banner Detail</label>
                     <input type="file" name="banner" accept="image/*"
-                        class="admin-field file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-watt-cyan file:text-watt-bg hover:file:opacity-90 cursor-pointer">
+                        class="admin-field @error('banner') border-watt-red @enderror file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-watt-cyan file:text-watt-bg hover:file:opacity-90 cursor-pointer">
                     <p class="text-[10px] text-watt-text-sec">Landscape, maks. 2MB.</p>
+                    @error('banner')
+                        <p class="text-xs font-semibold text-watt-red mt-1 flex items-center gap-1">
+                            <i data-lucide="alert-circle" class="w-3.5 h-3.5 flex-shrink-0"></i>
+                            {{ $message }}
+                        </p>
+                    @enderror
                 </div>
             </div>
             <div class="flex items-center gap-2">
                 <input type="checkbox" name="status" value="1" id="status" checked class="rounded border-watt-border bg-watt-bg text-watt-cyan focus:ring-watt-cyan">
                 <label for="status" class="text-xs font-semibold text-watt-text-sec uppercase tracking-wider select-none cursor-pointer">Game Aktif (Ditampilkan di Landing Page)</label>
             </div>
+
             <div class="pt-4 border-t border-watt-border flex justify-end gap-3">
                 <a href="{{ route('admin.games.index') }}" class="admin-button-secondary">Batal</a>
                 <button type="submit" class="admin-button-primary cursor-pointer">Simpan Game</button>

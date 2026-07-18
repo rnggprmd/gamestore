@@ -4,7 +4,14 @@
 
 @section('content')
 <div class="space-y-6">
-    <div class="admin-form-card p-5 space-y-6">
+    <div class="admin-form-card p-5 space-y-4">
+        <!-- Filter Section Marker -->
+        <div class="flex items-center gap-2">
+            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-watt-cyan/10 border border-watt-cyan/20">
+                <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5 text-watt-cyan"></i>
+                <span class="text-[11px] font-bold text-watt-cyan uppercase tracking-widest">Filter & Pencarian</span>
+            </div>
+        </div>
         <!-- Search & Filter (Integrated) -->
         <form method="GET" class="search-filter-form grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 items-end pb-4 border-b border-watt-border">
             <!-- Search Input -->
@@ -46,14 +53,13 @@
             </div>
         </form>
 
-        <!-- Header -->
+        <!-- Header with Add Button -->
         <div class="flex items-center justify-between pt-2">
-            <h3 class="text-base font-bold text-white flex items-center gap-2">
+            <div class="flex items-center gap-2">
                 <i data-lucide="package" class="w-4 h-4 text-watt-cyan"></i>
-                Daftar Produk
-                <span class="font-mono text-sm text-watt-text-sec">({{ $products->total() }})</span>
-            </h3>
-            <button onclick="openModal('modal-create-product')" class="inline-flex items-center gap-1.5 bg-watt-cyan hover:opacity-90 text-watt-bg text-xs font-bold px-4 py-2.5 rounded-xl transition-all cursor-pointer">
+                <span class="text-sm font-semibold text-white">Daftar Produk <span class="font-mono text-xs text-watt-text-sec">({{ $products->total() }})</span></span>
+            </div>
+            <button onclick="openModal('modal-create-product')" class="inline-flex items-center gap-1.5 bg-watt-cyan hover:opacity-90 text-watt-bg text-xs font-bold px-4 py-2.5 rounded-xl transition-all cursor-pointer flex-shrink-0">
                 <i data-lucide="plus" class="w-4 h-4"></i>
                 Tambah Produk
             </button>
@@ -64,24 +70,33 @@
             <table class="admin-table">
                 <thead>
                     <tr class="admin-table-head">
+                        <th class="admin-table-head w-16">No.</th>
                         <th class="admin-table-head">Game</th>
                         <th class="admin-table-head">Nama Produk</th>
                         <th class="admin-table-head">Kategori</th>
                         <th class="admin-table-head text-right">Harga</th>
+                        <th class="admin-table-head">Waktu Ditambah</th>
                         <th class="admin-table-head">Status</th>
                         <th class="admin-table-head text-right">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-watt-border">
-                    @forelse($products as $product)
+                    @forelse($products as $index => $product)
                     <tr class="admin-table-row">
-                        <td class="py-3.5 font-semibold text-white">{{ $product->game->name ?? '-' }}</td>
+                        <td class="py-3.5 text-center text-sm font-medium text-watt-text-sec">{{ $index + 1 }}</td>
+                        <td class="py-3.5 font-semibold text-white whitespace-nowrap">{{ $product->game->name ?? '-' }}</td>
                         <td class="py-3.5 text-watt-text-sec">{{ $product->name }}</td>
                         <td class="py-3.5">
                             <span class="px-2 py-0.5 rounded-lg bg-watt-hover text-watt-text-sec text-xs font-medium">{{ $product->category->name ?? '-' }}</span>
                         </td>
                         <td class="py-3.5 text-right font-bold text-watt-cyan font-mono text-xs">
                             Rp {{ number_format($product->price, 0, ',', '.') }}
+                        </td>
+                        <td class="py-3.5 text-xs text-watt-text-sec">
+                            <div class="flex flex-col">
+                                <span>{{ $product->created_at->format('d M Y') }}</span>
+                                <span class="text-[10px] text-watt-text-sec/70">{{ $product->created_at->format('H:i') }}</span>
+                            </div>
                         </td>
                         <td class="py-3.5">
                             @if($product->status)
@@ -121,7 +136,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" class="py-16 text-center text-watt-text-sec text-xs">
+                        <td colspan="8" class="py-16 text-center text-watt-text-sec text-xs">
                             <i data-lucide="package" class="w-10 h-10 mx-auto mb-3 opacity-30"></i>
                             <p>Belum ada produk yang ditambahkan.</p>
                         </td>
@@ -160,7 +175,7 @@
                         <select name="game_id" required class="admin-select">
                             <option value="">-- Pilih Game --</option>
                             @foreach($games as $game)
-                                <option value="{{ $game->id }}" {{ (old('_form_type') === 'create' && old('game_id') == $game->id) ? 'selected' : '' }}>{{ $game->name }}</option>
+                                <option value="{{ $game->id }}" {{ (session('_form_type') === 'create' && old('game_id') == $game->id) ? 'selected' : '' }}>{{ $game->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -169,25 +184,41 @@
                         <select name="category_id" required class="admin-select">
                             <option value="">-- Pilih Kategori --</option>
                             @foreach($categories as $category)
-                                <option value="{{ $category->id }}" {{ (old('_form_type') === 'create' && old('category_id') == $category->id) ? 'selected' : '' }}>{{ $category->name }}</option>
+                                <option value="{{ $category->id }}" {{ (session('_form_type') === 'create' && old('category_id') == $category->id) ? 'selected' : '' }}>{{ $category->name }}</option>
                             @endforeach
                         </select>
                     </div>
                 </div>
                 <div class="space-y-1.5">
                     <label class="admin-field-label">Nama Produk <span class="text-watt-red">*</span></label>
-                    <input type="text" name="name" value="{{ old('_form_type') === 'create' ? old('name') : '' }}" required placeholder="Contoh: Diamond 86 atau Weekly Pass"
-                        class="admin-field">
+                    <input type="text" name="name" value="{{ session('_form_type') === 'create' ? old('name') : '' }}" required placeholder="Contoh: Diamond 86 atau Weekly Pass"
+                        class="admin-field @if(session('_form_type') === 'create') @error('name') border-watt-red focus:border-watt-red focus:ring-watt-red @enderror @endif">
+                    @if(session('_form_type') === 'create')
+                        @error('name')
+                            <p class="text-xs font-semibold text-watt-red mt-1 flex items-center gap-1">
+                                <i data-lucide="alert-circle" class="w-3.5 h-3.5 flex-shrink-0"></i>
+                                {{ $message }}
+                            </p>
+                        @enderror
+                    @endif
                 </div>
                 <div class="space-y-1.5">
                     <label class="admin-field-label">Harga (IDR) <span class="text-watt-red">*</span></label>
-                    <input type="number" name="price" value="{{ old('_form_type') === 'create' ? old('price') : '' }}" required min="0" placeholder="Contoh: 28000"
-                        class="admin-field font-mono">
+                    <input type="number" name="price" value="{{ session('_form_type') === 'create' ? old('price') : '' }}" required min="0" placeholder="Contoh: 28000"
+                        class="admin-field font-mono @if(session('_form_type') === 'create') @error('price') border-watt-red focus:border-watt-red focus:ring-watt-red @enderror @endif">
+                    @if(session('_form_type') === 'create')
+                        @error('price')
+                            <p class="text-xs font-semibold text-watt-red mt-1 flex items-center gap-1">
+                                <i data-lucide="alert-circle" class="w-3.5 h-3.5 flex-shrink-0"></i>
+                                {{ $message }}
+                            </p>
+                        @enderror
+                    @endif
                 </div>
                 <div class="space-y-1.5">
                     <label class="admin-field-label">Deskripsi (Opsional)</label>
                     <textarea name="description" rows="2" placeholder="Deskripsi opsional..."
-                        class="admin-textarea">{{ old('_form_type') === 'create' ? old('description') : '' }}</textarea>
+                        class="admin-textarea">{{ session('_form_type') === 'create' ? old('description') : '' }}</textarea>
                 </div>
                 <div class="space-y-1.5">
                     <label class="admin-field-label">Gambar Produk (Opsional)</label>
@@ -230,7 +261,7 @@
                         <select id="edit-product-game" name="game_id" required class="admin-select">
                             @foreach($games as $game)
                                 <option value="{{ $game->id }}"
-                                    {{ (old('_form_type') === 'edit' && old('game_id') == $game->id) ? 'selected' : '' }}>{{ $game->name }}</option>
+                                    {{ (session('_form_type') === 'edit' && old('game_id') == $game->id) ? 'selected' : '' }}>{{ $game->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -239,7 +270,7 @@
                         <select id="edit-product-category" name="category_id" required class="admin-select">
                             @foreach($categories as $category)
                                 <option value="{{ $category->id }}"
-                                    {{ (old('_form_type') === 'edit' && old('category_id') == $category->id) ? 'selected' : '' }}>{{ $category->name }}</option>
+                                    {{ (session('_form_type') === 'edit' && old('category_id') == $category->id) ? 'selected' : '' }}>{{ $category->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -247,19 +278,35 @@
                 <div class="space-y-1.5">
                     <label class="admin-field-label">Nama Produk <span class="text-watt-red">*</span></label>
                     <input type="text" id="edit-product-name" name="name" required placeholder="Nama produk..."
-                        value="{{ old('_form_type') === 'edit' ? old('name') : '' }}"
-                        class="admin-field">
+                        value="{{ session('_form_type') === 'edit' ? old('name') : '' }}"
+                        class="admin-field @if(session('_form_type') === 'edit') @error('name') border-watt-red focus:border-watt-red focus:ring-watt-red @enderror @endif">
+                    @if(session('_form_type') === 'edit')
+                        @error('name')
+                            <p class="text-xs font-semibold text-watt-red mt-1 flex items-center gap-1">
+                                <i data-lucide="alert-circle" class="w-3.5 h-3.5 flex-shrink-0"></i>
+                                {{ $message }}
+                            </p>
+                        @enderror
+                    @endif
                 </div>
                 <div class="space-y-1.5">
                     <label class="admin-field-label">Harga (IDR) <span class="text-watt-red">*</span></label>
                     <input type="number" id="edit-product-price" name="price" required min="0"
-                        value="{{ old('_form_type') === 'edit' ? old('price') : '' }}"
-                        class="admin-field font-mono">
+                        value="{{ session('_form_type') === 'edit' ? old('price') : '' }}"
+                        class="admin-field font-mono @if(session('_form_type') === 'edit') @error('price') border-watt-red focus:border-watt-red focus:ring-watt-red @enderror @endif">
+                    @if(session('_form_type') === 'edit')
+                        @error('price')
+                            <p class="text-xs font-semibold text-watt-red mt-1 flex items-center gap-1">
+                                <i data-lucide="alert-circle" class="w-3.5 h-3.5 flex-shrink-0"></i>
+                                {{ $message }}
+                            </p>
+                        @enderror
+                    @endif
                 </div>
                 <div class="space-y-1.5">
                     <label class="admin-field-label">Deskripsi (Opsional)</label>
                     <textarea id="edit-product-description" name="description" rows="2"
-                        class="admin-textarea">{{ old('_form_type') === 'edit' ? old('description') : '' }}</textarea>
+                        class="admin-textarea">{{ session('_form_type') === 'edit' ? old('description') : '' }}</textarea>
                 </div>
                 <div class="space-y-1.5">
                     <label class="admin-field-label">Gambar Baru (Opsional)</label>
@@ -313,23 +360,34 @@ function openProductEditModal(btn) {
 
     openModal('modal-edit-product');
 }
-@if($errors->any())
 document.addEventListener('DOMContentLoaded', function() {
-    @if(old('_form_type') === 'edit')
-        openModal('modal-edit-product');
-        document.getElementById('form-edit-product').action = '{{ url("admin/products") }}/{{ old("_edit_id") }}';
-        document.getElementById('edit-product-hidden-id').value = '{{ old("_edit_id") }}';
-        document.getElementById('edit-product-game').value = '{{ old("game_id") }}';
-        document.getElementById('edit-product-category').value = '{{ old("category_id") }}';
-        document.getElementById('edit-product-name').value = @json(old('name') ?? '');
-        document.getElementById('edit-product-price').value = '{{ old("price") }}';
-        document.getElementById('edit-product-description').value = @json(old('description') ?? '');
-        document.getElementById('edit-product-status').checked = {{ old('status') ? 'true' : 'false' }};
-    @else
-        openModal('modal-create-product');
+    @if($errors->any())
+        @if(session('_form_type') === 'edit')
+            document.body.style.overflow = 'hidden';
+            document.getElementById('form-edit-product').action = '{{ url("admin/products") }}/{{ session("_edit_id") }}';
+            document.getElementById('edit-product-hidden-id').value = '{{ session("_edit_id") }}';
+            document.getElementById('edit-product-game').value = '{{ old("game_id") }}';
+            document.getElementById('edit-product-category').value = '{{ old("category_id") }}';
+            document.getElementById('edit-product-name').value = @json(old('name') ?? '');
+            document.getElementById('edit-product-price').value = '{{ old("price") }}';
+            document.getElementById('edit-product-description').value = @json(old('description') ?? '');
+            document.getElementById('edit-product-status').checked = {{ old('status') ? 'true' : 'false' }};
+            openModal('modal-edit-product');
+        @else
+            openModal('modal-create-product');
+        @endif
+
+        // Re-render Lucide icons
+        lucide.createIcons();
+
+        // Tampilkan error toast dengan delay untuk memastikan modal sudah visible
+        setTimeout(() => {
+            @foreach($errors->all() as $error)
+                showToast('{{ $error }}', 'error', 5000);
+            @endforeach
+        }, 300);
     @endif
 });
-@endif
 
 let searchTimeout;
 function autoSubmitForm(button) {
