@@ -22,6 +22,15 @@
 
     <!-- Custom Scrollbar Styling -->
     <style>
+        /* Prevent layout shift - reserve scrollbar space */
+        html {
+            scrollbar-gutter: stable;
+        }
+
+        body {
+            overflow-y: hidden;
+        }
+
         /* Scrollbar styling for sidebar */
         aside::-webkit-scrollbar {
             width: 8px;
@@ -174,12 +183,25 @@
             }
         }
 
+        /* Outer container untuk mencegah scroll saat resize */
+        #desktop-sidebar {
+            transition: width 0.3s ease !important;
+            will-change: width;
+            flex-shrink: 0;
+        }
+
         .sidebar-collapsed {
-            width: 80px;
+            width: 80px !important;
         }
 
         .sidebar-expanded {
-            width: 256px;
+            width: 256px !important;
+        }
+
+        /* Pastikan main content area tidak shift */
+        main {
+            min-width: 0;
+            scrollbar-gutter: stable;
         }
 
         .sidebar-text {
@@ -398,18 +420,18 @@
         window.showToast = showToast;
     </script>
 </head>
-<body class="bg-watt-bg text-white h-screen overflow-hidden flex flex-col">
+<body class="bg-watt-bg text-white h-screen overflow-hidden flex flex-col" style="overflow-y: hidden !important;">
     <!-- Main Outer Wrapper -->
-    <div class="flex flex-1 overflow-hidden">
+    <div class="flex flex-1 overflow-hidden" style="gap: 0; padding: 0;">
         
         <!-- Sidebar (Desktop) -->
-        <aside id="desktop-sidebar" class="hidden lg:flex flex-col w-64 bg-watt-surface text-watt-text-sec border-r border-watt-border sidebar-expanded transition-all duration-300">
+        <aside id="desktop-sidebar" class="hidden lg:flex flex-col bg-watt-surface text-watt-text-sec border-r border-watt-border sidebar-expanded transition-all duration-300">
             <!-- Sidebar Header -->
-            <div class="h-28 flex items-center justify-between px-6 pt-4 bg-watt-bg border-b border-watt-border relative">
+            <div class="h-28 flex items-center justify-center px-6 pt-4 bg-watt-bg border-b border-watt-border relative">
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2 logo-animated">
                     <img src="{{ asset('img/logo gamestore.png') }}" alt="Gamestore Logo" class="h-20 w-auto sidebar-text">
                 </a>
-                <button id="sidebar-collapse-btn" onclick="toggleSidebarCollapse()" class="p-2 rounded-lg collapse-btn flex-shrink-0 text-watt-text-sec hover:text-watt-cyan">
+                <button id="sidebar-collapse-btn" onclick="toggleSidebarCollapse()" class="absolute right-6 p-2 rounded-lg collapse-btn flex-shrink-0 text-watt-text-sec hover:text-watt-cyan">
                     <i id="collapse-icon" data-lucide="chevron-left" class="w-5 h-5"></i>
                 </button>
             </div>
@@ -578,13 +600,11 @@
             if (sidebarCollapsed) {
                 sidebar.classList.remove('sidebar-expanded');
                 sidebar.classList.add('sidebar-collapsed');
-                sidebar.style.width = '80px';
                 // Change icon direction
                 collapseIcon.setAttribute('data-lucide', 'chevron-right');
             } else {
                 sidebar.classList.remove('sidebar-collapsed');
                 sidebar.classList.add('sidebar-expanded');
-                sidebar.style.width = '256px';
                 // Change icon direction
                 collapseIcon.setAttribute('data-lucide', 'chevron-left');
             }
@@ -604,7 +624,17 @@
             // Restore sidebar state from localStorage
             const savedState = localStorage.getItem('sidebarCollapsed');
             if (savedState === 'true') {
-                toggleSidebarCollapse();
+                sidebarCollapsed = true;
+                const sidebar = document.getElementById('desktop-sidebar');
+                sidebar.classList.remove('sidebar-expanded');
+                sidebar.classList.add('sidebar-collapsed');
+                
+                const collapseIcon = document.getElementById('collapse-icon');
+                collapseIcon.setAttribute('data-lucide', 'chevron-right');
+                
+                if (window.lucide) {
+                    lucide.createIcons();
+                }
             }
 
             const mobileToggle = document.getElementById('mobile-toggle');
