@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LandingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Admin\GameController;
@@ -7,35 +8,18 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\Admin\SettingController;
-use App\Services\GameService;
-use App\Models\Setting;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\OrderController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function (GameService $gameService) {
-    $games = $gameService->getActiveGamesWithProducts();
-    $banners = $gameService->getActiveBanners();
-    $setting = $gameService->getSettings();
-    $testimonials = $gameService->getActiveTestimonials();
+// Landing Pages (Public) - Using LandingController
+Route::get('/', [LandingController::class, 'index'])->name('home');
+Route::get('/game/{slug}', [LandingController::class, 'gameDetail'])->name('game.show');
 
-    return view('landing.index', compact('games', 'banners', 'setting', 'testimonials'));
-})->name('home');
-
-Route::get('/game/{slug}', function (string $slug, GameService $gameService) {
-    $game = $gameService->getGameBySlug($slug);
-    $setting = $gameService->getSettings();
-
-    return view('landing.game', compact('game', 'setting'));
-})->name('game.show');
-
-// WhatsApp click logger (Ajax endpoint)
-Route::post('/log-click', function (GameService $gameService) {
-    $setting = Setting::first();
-    if ($setting) {
-        $setting->increment('whatsapp_clicks');
-        $gameService->clearCache();
-    }
-    return response()->json(['success' => true]);
-})->name('log-click');
+// AJAX Endpoints
+Route::post('/log-click', [LandingController::class, 'logWhatsAppClick'])->name('log-click');
+Route::get('/api/search-games', [LandingController::class, 'searchGames'])->name('api.search.games');
+Route::get('/api/site-settings', [LandingController::class, 'getSiteSettings'])->name('api.site.settings');
 
 // Redirect from default login /dashboard to our custom /admin panel
 Route::get('/dashboard', function () {
@@ -51,6 +35,14 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 
     // Products Management CRUD
     Route::resource('products', ProductController::class);
+
+    // Categories Management CRUD (NEW!)
+    Route::resource('categories', CategoryController::class);
+
+    // Orders Management CRUD (NEW!)
+    Route::resource('orders', OrderController::class);
+    Route::patch('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
+    Route::get('/api/order-stats', [OrderController::class, 'getStats'])->name('api.order.stats');
 
     // Banners Management CRUD
     Route::resource('banners', BannerController::class);

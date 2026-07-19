@@ -78,4 +78,18 @@ class GameService
         Cache::forget("game_slug_{$slug}");
         $this->clearCache();
     }
+
+    public function searchGames(string $query)
+    {
+        return Game::where('status', true)
+            ->where(function ($q) use ($query) {
+                $q->where('name', 'LIKE', "%{$query}%")
+                  ->orWhere('description', 'LIKE', "%{$query}%");
+            })
+            ->with(['products' => function ($q) {
+                $q->where('status', true);
+            }])
+            ->limit(10)
+            ->get();
+    }
 }

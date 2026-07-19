@@ -3,370 +3,444 @@
 @section('title', $setting->store_name ?? 'Gamestore Indonesia')
 
 @section('content')
-<!-- Hero Banner Carousel -->
-<div class="relative overflow-hidden bg-[#05070f] border-b border-slate-900">
-    <div x-data="{ activeSlide: 0, slidesCount: {{ count($banners) }} }" 
-         x-init="setInterval(() => activeSlide = (activeSlide + 1) % slidesCount, 5000)" 
-         class="relative h-[280px] sm:h-[450px] max-w-7xl mx-auto">
-        
-        <!-- Slides -->
-        @foreach($banners as $index => $banner)
-            <div x-show="activeSlide === {{ $index }}" 
-                 x-transition:enter="transition ease-out duration-700"
-                 x-transition:enter-start="opacity-0 translate-x-4"
-                 x-transition:enter-end="opacity-100 translate-x-0"
-                 x-transition:leave="transition ease-in duration-500"
-                 x-transition:leave-start="opacity-100 translate-x-0"
-                 x-transition:leave-end="opacity-0 -translate-x-4"
-                 class="absolute inset-0 flex items-center z-10">
-                
-                <!-- Background Image or Fallback Gradient -->
-                <div class="absolute inset-0 bg-cover bg-center" 
-                     style="background-image: @if($banner->image && file_exists(public_path('img/' . $banner->image))) url('{{ asset('img/' . $banner->image) }}') @else linear-gradient(to right, #05070f, #1e1b4b) @endif ;"></div>
-                <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent"></div>
-
-                <div class="relative max-w-xl space-y-4 px-6 sm:px-12 lg:px-20 z-20">
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-violet-600/10 border border-violet-500/20 text-violet-400 text-xs font-semibold tracking-wide">
-                        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-                        PROMO TERBARU
-                    </span>
-                    <h1 class="text-3xl sm:text-5xl font-black text-white leading-tight tracking-tight">
-                        {{ $banner->title }}
-                    </h1>
-                    <p class="text-slate-400 text-sm sm:text-base leading-relaxed">
-                        {{ $banner->subtitle }}
-                    </p>
-                    <div class="pt-2">
-                        <a href="{{ $banner->button_link ?? '#games' }}" class="inline-flex items-center gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-bold text-sm px-6 py-3 rounded-xl transition-all duration-300 shadow-lg shadow-violet-500/20 glow-hover">
-                            {{ $banner->button_text ?? 'Beli Sekarang' }}
-                            <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        @endforeach
-
-        <!-- Slider Dots -->
-        @if(count($banners) > 1)
-            <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2">
-                @foreach($banners as $index => $banner)
-                    <button @click="activeSlide = {{ $index }}" 
-                            :class="activeSlide === {{ $index }} ? 'w-8 bg-violet-500' : 'w-2.5 bg-slate-700'" 
-                            class="h-2.5 rounded-full transition-all duration-300 cursor-pointer"></button>
-                @endforeach
-            </div>
-        @endif
-
-        <!-- Banner Abstract Background Elements -->
-        <div class="absolute top-0 right-0 h-full w-1/2 bg-gradient-to-l from-violet-600/10 to-transparent pointer-events-none blur-3xl"></div>
-    </div>
-</div>
-
-<!-- Promo & Penawaran Terbaru (Features Highlights) -->
-<section class="py-12 bg-[#020617] border-b border-slate-900/50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- Promo Card 1 -->
-            <div class="bg-gradient-to-r from-violet-950/20 to-indigo-950/20 border border-slate-800/80 rounded-2xl p-6 flex gap-4 items-start shadow-xl">
-                <div class="w-12 h-12 rounded-xl bg-violet-600/10 border border-violet-500/20 flex items-center justify-center text-violet-400 flex-shrink-0">
-                    <i data-lucide="zap" class="w-6 h-6"></i>
-                </div>
-                <div>
-                    <h3 class="font-bold text-white mb-1">Proses Super Cepat</h3>
-                    <p class="text-xs text-slate-400 leading-relaxed">Top up game favorit Anda diproses secara instan hanya dalam hitungan detik setelah pembayaran dikonfirmasi.</p>
-                </div>
-            </div>
-            <!-- Promo Card 2 -->
-            <div class="bg-gradient-to-r from-violet-950/20 to-indigo-950/20 border border-slate-800/80 rounded-2xl p-6 flex gap-4 items-start shadow-xl">
-                <div class="w-12 h-12 rounded-xl bg-violet-600/10 border border-violet-500/20 flex items-center justify-center text-violet-400 flex-shrink-0">
-                    <i data-lucide="shield-check" class="w-6 h-6"></i>
-                </div>
-                <div>
-                    <h3 class="font-bold text-white mb-1">100% Aman & Legal</h3>
-                    <p class="text-xs text-slate-400 leading-relaxed">Kami menjamin seluruh produk yang dijual aman, resmi, dan legal 100% tanpa risiko banned akun.</p>
-                </div>
-            </div>
-            <!-- Promo Card 3 -->
-            <div class="bg-gradient-to-r from-violet-950/20 to-indigo-950/20 border border-slate-800/80 rounded-2xl p-6 flex gap-4 items-start shadow-xl">
-                <div class="w-12 h-12 rounded-xl bg-violet-600/10 border border-violet-500/20 flex items-center justify-center text-violet-400 flex-shrink-0">
-                    <i data-lucide="badge-percent" class="w-6 h-6"></i>
-                </div>
-                <div>
-                    <h3 class="font-bold text-white mb-1">Harga Termurah</h3>
-                    <p class="text-xs text-slate-400 leading-relaxed">Dapatkan penawaran harga terbaik dengan diskon spesial setiap harinya khusus untuk para gamers.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Popular Games Grid -->
-<section id="games" class="py-20 bg-[#030712] relative">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Section Header -->
-        <div class="text-center max-w-xl mx-auto mb-16 space-y-3">
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-violet-600/10 border border-violet-500/20 text-violet-400 text-xs font-semibold tracking-wide uppercase">
-                Product Catalog
-            </span>
-            <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Daftar Game Populer</h2>
-            <p class="text-slate-400 text-sm leading-relaxed">Pilih game favorit Anda untuk melihat daftar produk top up instan terlengkap dan termurah yang tersedia.</p>
-        </div>
-
-        <!-- Games Grid -->
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-            @foreach($games as $game)
-                <a href="{{ route('game.show', $game->slug) }}" class="group relative bg-slate-900/40 hover:bg-slate-900/80 border border-slate-800/80 rounded-2xl p-4 flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1.5 hover:border-violet-500/40 glow-hover shadow-xl">
-                    <!-- Thumbnail Container -->
-                    <div class="w-full aspect-square rounded-xl bg-slate-800 overflow-hidden relative mb-4">
-                        @if($game->thumbnail && file_exists(public_path('img/' . $game->thumbnail)))
-                            <img src="{{ asset('img/' . $game->thumbnail) }}" alt="{{ $game->name }}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                        @else
-                            <div class="absolute inset-0 bg-gradient-to-br from-violet-800 to-indigo-900 flex flex-col items-center justify-center text-slate-300 font-bold group-hover:scale-105 transition-transform duration-500">
-                                <i data-lucide="gamepad-2" class="w-10 h-10 text-white/40 mb-2"></i>
-                            </div>
-                        @endif
-                        
-                        <!-- Glowing Badge -->
-                        <div class="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-violet-600 text-white text-[9px] font-extrabold tracking-wider uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            POPULER
-                        </div>
-                    </div>
-                    
-                    <h3 class="font-bold text-sm text-slate-200 group-hover:text-white line-clamp-1 transition-colors">{{ $game->name }}</h3>
-                    <p class="text-[10px] text-slate-500 mt-1 leading-normal line-clamp-2">{{ $game->description }}</p>
-                    
-                    <div class="mt-4 w-full bg-slate-950/80 border border-slate-800/60 rounded-xl py-1.5 text-[10px] font-bold text-violet-400 tracking-wider group-hover:bg-violet-600 group-hover:text-white group-hover:border-violet-600 transition-all duration-300">
-                        TOP UP INSTAN
-                    </div>
+<!-- Hero Section -->
+<section class="max-w-7xl mx-auto px-6 pt-0 pb-12 lg:pt-0 lg:pb-16 relative flex flex-col gap-12 lg:gap-16 overflow-hidden">
+    <!-- Main Hero content (Left: Text, Right: Character) -->
+    <div class="flex flex-col-reverse lg:flex-row items-center gap-10 lg:gap-16">
+        <!-- Left: Content -->
+        <div class="flex-1 text-center lg:text-left z-10 fade-in-left">
+            <h1 class="text-4xl sm:text-5xl lg:text-7xl font-heading font-black leading-tight mb-5">
+                Welcome To <br>
+                <span class="text-primary hero-glow">{{ strtoupper($setting->store_name ?? 'GAMESTORE') }}</span>
+            </h1>
+            <p class="text-base sm:text-lg text-gray-300 mb-8 max-w-lg mx-auto lg:mx-0">
+                Premium Top Up Game at the Best Prices
+            </p>
+            <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-8">
+                <a href="#games" class="btn-primary px-8 py-3 rounded-full text-white font-bold w-full sm:w-auto flex items-center justify-center gap-2">
+                    Shop Now <i class="fas fa-arrow-right"></i>
                 </a>
-            @endforeach
-        </div>
-    </div>
-</section>
-
-<!-- Mengapa Memilih Store Kami -->
-<section id="features" class="py-20 bg-[#020617] border-y border-slate-900/60">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div class="space-y-6">
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-violet-600/10 border border-violet-500/20 text-violet-400 text-xs font-semibold tracking-wide uppercase">
-                    OUR ADVANTAGES
-                </span>
-                <h2 class="text-3xl sm:text-4xl font-extrabold text-white leading-tight">Mengapa Memilih Store Kami?</h2>
-                <p class="text-slate-400 text-sm leading-relaxed">
-                    Kami hadir sebagai platform top up game instan dengan memberikan keunggulan performa, kecepatan, dan kenyamanan terbaik bagi para gamers di Indonesia.
-                </p>
-
-                <!-- Benefit points list -->
-                <div class="space-y-4 pt-4">
-                    <div class="flex gap-4">
-                        <div class="w-10 h-10 rounded-xl bg-violet-600/10 border border-violet-500/20 flex items-center justify-center text-violet-400 flex-shrink-0">
-                            <i data-lucide="clock" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-white text-sm">Layanan 24 Jam Non-Stop</h4>
-                            <p class="text-xs text-slate-400 mt-1">Sistem kami berjalan otomatis 24 jam sehari, 7 hari seminggu. Transaksi kapan saja sesuka Anda.</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-4">
-                        <div class="w-10 h-10 rounded-xl bg-violet-600/10 border border-violet-500/20 flex items-center justify-center text-violet-400 flex-shrink-0">
-                            <i data-lucide="credit-card" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-white text-sm">Metode Pembayaran WhatsApp</h4>
-                            <p class="text-xs text-slate-400 mt-1">Checkout otomatis yang langsung terhubung ke chat WhatsApp Admin. Pembayaran praktis dan konfirmasi instan.</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-4">
-                        <div class="w-10 h-10 rounded-xl bg-violet-600/10 border border-violet-500/20 flex items-center justify-center text-violet-400 flex-shrink-0">
-                            <i data-lucide="smile" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-white text-sm">Customer Service Responsif</h4>
-                            <p class="text-xs text-slate-400 mt-1">Butuh bantuan? Admin kami siap melayani seluruh pertanyaan dan bantuan transaksi Anda.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Graphic Panel (Stats / Mock) -->
-            <div class="relative bg-slate-900/40 border border-slate-800/80 rounded-3xl p-8 overflow-hidden shadow-2xl">
-                <div class="grid grid-cols-2 gap-6 relative z-10">
-                    <div class="bg-[#05070f] border border-slate-800/60 p-6 rounded-2xl text-center">
-                        <span class="text-3xl font-black text-violet-400 block mb-1">99.9%</span>
-                        <span class="text-xs font-bold text-slate-400">Transaksi Sukses</span>
-                    </div>
-                    <div class="bg-[#05070f] border border-slate-800/60 p-6 rounded-2xl text-center">
-                        <span class="text-3xl font-black text-violet-400 block mb-1">10k+</span>
-                        <span class="text-xs font-bold text-slate-400">Pelanggan Aktif</span>
-                    </div>
-                    <div class="bg-[#05070f] border border-slate-800/60 p-6 rounded-2xl text-center">
-                        <span class="text-3xl font-black text-violet-400 block mb-1">30+</span>
-                        <span class="text-xs font-bold text-slate-400">Game Populer</span>
-                    </div>
-                    <div class="bg-[#05070f] border border-slate-800/60 p-6 rounded-2xl text-center">
-                        <span class="text-3xl font-black text-violet-400 block mb-1">&lt; 1 Menit</span>
-                        <span class="text-xs font-bold text-slate-400">Rata-rata Proses</span>
-                    </div>
-                </div>
-                <div class="absolute inset-0 bg-gradient-to-tr from-violet-600/5 to-transparent pointer-events-none"></div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Cara Order (Tutorial steps & YouTube Embed) -->
-<section id="cara-order" class="py-20 bg-[#030712]">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Section Header -->
-        <div class="text-center max-w-xl mx-auto mb-16 space-y-3">
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-violet-600/10 border border-violet-500/20 text-violet-400 text-xs font-semibold tracking-wide uppercase">
-                TUTORIAL
-            </span>
-            <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Cara Melakukan Order</h2>
-            <p class="text-slate-400 text-sm leading-relaxed">Ikuti langkah-langkah mudah di bawah ini untuk melakukan top up game favorit Anda.</p>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <!-- Step List -->
-            <div class="space-y-6">
-                <!-- Step 1 -->
-                <div class="flex gap-4 relative">
-                    <div class="w-8 h-8 rounded-full bg-violet-600 flex items-center justify-center text-white font-extrabold text-xs flex-shrink-0 shadow-lg shadow-violet-500/20">
-                        1
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-white text-sm">Pilih Game</h4>
-                        <p class="text-xs text-slate-400 mt-1">Pilih game populer dari daftar yang kami sediakan.</p>
-                    </div>
-                </div>
-                <!-- Step 2 -->
-                <div class="flex gap-4 relative">
-                    <div class="w-8 h-8 rounded-full bg-violet-600 flex items-center justify-center text-white font-extrabold text-xs flex-shrink-0 shadow-lg shadow-violet-500/20">
-                        2
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-white text-sm">Pilih Produk & Masukkan Data Akun</h4>
-                        <p class="text-xs text-slate-400 mt-1">Pilih paket nominal top up game, isi data akun Anda (Username, UID, Server).</p>
-                    </div>
-                </div>
-                <!-- Step 3 -->
-                <div class="flex gap-4 relative">
-                    <div class="w-8 h-8 rounded-full bg-violet-600 flex items-center justify-center text-white font-extrabold text-xs flex-shrink-0 shadow-lg shadow-violet-500/20">
-                        3
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-white text-sm">Tambahkan ke Keranjang & Checkout</h4>
-                        <p class="text-xs text-slate-400 mt-1">Masukkan item ke Keranjang Belanja Anda, periksa kembali data Anda, lalu klik Checkout via WhatsApp.</p>
-                    </div>
-                </div>
-                <!-- Step 4 -->
-                <div class="flex gap-4 relative">
-                    <div class="w-8 h-8 rounded-full bg-violet-600 flex items-center justify-center text-white font-extrabold text-xs flex-shrink-0 shadow-lg shadow-violet-500/20">
-                        4
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-white text-sm">Konfirmasi Pembayaran via WhatsApp</h4>
-                        <p class="text-xs text-slate-400 mt-1">Kirim chat format pesanan ke WhatsApp Admin, lakukan transfer pembayaran, dan pesanan segera diproses!</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- YouTube Video Embed -->
-            @php
-                $youtube_id = '';
-                if (!empty($setting->youtube_tutorial)) {
-                    if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $setting->youtube_tutorial, $match)) {
-                        $youtube_id = $match[1];
-                    }
-                }
-            @endphp
-
-            <div class="space-y-4">
-                @if(!empty($youtube_id))
-                    <div class="relative w-full aspect-video rounded-2xl overflow-hidden border border-slate-800 bg-slate-950 shadow-2xl">
-                        <iframe class="absolute inset-0 w-full h-full"
-                                src="https://www.youtube.com/embed/{{ $youtube_id }}"
-                                title="Video Tutorial Cara Order"
-                                frameborder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                allowfullscreen>
-                        </iframe>
-                    </div>
-                    @if($setting->youtube_tutorial)
-                        <div class="text-center pt-2">
-                            <a href="{{ $setting->youtube_tutorial }}" target="_blank" class="inline-flex items-center gap-2 text-xs font-bold text-red-400 hover:text-red-300 transition-colors uppercase tracking-wider">
-                                <i data-lucide="play" class="w-4 h-4 fill-red-400"></i>
-                                Tonton di YouTube
-                            </a>
-                        </div>
-                    @endif
-                @else
-                    <!-- Video Placeholder -->
-                    <div class="w-full aspect-video rounded-2xl border border-dashed border-slate-800/80 bg-slate-950/40 flex flex-col items-center justify-center text-center p-6">
-                        <div class="w-12 h-12 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-500 mb-4">
-                            <i data-lucide="video" class="w-6 h-6"></i>
-                        </div>
-                        <h4 class="font-bold text-slate-300 text-sm">Video tutorial belum diset oleh Admin.</h4>
-                    </div>
+                @if($setting->whatsapp)
+                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $setting->whatsapp) }}" target="_blank" class="border border-white/50 hover:border-white px-8 py-3 rounded-full text-white font-semibold transition-colors w-full sm:w-auto text-center">
+                    Contact WhatsApp
+                </a>
                 @endif
             </div>
         </div>
+        
+        <!-- Right: Illustration -->
+        <div class="flex-1 relative z-0 flex justify-center lg:justify-end w-full fade-in-right">
+            <div class="character-glow relative">
+                <!-- Giant watermark logo way in the back -->
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none select-none">
+                    <img src="{{ asset('img/logo gamestore.png') }}" 
+                         alt="Gamestore Watermark Background" 
+                         class="w-[420px] h-[420px] sm:w-[500px] sm:h-[500px] lg:w-[700px] lg:h-[700px] xl:w-[800px] xl:h-[800px] rounded-full opacity-25 animate-spin-slow drop-shadow-[0_0_60px_rgba(0,174,239,0.4)]">
+                </div>
+
+                <!-- Floating logo icons behind the character -->
+                <img src="{{ asset('img/logo gamestore.png') }}" 
+                     alt="Gamestore Logo Bubble"
+                     class="absolute top-8 left-12 w-14 h-14 rounded-full border border-primary/20 shadow-[0_0_15px_rgba(0,174,239,0.2)] animate-float-slow opacity-60 z-0 select-none">
+                <img src="{{ asset('img/logo gamestore.png') }}" 
+                     alt="Gamestore Logo Bubble"
+                     class="absolute bottom-16 right-4 w-18 h-18 rounded-full border border-primary/30 shadow-[0_0_20px_rgba(0,174,239,0.35)] animate-float-fast opacity-50 z-0 select-none">
+                <img src="{{ asset('img/logo gamestore.png') }}" 
+                     alt="Gamestore Logo Bubble"
+                     class="absolute top-1/2 -left-6 w-11 h-11 rounded-full border border-primary/15 shadow-[0_0_10px_rgba(0,174,239,0.15)] animate-float-medium opacity-40 z-0 select-none">
+                <img src="{{ asset('img/logo gamestore.png') }}" 
+                     alt="Gamestore Logo Bubble"
+                     class="absolute top-2 right-20 w-10 h-10 rounded-full border border-primary/15 shadow-[0_0_10px_rgba(0,174,239,0.15)] animate-float-medium opacity-35 z-0 select-none">
+                <img src="{{ asset('img/logo gamestore.png') }}" 
+                     alt="Gamestore Logo Bubble"
+                     class="absolute bottom-6 left-16 w-15 h-15 rounded-full border border-primary/25 shadow-[0_0_18px_rgba(0,174,239,0.25)] animate-float-slow opacity-45 z-0 select-none">
+                <img src="{{ asset('img/logo gamestore.png') }}" 
+                     alt="Gamestore Logo Bubble"
+                     class="absolute top-1/3 -right-6 w-9 h-9 rounded-full border border-primary/15 shadow-[0_0_8px_rgba(0,174,239,0.15)] animate-float-fast opacity-50 z-0 select-none">
+
+                <img src="{{ asset('img/karakter.png') }}" 
+                     alt="Gaming Character" 
+                     class="character-float w-full max-w-[550px] lg:max-w-[780px] xl:max-w-[900px] h-auto object-contain relative z-10">
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section (Merged under the Trusted by text & Character image) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 relative z-20 md:-mt-20 lg:-mt-36 xl:-mt-48 stagger-animation">
+        <!-- Feature 1 -->
+        <div class="bg-[#141A28] border border-white/10 rounded-2xl p-5 flex items-center gap-4 transition-all duration-300 hover:border-primary/45 hover:-translate-y-1 shadow-lg group cursor-pointer">
+            <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary text-xl shrink-0 border border-primary/20 shadow-[0_0_15px_rgba(0,174,239,0.15)] group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="text-left">
+                <h3 class="text-sm font-bold text-white mb-0.5">100% Trusted</h3>
+                <p class="text-[11px] text-gray-400 leading-tight">Terpercaya dan aman untuk semua transaksi game.</p>
+            </div>
+        </div>
+        
+        <!-- Feature 2 -->
+        <div class="bg-[#141A28] border border-white/10 rounded-2xl p-5 flex items-center gap-4 transition-all duration-300 hover:border-primary/45 hover:-translate-y-1 shadow-lg group cursor-pointer">
+            <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary text-xl shrink-0 border border-primary/20 shadow-[0_0_15px_rgba(0,174,239,0.15)] group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+                <i class="fas fa-bolt"></i>
+            </div>
+            <div class="text-left">
+                <h3 class="text-sm font-bold text-white mb-0.5">Instant Delivery</h3>
+                <p class="text-[11px] text-gray-400 leading-tight">Pengiriman instan otomatis hitungan detik.</p>
+            </div>
+        </div>
+        
+        <!-- Feature 3 -->
+        <div class="bg-[#141A28] border border-white/10 rounded-2xl p-5 flex items-center gap-4 transition-all duration-300 hover:border-primary/45 hover:-translate-y-1 shadow-lg group cursor-pointer">
+            <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary text-xl shrink-0 border border-primary/20 shadow-[0_0_15px_rgba(0,174,239,0.15)] group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+                <i class="fas fa-tag"></i>
+            </div>
+            <div class="text-left">
+                <h3 class="text-sm font-bold text-white mb-0.5">Best Prices</h3>
+                <p class="text-[11px] text-gray-400 leading-tight">Harga paling kompetitif dan banyak promo.</p>
+            </div>
+        </div>
+        
+        <!-- Feature 4 -->
+        <div class="bg-[#141A28] border border-white/10 rounded-2xl p-5 flex items-center gap-4 transition-all duration-300 hover:border-primary/45 hover:-translate-y-1 shadow-lg group cursor-pointer">
+            <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary text-xl shrink-0 border border-primary/20 shadow-[0_0_15px_rgba(0,174,239,0.15)] group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+                <i class="fas fa-headset"></i>
+            </div>
+            <div class="text-left">
+                <h3 class="text-sm font-bold text-white mb-0.5">24/7 Support</h3>
+                <p class="text-[11px] text-gray-400 leading-tight">Customer support siap membantu kapan saja.</p>
+            </div>
+        </div>
     </div>
 </section>
 
-<!-- Testimoni Pelanggan -->
-<section id="testimonials" class="py-20 bg-[#020617] border-t border-slate-900/60">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Section Header -->
-        <div class="text-center max-w-xl mx-auto mb-16 space-y-3">
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-violet-600/10 border border-violet-500/20 text-violet-400 text-xs font-semibold tracking-wide uppercase">
-                TESTIMONIALS
-            </span>
-            <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Ulasan Pelanggan</h2>
-            <p class="text-slate-400 text-sm leading-relaxed">Apa kata mereka yang telah melakukan transaksi di platform top up kami?</p>
+<!-- Section Divider -->
+<div class="max-w-7xl mx-auto px-6"><div class="border-t border-white/5"></div></div>
+
+<!-- Popular Games -->
+<section id="games" class="max-w-7xl mx-auto px-6 py-16 lg:py-20">
+    <div class="flex items-center justify-between mb-8 lg:mb-12 animate-on-scroll">
+        <div>
+            <h2 class="text-2xl sm:text-3xl lg:text-4xl font-heading font-black">Daftar Game Populer</h2>
+            <div class="w-12 h-1 bg-primary rounded-full mt-2"></div>
         </div>
+    </div>
+    
+    <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 stagger-animation">
+        @foreach($games->take(8) as $game)
+        <a href="{{ route('game.show', $game->slug) }}" class="game-card rounded-2xl p-3 flex flex-col relative overflow-hidden group">
+            <!-- Modern Accent corner lights -->
+            <div class="absolute top-0 right-0 w-16 h-16 bg-primary/10 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+            
+            <!-- Category Badge -->
+            <div class="absolute top-5 left-5 z-20 bg-[#0B101E]/80 backdrop-blur-md border border-white/10 text-primary text-[10px] font-bold px-2.5 py-1 rounded-lg tracking-wider uppercase">
+                Active ⚡
+            </div>
 
-        <!-- Testimonial Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            @foreach($testimonials as $testimonial)
-                <div class="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 relative overflow-hidden shadow-xl flex flex-col justify-between">
-                    <div>
-                        <!-- Rating Stars -->
-                        <div class="flex items-center gap-1 text-amber-400 mb-4">
-                            @for($i = 0; $i < $testimonial->rating; $i++)
-                                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
-                            @endfor
-                        </div>
-                        <!-- Message -->
-                        <p class="text-slate-300 text-xs leading-relaxed italic mb-6">
-                            "{{ $testimonial->message }}"
-                        </p>
+            <!-- Zoomable Image wrapper -->
+            <div class="w-full aspect-[4/5] overflow-hidden rounded-xl mb-4 relative z-0">
+                @if($game->thumbnail && file_exists(public_path('img/' . $game->thumbnail)))
+                    <img src="{{ asset('img/' . $game->thumbnail) }}" alt="{{ $game->name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                @else
+                    <div class="w-full h-full bg-gradient-to-br from-violet-800 to-indigo-900 flex items-center justify-center transition-transform duration-500 group-hover:scale-105">
+                        <i class="fas fa-gamepad text-white/40 text-5xl"></i>
                     </div>
+                @endif
+                <!-- Image Overlay gradient -->
+                <div class="absolute inset-0 bg-gradient-to-t from-bg-dark/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-300"></div>
+            </div>
 
-                    <!-- Client Info -->
-                    <div class="flex items-center gap-3 border-t border-slate-800/40 pt-4">
-                        <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-violet-600 to-indigo-600 flex items-center justify-center text-white font-extrabold text-xs">
-                            {{ substr($testimonial->customer_name, 0, 1) }}
+            <!-- Content -->
+            <div class="px-1 pb-1.5 flex-1 flex flex-col relative z-10">
+                <h3 class="text-base sm:text-lg font-bold mb-1.5 group-hover:text-primary transition-colors duration-300">{{ $game->name }}</h3>
+                <p class="text-xs text-gray-400 mb-4 flex-grow line-clamp-2 leading-relaxed">{{ $game->description }}</p>
+                
+                <div class="w-full btn-primary py-2.5 rounded-xl text-xs sm:text-sm font-bold mt-auto flex items-center justify-center gap-1.5 shadow-[0_4px_12px_rgba(0,174,239,0.15)] group-hover:shadow-[0_4px_20px_rgba(0,174,239,0.35)] transition-all duration-300">
+                    <span>Top Up Now</span>
+                    <i class="fas fa-arrow-right text-[10px] transform group-hover:translate-x-1 transition-transform"></i>
+                </div>
+            </div>
+        </a>
+        @endforeach
+    </div>
+    
+    @if($games->count() > 8)
+    <div class="mt-12 text-center animate-on-scroll">
+        <a href="#all-games" class="inline-flex items-center gap-2 bg-[#141A28] border border-white/10 hover:border-primary/45 px-8 py-3.5 rounded-full text-white font-bold text-sm transition-all hover:-translate-y-0.5">
+            <i class="fas fa-gamepad text-primary"></i>
+            Lihat Game Lainnya ({{ $games->count() - 8 }})
+        </a>
+    </div>
+    @endif
+</section>
+
+<!-- Section Divider -->
+<div class="max-w-7xl mx-auto px-6"><div class="border-t border-white/5"></div></div>
+
+<!-- Why Choose Us -->
+<section id="features" class="max-w-7xl mx-auto px-6 py-16 lg:py-20">
+    <div class="text-center mb-12 lg:mb-16 animate-on-scroll">
+        <h2 class="text-3xl sm:text-4xl font-heading font-black mb-4">Mengapa Memilih Kami?</h2>
+        <div class="w-20 h-1 bg-gradient-to-r from-primary to-primary-dark mx-auto rounded-full shadow-[0_0_15px_rgba(0,174,239,0.6)]"></div>
+    </div>
+    
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 stagger-animation">
+        <!-- Card 1 -->
+        <div class="bg-[#141A28] border border-white/10 rounded-2xl p-6 lg:p-8 flex flex-col items-center text-center relative overflow-hidden transition-all duration-300 hover:border-primary/30 hover:-translate-y-1 shadow-lg group">
+            <!-- Background number -->
+            <div class="absolute bottom-2 right-4 text-white/[0.02] text-6xl font-mono font-black select-none pointer-events-none group-hover:text-primary/[0.05] transition-colors duration-300">01</div>
+            
+            <div class="w-16 h-16 lg:w-20 lg:h-20 bg-primary/10 rounded-2xl flex items-center justify-center text-primary text-3xl lg:text-4xl mb-6 shadow-glow border border-primary/20 group-hover:border-primary/50 transition-colors duration-300">
+                <i class="fas fa-bolt"></i>
+            </div>
+            <h3 class="text-lg font-bold mb-3 text-white">Proses Cepat & Otomatis</h3>
+            <p class="text-sm text-gray-400 leading-relaxed">Transaksi diproses secara instan dan otomatis dalam hitungan detik setelah pembayaran dikonfirmasi.</p>
+        </div>
+        
+        <!-- Card 2 -->
+        <div class="bg-[#141A28] border border-white/10 rounded-2xl p-6 lg:p-8 flex flex-col items-center text-center relative overflow-hidden transition-all duration-300 hover:border-primary/30 hover:-translate-y-1 shadow-lg group">
+            <!-- Background number -->
+            <div class="absolute bottom-2 right-4 text-white/[0.02] text-6xl font-mono font-black select-none pointer-events-none group-hover:text-primary/[0.05] transition-colors duration-300">02</div>
+            
+            <div class="w-16 h-16 lg:w-20 lg:h-20 bg-primary/10 rounded-2xl flex items-center justify-center text-primary text-3xl lg:text-4xl mb-6 shadow-glow border border-primary/20 group-hover:border-primary/50 transition-colors duration-300">
+                <i class="fas fa-tag"></i>
+            </div>
+            <h3 class="text-lg font-bold mb-3 text-white">Harga Termurah & Bersaing</h3>
+            <p class="text-sm text-gray-400 leading-relaxed">Kami menawarkan penawaran terbaik dan harga paling kompetitif untuk semua item game favoritmu.</p>
+        </div>
+        
+        <!-- Card 3 -->
+        <div class="bg-[#141A28] border border-white/10 rounded-2xl p-6 lg:p-8 flex flex-col items-center text-center relative overflow-hidden transition-all duration-300 hover:border-primary/30 hover:-translate-y-1 shadow-lg group">
+            <!-- Background number -->
+            <div class="absolute bottom-2 right-4 text-white/[0.02] text-6xl font-mono font-black select-none pointer-events-none group-hover:text-primary/[0.05] transition-colors duration-300">03</div>
+            
+            <div class="w-16 h-16 lg:w-20 lg:h-20 bg-primary/10 rounded-2xl flex items-center justify-center text-primary text-3xl lg:text-4xl mb-6 shadow-glow border border-primary/20 group-hover:border-primary/50 transition-colors duration-300">
+                <i class="fas fa-shield-halved"></i>
+            </div>
+            <h3 class="text-lg font-bold mb-3 text-white">Keamanan Terjamin 100%</h3>
+            <p class="text-sm text-gray-400 leading-relaxed">Sistem gateway pembayaran yang aman terintegrasi penuh untuk melindungi setiap transaksi belanja Anda.</p>
+        </div>
+        
+        <!-- Card 4 -->
+        <div class="bg-[#141A28] border border-white/10 rounded-2xl p-6 lg:p-8 flex flex-col items-center text-center relative overflow-hidden transition-all duration-300 hover:border-primary/30 hover:-translate-y-1 shadow-lg group">
+            <!-- Background number -->
+            <div class="absolute bottom-2 right-4 text-white/[0.02] text-6xl font-mono font-black select-none pointer-events-none group-hover:text-primary/[0.05] transition-colors duration-300">04</div>
+            
+            <div class="w-16 h-16 lg:w-20 lg:h-20 bg-primary/10 rounded-2xl flex items-center justify-center text-primary text-3xl lg:text-4xl mb-6 shadow-glow border border-primary/20 group-hover:border-primary/50 transition-colors duration-300">
+                <i class="fas fa-headset"></i>
+            </div>
+            <h3 class="text-lg font-bold mb-3 text-white">Layanan CS 24 Jam</h3>
+            <p class="text-sm text-gray-400 leading-relaxed">Tim bantuan customer support ramah kami siap mendampingi kendala Anda kapan pun dibutuhkan.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Section Divider -->
+<div class="max-w-7xl mx-auto px-6"><div class="border-t border-white/5"></div></div>
+
+<!-- How to Order -->
+<section id="cara-order" class="max-w-7xl mx-auto px-6 py-16 lg:py-24">
+    <div class="text-center mb-12 lg:mb-16 animate-on-scroll">
+        <h2 class="text-3xl sm:text-4xl font-heading font-black mt-3 mb-4">Cara Melakukan Order</h2>
+        <div class="w-20 h-1 bg-gradient-to-r from-primary to-primary-dark mx-auto rounded-full shadow-[0_0_15px_rgba(0,174,239,0.6)]"></div>
+    </div>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+        <!-- Left: Video Player (7 Cols) -->
+        <div class="lg:col-span-7 relative group fade-in-left">
+            <div class="absolute -inset-2 bg-gradient-to-r from-primary/30 to-primary-dark/20 blur-xl rounded-3xl opacity-75 group-hover:opacity-100 transition-opacity duration-500"></div>
+            
+            <!-- Video Mock Player Frame -->
+            <div class="relative bg-bg-card rounded-2xl border border-white/10 overflow-hidden shadow-2xl">
+                <!-- Top Player Control Dots -->
+                <div class="flex items-center gap-1.5 px-4 py-3 bg-bg-dark/80 border-b border-white/5">
+                    <span class="w-2.5 h-2.5 rounded-full bg-rose-500/80"></span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-amber-500/80"></span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500/80"></span>
+                    <span class="text-[10px] text-gray-500 font-mono ml-2">Video_Panduan.mp4</span>
+                </div>
+                
+                <div class="aspect-video bg-black/90">
+                    @php
+                        $youtube_id = '';
+                        if (!empty($setting->youtube_tutorial)) {
+                            if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $setting->youtube_tutorial, $match)) {
+                                $youtube_id = $match[1];
+                            }
+                        }
+                    @endphp
+                    
+                    @if(!empty($youtube_id))
+                        <iframe class="w-full h-full" src="https://www.youtube.com/embed/{{ $youtube_id }}" title="Tutorial" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    @else
+                        <div class="w-full h-full flex flex-col items-center justify-center p-6 text-center">
+                            <div class="w-16 h-16 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center mb-3">
+                                <i class="fas fa-video text-2xl text-primary"></i>
+                            </div>
+                            <p class="text-sm font-semibold text-gray-200">Video tutorial sedang disiapkan</p>
+                            <p class="text-xs text-gray-500 mt-1 max-w-[200px] mx-auto">Kami akan segera menyematkan video panduan terbaru.</p>
                         </div>
-                        <div>
-                            <h4 class="font-bold text-white text-xs">{{ $testimonial->customer_name }}</h4>
-                            <span class="text-[9px] text-slate-500">Verified Buyer</span>
-                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right: Stepper Steps (5 Cols) -->
+        <div class="lg:col-span-5 relative flex flex-col gap-6 pl-4 lg:pl-10 fade-in-right">
+            <!-- Central connection track line -->
+            <div class="absolute left-9 top-6 bottom-6 w-[2px] bg-gradient-to-b from-primary/60 via-primary-dark/30 to-white/5"></div>
+            
+            <!-- Step 1 -->
+            <div class="relative flex gap-6 items-start group">
+                <!-- Glow circle connector -->
+                <div class="w-10 h-10 rounded-full bg-bg-card border-2 border-primary flex items-center justify-center text-primary text-sm font-bold z-10 shrink-0 group-hover:scale-110 group-hover:shadow-[0_0_15px_rgba(0,174,239,0.5)] transition-all duration-300">
+                    01
+                </div>
+                <div class="bg-bg-card border border-white/10 rounded-2xl p-5 hover:border-primary/40 transition-colors duration-300 flex-grow shadow-lg">
+                    <h4 class="font-bold text-white text-base mb-1.5 flex items-center gap-2">
+                        <i class="fas fa-gamepad text-primary/75 text-sm"></i>
+                        Pilih Game & Item
+                    </h4>
+                    <p class="text-sm text-gray-400 leading-relaxed">Pilih game favoritmu dari katalog, lalu pilih nominal item top-up atau paket yang kamu butuhkan.</p>
+                </div>
+            </div>
+            
+            <!-- Step 2 -->
+            <div class="relative flex gap-6 items-start group">
+                <!-- Glow circle connector -->
+                <div class="w-10 h-10 rounded-full bg-bg-card border-2 border-primary/40 flex items-center justify-center text-primary/80 text-sm font-bold z-10 shrink-0 group-hover:scale-110 group-hover:border-primary group-hover:text-primary group-hover:shadow-[0_0_15px_rgba(0,174,239,0.5)] transition-all duration-300">
+                    02
+                </div>
+                <div class="bg-bg-card border border-white/10 rounded-2xl p-5 hover:border-primary/40 transition-colors duration-300 flex-grow shadow-lg">
+                    <h4 class="font-bold text-white text-base mb-1.5 flex items-center gap-2">
+                        <i class="fas fa-user-edit text-primary/75 text-sm"></i>
+                        Isi Data Akun
+                    </h4>
+                    <p class="text-sm text-gray-400 leading-relaxed">Masukkan User ID, Zone ID, atau Username game kamu dengan lengkap dan benar untuk menghindari kesalahan pengiriman.</p>
+                </div>
+            </div>
+            
+            <!-- Step 3 -->
+            <div class="relative flex gap-6 items-start group">
+                <!-- Glow circle connector -->
+                <div class="w-10 h-10 rounded-full bg-bg-card border-2 border-primary/40 flex items-center justify-center text-primary/80 text-sm font-bold z-10 shrink-0 group-hover:scale-110 group-hover:border-primary group-hover:text-primary group-hover:shadow-[0_0_15px_rgba(0,174,239,0.5)] transition-all duration-300">
+                    03
+                </div>
+                <div class="bg-bg-card border border-white/10 rounded-2xl p-5 hover:border-primary/40 transition-colors duration-300 flex-grow shadow-lg">
+                    <h4 class="font-bold text-white text-base mb-1.5 flex items-center gap-2">
+                        <i class="fas fa-wallet text-primary/75 text-sm"></i>
+                        Pilih Metode Pembayaran
+                    </h4>
+                    <p class="text-sm text-gray-400 leading-relaxed">Pilih opsi pembayaran ternyaman dari e-wallet, virtual account, transfer bank, hingga retail store terdekat.</p>
+                </div>
+            </div>
+            
+            <!-- Step 4 -->
+            <div class="relative flex gap-6 items-start group">
+                <!-- Glow circle connector -->
+                <div class="w-10 h-10 rounded-full bg-bg-card border-2 border-primary/40 flex items-center justify-center text-primary/80 text-sm font-bold z-10 shrink-0 group-hover:scale-110 group-hover:border-primary group-hover:text-primary group-hover:shadow-[0_0_15px_rgba(0,174,239,0.5)] transition-all duration-300">
+                    04
+                </div>
+                <div class="bg-bg-card border border-white/10 rounded-2xl p-5 hover:border-primary/40 transition-colors duration-300 flex-grow shadow-lg">
+                    <h4 class="font-bold text-white text-base mb-1.5 flex items-center gap-2">
+                        <i class="fas fa-check-circle text-primary/75 text-sm"></i>
+                        Selesaikan Pembayaran
+                    </h4>
+                    <p class="text-sm text-gray-400 leading-relaxed">Lakukan transfer/pembayaran. Sistem otomatis kami akan memproses & mengirim item masuk ke akun kamu hanya dalam hitungan detik.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mt-14 lg:mt-16 text-center scale-in">
+        <a href="#games" class="btn-primary px-10 py-4 rounded-full text-white font-bold text-lg shadow-[0_0_20px_rgba(0,174,239,0.4)] hover:scale-105 transition-transform inline-block">
+            Mulai Belanja Sekarang
+        </a>
+    </div>
+</section>
+
+<!-- Section Divider -->
+<div class="max-w-7xl mx-auto px-6"><div class="border-t border-white/5"></div></div>
+
+<!-- Customer Reviews -->
+<section id="testimonials" class="max-w-7xl mx-auto px-6 py-16 lg:py-24">
+    <div class="text-center mb-12 lg:mb-16 animate-on-scroll">
+        <h2 class="text-3xl sm:text-4xl font-heading font-black mt-3 mb-4">Ulasan Pelanggan</h2>
+        <div class="w-20 h-1 bg-gradient-to-r from-primary to-primary-dark mx-auto rounded-full shadow-[0_0_15px_rgba(0,174,239,0.6)]"></div>
+        
+        <!-- Trust badge statistics -->
+        <div class="flex items-center justify-center gap-6 mt-6 text-gray-400 text-xs sm:text-sm">
+            <div class="flex items-center gap-1.5">
+                <i class="fas fa-check-circle text-emerald-500"></i>
+                <span>100% Pembeli Terverifikasi</span>
+            </div>
+            <div class="w-[1px] h-4 bg-white/10"></div>
+            <div class="flex items-center gap-1">
+                <span class="text-yellow-400 font-bold">★ 4.9 / 5.0</span>
+                <span>Nilai Kepuasan</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 stagger-animation">
+        @foreach($testimonials as $index => $testimonial)
+        @php
+            // Assign gradient classes for avatars to make it look premium
+            $gradients = [
+                'from-violet-600 to-indigo-600',
+                'from-emerald-500 to-teal-600',
+                'from-pink-500 to-rose-600',
+                'from-amber-500 to-orange-600',
+                'from-cyan-500 to-blue-600'
+            ];
+            $avatarGrad = $gradients[$index % count($gradients)];
+            $initial = strtoupper(substr($testimonial->customer_name, 0, 1));
+        @endphp
+        
+        <div class="bg-[#141A28] border border-white/10 rounded-2xl p-6 lg:p-7 relative overflow-hidden transition-all duration-300 hover:border-primary/30 hover:-translate-y-1 shadow-lg group">
+            <!-- Large decorative background quote mark -->
+            <div class="absolute right-4 top-2 text-white/[0.03] text-7xl font-serif select-none pointer-events-none group-hover:text-primary/[0.06] transition-colors duration-300">
+                ”
+            </div>
+            
+            <!-- Header: Avatar Initials + Customer info -->
+            <div class="flex items-center gap-3.5 mb-5">
+                <div class="w-11 h-11 rounded-full bg-gradient-to-tr {{ $avatarGrad }} flex items-center justify-center text-white font-bold text-sm shadow-md">
+                    {{ $initial }}
+                </div>
+                <div>
+                    <h4 class="font-bold text-white text-sm tracking-wide">{{ $testimonial->customer_name }}</h4>
+                    <div class="flex text-yellow-400 text-[11px] gap-0.5 mt-0.5">
+                        @for($i = 0; $i < $testimonial->rating; $i++)
+                            <i class="fas fa-star"></i>
+                        @endfor
+                        @for($i = $testimonial->rating; $i < 5; $i++)
+                            <i class="far fa-star text-gray-600"></i>
+                        @endfor
                     </div>
                 </div>
-            @endforeach
-        </div>
-
-        <!-- WhatsApp Channel Action Link -->
-        @if($setting->whatsapp_channel)
-            <div class="text-center pt-4">
-                <a href="{{ $setting->whatsapp_channel }}" target="_blank" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm px-8 py-3.5 rounded-2xl transition-all shadow-lg shadow-emerald-600/10 cursor-pointer">
-                    <i data-lucide="bell" class="w-5 h-5"></i>
-                    Lihat Testimoni Customer Lainnya
-                </a>
             </div>
-        @endif
+            
+            <!-- Message -->
+            <p class="text-gray-300 italic leading-relaxed text-sm relative z-10 mb-5">
+                "{{ $testimonial->message }}"
+            </p>
+            
+            <!-- Footer Verification Tag -->
+            <div class="flex items-center gap-1.5 pt-3.5 border-t border-white/5 text-[10px] text-emerald-500 font-bold uppercase tracking-wider">
+                <i class="fas fa-check-circle text-[11px]"></i>
+                Verified Purchase
+            </div>
+        </div>
+        @endforeach
     </div>
+    
+    @if($setting->whatsapp_channel)
+    <div class="text-center mt-12 lg:mt-16 scale-in">
+        <a href="{{ $setting->whatsapp_channel }}" target="_blank" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm px-8 py-3.5 rounded-2xl transition-all shadow-lg shadow-emerald-600/10 hover:scale-105">
+            <i class="fab fa-whatsapp"></i>
+            Lihat Testimoni Customer Lainnya
+        </a>
+    </div>
+    @endif
 </section>
 @endsection

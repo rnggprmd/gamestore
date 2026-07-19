@@ -453,6 +453,16 @@
                     <span class="sidebar-text">Manajemen Produk</span>
                 </a>
 
+                <a href="{{ route('admin.categories.index') }}" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 hover:translate-x-1 menu-item-hover menu-item-active-animation menu-item-animated {{ request()->routeIs('admin.categories.*') ? 'bg-watt-cyan text-watt-bg shadow-[0_4px_20px_rgba(0,229,255,0.25)] font-semibold' : 'text-watt-text-sec hover:bg-watt-hover/60 hover:text-white' }}" title="Kategori Produk">
+                    <i data-lucide="folder" class="w-4 h-4 flex-shrink-0"></i>
+                    <span class="sidebar-text">Kategori Produk</span>
+                </a>
+
+                <a href="{{ route('admin.orders.index') }}" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 hover:translate-x-1 menu-item-hover menu-item-active-animation menu-item-animated {{ request()->routeIs('admin.orders.*') ? 'bg-watt-cyan text-watt-bg shadow-[0_4px_20px_rgba(0,229,255,0.25)] font-semibold' : 'text-watt-text-sec hover:bg-watt-hover/60 hover:text-white' }}" title="Manajemen Order">
+                    <i data-lucide="shopping-cart" class="w-4 h-4 flex-shrink-0"></i>
+                    <span class="sidebar-text">Manajemen Order</span>
+                </a>
+
                 <a href="{{ route('admin.banners.index') }}" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 hover:translate-x-1 menu-item-hover menu-item-active-animation menu-item-animated {{ request()->routeIs('admin.banners.*') ? 'bg-watt-cyan text-watt-bg shadow-[0_4px_20px_rgba(0,229,255,0.25)] font-semibold' : 'text-watt-text-sec hover:bg-watt-hover/60 hover:text-white' }}" title="Manajemen Banner">
                     <i data-lucide="image" class="w-4 h-4 flex-shrink-0"></i>
                     <span class="sidebar-text">Manajemen Banner</span>
@@ -546,6 +556,14 @@
                         <a href="{{ route('admin.products.index') }}" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 menu-item-hover menu-item-active-animation menu-item-animated {{ request()->routeIs('admin.products.*') ? 'bg-watt-cyan text-watt-bg shadow-[0_4px_20px_rgba(0,229,255,0.25)] font-semibold' : 'text-watt-text-sec hover:bg-watt-hover/60 hover:text-white' }}">
                             <i data-lucide="package" class="w-4 h-4"></i>
                             Manajemen Produk
+                        </a>
+                        <a href="{{ route('admin.categories.index') }}" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 menu-item-hover menu-item-active-animation menu-item-animated {{ request()->routeIs('admin.categories.*') ? 'bg-watt-cyan text-watt-bg shadow-[0_4px_20px_rgba(0,229,255,0.25)] font-semibold' : 'text-watt-text-sec hover:bg-watt-hover/60 hover:text-white' }}">
+                            <i data-lucide="folder" class="w-4 h-4"></i>
+                            Kategori Produk
+                        </a>
+                        <a href="{{ route('admin.orders.index') }}" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 menu-item-hover menu-item-active-animation menu-item-animated {{ request()->routeIs('admin.orders.*') ? 'bg-watt-cyan text-watt-bg shadow-[0_4px_20px_rgba(0,229,255,0.25)] font-semibold' : 'text-watt-text-sec hover:bg-watt-hover/60 hover:text-white' }}">
+                            <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+                            Manajemen Order
                         </a>
                         <a href="{{ route('admin.banners.index') }}" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 menu-item-hover menu-item-active-animation menu-item-animated {{ request()->routeIs('admin.banners.*') ? 'bg-watt-cyan text-watt-bg shadow-[0_4px_20px_rgba(0,229,255,0.25)] font-semibold' : 'text-watt-text-sec hover:bg-watt-hover/60 hover:text-white' }}">
                             <i data-lucide="image" class="w-4 h-4"></i>
