@@ -82,8 +82,8 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Categories — hanya 2: Item dan Game Pass
-        $catItem     = Category::create(['name' => 'Item']);
-        $catGamePass = Category::create(['name' => 'Game Pass']);
+        $catItem     = Category::create(['name' => 'Item', 'slug' => 'item']);
+        $catGamePass = Category::create(['name' => 'Game Pass', 'slug' => 'game-pass']);
 
         // Game 1: Mobile Legends
         $mlbb = Game::create([

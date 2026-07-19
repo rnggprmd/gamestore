@@ -9,7 +9,6 @@ use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\CategoryController;
-use App\Http\Controllers\Admin\OrderController;
 use Illuminate\Support\Facades\Route;
 
 // Landing Pages (Public) - Using LandingController
@@ -38,11 +37,6 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 
     // Categories Management CRUD (NEW!)
     Route::resource('categories', CategoryController::class);
-
-    // Orders Management CRUD (NEW!)
-    Route::resource('orders', OrderController::class);
-    Route::patch('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
-    Route::get('/api/order-stats', [OrderController::class, 'getStats'])->name('api.order.stats');
 
     // Banners Management CRUD
     Route::resource('banners', BannerController::class);

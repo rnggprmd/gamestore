@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Game;
+use App\Models\Category;
 use App\Models\Banner;
 use App\Models\Testimonial;
 use App\Models\Setting;
@@ -49,6 +50,13 @@ class GameService
         });
     }
 
+    public function getActiveCategories()
+    {
+        return Cache::remember('active_categories', self::CACHE_TTL, function () {
+            return Category::where('status', true)->ordered()->get();
+        });
+    }
+
     public function getSettings()
     {
         return Cache::remember('site_settings', self::CACHE_TTL, function () {
@@ -70,6 +78,7 @@ class GameService
         Cache::forget('active_games_with_products');
         Cache::forget('active_banners');
         Cache::forget('active_testimonials');
+        Cache::forget('active_categories');
         Cache::forget('site_settings');
     }
 

@@ -8,7 +8,7 @@
     <!-- Main Hero content (Left: Text, Right: Character) -->
     <div class="flex flex-col-reverse lg:flex-row items-center gap-10 lg:gap-16">
         <!-- Left: Content -->
-        <div class="flex-1 text-center lg:text-left z-10 fade-in-left">
+        <div class="flex-1 text-center lg:text-left z-20 fade-in-left -mt-32 lg:mt-0">
             <h1 class="text-4xl sm:text-5xl lg:text-7xl font-heading font-black leading-tight mb-5">
                 Welcome To <br>
                 <span class="text-primary hero-glow">{{ strtoupper($setting->store_name ?? 'GAMESTORE') }}</span>
@@ -16,16 +16,6 @@
             <p class="text-base sm:text-lg text-gray-300 mb-8 max-w-lg mx-auto lg:mx-0">
                 Premium Top Up Game at the Best Prices
             </p>
-            <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-8">
-                <a href="#games" class="btn-primary px-8 py-3 rounded-full text-white font-bold w-full sm:w-auto flex items-center justify-center gap-2">
-                    Shop Now <i class="fas fa-arrow-right"></i>
-                </a>
-                @if($setting->whatsapp)
-                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $setting->whatsapp) }}" target="_blank" class="border border-white/50 hover:border-white px-8 py-3 rounded-full text-white font-semibold transition-colors w-full sm:w-auto text-center">
-                    Contact WhatsApp
-                </a>
-                @endif
-            </div>
         </div>
         
         <!-- Right: Illustration -->
@@ -117,60 +107,116 @@
 <div class="max-w-7xl mx-auto px-6"><div class="border-t border-white/5"></div></div>
 
 <!-- Popular Games -->
-<section id="games" class="max-w-7xl mx-auto px-6 py-16 lg:py-20">
-    <div class="flex items-center justify-between mb-8 lg:mb-12 animate-on-scroll">
-        <div>
-            <h2 class="text-2xl sm:text-3xl lg:text-4xl font-heading font-black">Daftar Game Populer</h2>
-            <div class="w-12 h-1 bg-primary rounded-full mt-2"></div>
+<section id="games" class="max-w-7xl mx-auto px-6 py-16 lg:py-24">
+    <!-- Section Header -->
+    <div class="mb-12 lg:mb-16 animate-on-scroll">
+        <h2 class="text-2xl sm:text-3xl lg:text-4xl font-heading font-black mb-4">Daftar Game Populer</h2>
+        <div class="w-12 h-1 bg-primary rounded-full"></div>
+    </div>
+    
+    <!-- Search Box -->
+    <div class="mb-12 animate-on-scroll" x-data="gameSearchFilter()">
+        <div class="relative">
+            <input type="text" 
+                   x-model="searchQuery"
+                   @input="filterBySearch()"
+                   placeholder="Cari game favorit Anda..." 
+                   class="w-full px-6 py-4 rounded-xl bg-[#141A28] border border-white/20 text-white placeholder-gray-500 focus:outline-none focus:border-primary transition-colors text-base">
+            <i class="fas fa-search absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
         </div>
     </div>
     
-    <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 stagger-animation">
-        @foreach($games->take(8) as $game)
-        <a href="{{ route('game.show', $game->slug) }}" class="game-card rounded-2xl p-3 flex flex-col relative overflow-hidden group">
-            <!-- Modern Accent corner lights -->
-            <div class="absolute top-0 right-0 w-16 h-16 bg-primary/10 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-            
-            <!-- Category Badge -->
-            <div class="absolute top-5 left-5 z-20 bg-[#0B101E]/80 backdrop-blur-md border border-white/10 text-primary text-[10px] font-bold px-2.5 py-1 rounded-lg tracking-wider uppercase">
-                Active ⚡
-            </div>
-
-            <!-- Zoomable Image wrapper -->
-            <div class="w-full aspect-[4/5] overflow-hidden rounded-xl mb-4 relative z-0">
-                @if($game->thumbnail && file_exists(public_path('img/' . $game->thumbnail)))
-                    <img src="{{ asset('img/' . $game->thumbnail) }}" alt="{{ $game->name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-                @else
-                    <div class="w-full h-full bg-gradient-to-br from-violet-800 to-indigo-900 flex items-center justify-center transition-transform duration-500 group-hover:scale-105">
-                        <i class="fas fa-gamepad text-white/40 text-5xl"></i>
-                    </div>
-                @endif
-                <!-- Image Overlay gradient -->
-                <div class="absolute inset-0 bg-gradient-to-t from-bg-dark/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-300"></div>
-            </div>
-
-            <!-- Content -->
-            <div class="px-1 pb-1.5 flex-1 flex flex-col relative z-10">
-                <h3 class="text-base sm:text-lg font-bold mb-1.5 group-hover:text-primary transition-colors duration-300">{{ $game->name }}</h3>
-                <p class="text-xs text-gray-400 mb-4 flex-grow line-clamp-2 leading-relaxed">{{ $game->description }}</p>
-                
-                <div class="w-full btn-primary py-2.5 rounded-xl text-xs sm:text-sm font-bold mt-auto flex items-center justify-center gap-1.5 shadow-[0_4px_12px_rgba(0,174,239,0.15)] group-hover:shadow-[0_4px_20px_rgba(0,174,239,0.35)] transition-all duration-300">
-                    <span>Top Up Now</span>
-                    <i class="fas fa-arrow-right text-[10px] transform group-hover:translate-x-1 transition-transform"></i>
-                </div>
-            </div>
-        </a>
+    <!-- Category Filter -->
+    <div class="flex flex-wrap gap-4 mb-16 animate-on-scroll" x-data="gameFilter()">
+        <button @click="selectedCategory = 'all'; filterGames()" 
+                :class="selectedCategory === 'all' ? 'bg-primary text-white border-primary' : 'bg-transparent text-gray-300 border-white/20 hover:border-primary/50'"
+                class="px-6 py-3 rounded-full border font-semibold text-sm transition-all duration-300 flex items-center gap-2 whitespace-nowrap">
+            <i class="fas fa-th"></i>
+            Semua Produk
+        </button>
+        @foreach($categories as $category)
+        <button @click="selectedCategory = '{{ $category->id }}'; filterGames()"
+                :class="selectedCategory === '{{ $category->id }}' ? 'bg-primary text-white border-primary' : 'bg-transparent text-gray-300 border-white/20 hover:border-primary/50'"
+                class="px-6 py-3 rounded-full border font-semibold text-sm transition-all duration-300 flex items-center gap-2 whitespace-nowrap">
+            <i class="fas fa-tag text-xs"></i>
+            {{ $category->name }}
+        </button>
         @endforeach
     </div>
     
-    @if($games->count() > 8)
-    <div class="mt-12 text-center animate-on-scroll">
-        <a href="#all-games" class="inline-flex items-center gap-2 bg-[#141A28] border border-white/10 hover:border-primary/45 px-8 py-3.5 rounded-full text-white font-bold text-sm transition-all hover:-translate-y-0.5">
-            <i class="fas fa-gamepad text-primary"></i>
-            Lihat Game Lainnya ({{ $games->count() - 8 }})
-        </a>
+    <!-- Carousel Container -->
+    <div class="relative group" x-data="gameCarousel()" 
+         @touchstart="touchStart($event)" 
+         @touchend="touchEnd($event)"
+         @wheel="handleWheel($event)"
+         @keydown.left="prevPage()"
+         @keydown.right="nextPage()"
+         tabindex="0"
+         class="pt-8 pb-12">
+        <!-- Games Grid with Carousel - Hidden overflow for clean edges -->
+        <div class="overflow-hidden">
+            <div class="flex transition-transform duration-500"
+                 :style="{ transform: `translateX(-${currentPage * 100}%)` }">
+                <!-- Each page: exactly 4 games -->
+                @foreach($games->chunk(4) as $page)
+                <div class="w-full flex-shrink-0 flex">
+                    <div class="w-full grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8 px-6 items-stretch">
+                        @foreach($page as $game)
+                        <a href="{{ route('game.show', $game->slug) }}" 
+                           class="game-card rounded-2xl p-4 flex flex-col relative group game-item transition-all duration-300 will-change-transform"
+                           data-categories="{{ json_encode($game->products->pluck('category_id')->unique()->toArray()) }}">
+                            <!-- Glow Effect -->
+                            <div class="absolute -inset-6 pointer-events-none">
+                                <div class="absolute -top-3 -right-3 w-24 h-24 bg-primary/30 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            </div>
+                            
+                            <!-- Active Badge -->
+                            <div class="absolute top-4 left-4 z-20 bg-[#0B101E]/90 backdrop-blur-sm border border-white/10 text-primary text-[10px] font-bold px-3 py-1 rounded-lg tracking-wider uppercase">
+                                Active ⚡
+                            </div>
+
+                            <!-- Image -->
+                            <div class="w-full aspect-[4/5] overflow-hidden rounded-xl mb-4 relative z-10">
+                                @if($game->thumbnail && file_exists(public_path('img/' . $game->thumbnail)))
+                                    <img src="{{ asset('img/' . $game->thumbnail) }}" alt="{{ $game->name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                                @else
+                                    <div class="w-full h-full bg-gradient-to-br from-violet-800 to-indigo-900 flex items-center justify-center transition-transform duration-500 group-hover:scale-105">
+                                        <i class="fas fa-gamepad text-white/40 text-5xl"></i>
+                                    </div>
+                                @endif
+                                <div class="absolute inset-0 bg-gradient-to-t from-bg-dark/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-300"></div>
+                            </div>
+
+                            <!-- Content -->
+                            <div class="flex-1 flex flex-col relative z-10">
+                                <h3 class="text-base font-bold mb-2 group-hover:text-primary transition-colors duration-300 line-clamp-2">{{ $game->name }}</h3>
+                                <p class="text-xs text-gray-400 mb-4 flex-grow line-clamp-2 leading-relaxed">{{ $game->description }}</p>
+                                
+                                <button class="w-full btn-primary py-2.5 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 shadow-[0_4px_12px_rgba(0,174,239,0.15)] group-hover:shadow-[0_4px_20px_rgba(0,174,239,0.35)] transition-all duration-300">
+                                    <span>Beli Sekarang</span>
+                                    <i class="fas fa-arrow-right text-[10px] group-hover:translate-x-0.5 transition-transform"></i>
+                                </button>
+                            </div>
+                        </a>
+                        @endforeach
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+        
+        <!-- Pagination Dots -->
+        @if($games->count() > 4)
+        <div class="flex justify-center gap-2 mt-10">
+            <template x-for="(page, index) in totalPages" :key="index">
+                <button @click="currentPage = index"
+                        :class="currentPage === index ? 'bg-primary w-8' : 'bg-white/30 hover:bg-white/50'"
+                        class="h-2.5 rounded-full transition-all duration-300 cursor-pointer"></button>
+            </template>
+        </div>
+        @endif
     </div>
-    @endif
+
 </section>
 
 <!-- Section Divider -->

@@ -105,6 +105,15 @@
             background: #0077B5;
         }
         
+        /* Hide scrollbar */
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        
         /* Scroll Animations */
         .animate-on-scroll {
             opacity: 0;
@@ -224,7 +233,7 @@
         }
     </style>
 </head>
-<body class="landing-body text-white" x-data="cartHandler()" x-init="initCart()">
+<body class="landing-body text-white">
     
     <!-- Floating WhatsApp Button -->
     @if($setting->whatsapp)
@@ -259,11 +268,10 @@
             
             <!-- Actions -->
             <div class="flex items-center gap-5">
-                <!-- Cart Button -->
-                <button @click="openCart = true" class="text-gray-300 hover:text-white transition-colors relative">
-                    <i class="fas fa-shopping-cart text-lg"></i>
-                    <span x-show="cart.length > 0" x-text="cartTotalQuantity()" class="absolute -top-2 -right-2 bg-primary text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">0</span>
-                </button>
+                <a href="{{ route('home') }}#games" class="hidden md:flex items-center gap-2 bg-primary hover:bg-primary/90 px-6 py-2 rounded-full text-white font-semibold text-sm transition-colors">
+                    <span>Beli Sekarang</span>
+                    <i class="fas fa-arrow-right text-xs"></i>
+                </a>
             </div>
         </div>
     </header>
@@ -376,206 +384,10 @@
     </footer>
     
     <!-- Shopping Cart Drawer -->
-    <div x-cloak x-show="openCart" class="fixed inset-0 z-50 overflow-hidden" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
-        <div class="absolute inset-0 overflow-hidden">
-            <!-- Background Backdrop -->
-            <div x-show="openCart" x-transition:enter="ease-in-out duration-500" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in-out duration-500" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click="openCart = false" class="absolute inset-0 bg-bg-dark/70 backdrop-blur-sm transition-opacity"></div>
-            
-            <!-- Drawer Container -->
-            <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
-                <div x-show="openCart" x-transition:enter="transform transition ease-in-out duration-500 sm:duration-700" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0" x-transition:leave="transform transition ease-in-out duration-500 sm:duration-700" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full" class="pointer-events-auto w-screen max-w-md">
-                    <div class="flex h-full flex-col overflow-y-scroll bg-[#0b0f19] border-l border-white/10 shadow-2xl">
-                        <!-- Drawer Header -->
-                        <div class="flex items-center justify-between px-6 py-6 border-b border-white/10 bg-[#090d16]">
-                            <h2 class="text-lg font-bold text-white flex items-center gap-2">
-                                <i class="fas fa-shopping-cart text-primary"></i>
-                                Keranjang Belanja
-                            </h2>
-                            <button @click="openCart = false" class="p-2 rounded-lg bg-bg-card hover:bg-[#1a2030] text-gray-400 hover:text-white transition-colors cursor-pointer border border-white/10">
-                                <i class="fas fa-times text-lg"></i>
-                            </button>
-                        </div>
-                        
-                        <!-- Drawer Body -->
-                        <div class="flex-1 py-6 overflow-y-auto px-6 space-y-4">
-                            <!-- Empty Cart State -->
-                            <template x-if="cart.length === 0">
-                                <div class="h-full flex flex-col items-center justify-center text-center py-12">
-                                    <div class="w-16 h-16 rounded-full bg-bg-card border border-white/10 flex items-center justify-center mb-4 text-gray-600">
-                                        <i class="fas fa-shopping-bag text-3xl"></i>
-                                    </div>
-                                    <h3 class="text-sm font-semibold text-gray-300">Keranjang Kosong</h3>
-                                    <p class="mt-1 text-xs text-gray-500 max-w-[240px]">Belum ada produk yang ditambahkan. Silakan pilih produk game Anda terlebih dahulu.</p>
-                                    <a @click="openCart = false" href="{{ route('home') }}#games" class="mt-6 inline-flex items-center justify-center btn-primary text-white font-semibold text-xs py-2.5 px-6 rounded-xl transition-all cursor-pointer">
-                                        Lihat Produk Game
-                                    </a>
-                                </div>
-                            </template>
-                            
-                            <!-- Cart Items List -->
-                            <template x-if="cart.length > 0">
-                                <div class="space-y-4">
-                                    <template x-for="(item, index) in cart" :key="index">
-                                        <div class="bg-bg-card/60 border border-white/10 rounded-2xl p-4 flex gap-4 relative overflow-hidden">
-                                            <!-- Remove Item Button -->
-                                            <button @click="removeItem(index)" class="absolute top-2 right-2 p-1.5 rounded-lg bg-red-950/20 text-red-400 hover:bg-red-950/60 hover:text-red-300 transition-colors border border-red-900/10 cursor-pointer">
-                                                <i class="fas fa-trash text-sm"></i>
-                                            </button>
-                                            
-                                            <!-- Content -->
-                                            <div class="flex-grow space-y-2">
-                                                <div class="pr-6">
-                                                    <h4 class="text-sm font-bold text-white" x-text="item.gameName"></h4>
-                                                    <p class="text-xs text-gray-400" x-text="item.productName"></p>
-                                                </div>
-                                                
-                                                <!-- Order Meta -->
-                                                <div class="grid grid-cols-2 gap-x-2 gap-y-1 bg-bg-dark/50 rounded-lg p-2 text-[10px] text-gray-400">
-                                                    <div>Username: <span class="text-gray-200 font-medium" x-text="item.username"></span></div>
-                                                    <div>UID: <span class="text-gray-200 font-medium" x-text="item.uid"></span></div>
-                                                    <template x-if="item.server">
-                                                        <div class="col-span-2">Server: <span class="text-gray-200 font-medium" x-text="item.server"></span></div>
-                                                    </template>
-                                                </div>
-                                                
-                                                <!-- Price & Qty Actions -->
-                                                <div class="flex items-center justify-between pt-2">
-                                                    <span class="text-xs font-semibold text-primary" x-text="formatRupiah(item.price * item.quantity)"></span>
-                                                    
-                                                    <!-- Quantity Control -->
-                                                    <div class="flex items-center gap-1 bg-bg-dark rounded-lg p-1 border border-white/10">
-                                                        <button @click="updateQty(index, -1)" class="w-6 h-6 flex items-center justify-center rounded bg-bg-card hover:bg-[#1a2030] text-gray-400 hover:text-white transition-all text-xs font-bold cursor-pointer">-</button>
-                                                        <span class="w-6 text-center text-xs font-bold text-white" x-text="item.quantity"></span>
-                                                        <button @click="updateQty(index, 1)" class="w-6 h-6 flex items-center justify-center rounded bg-bg-card hover:bg-[#1a2030] text-gray-400 hover:text-white transition-all text-xs font-bold cursor-pointer">+</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </template>
-                                </div>
-                            </template>
-                        </div>
-                        
-                        <!-- Drawer Footer -->
-                        <template x-if="cart.length > 0">
-                            <div class="border-t border-white/10 bg-[#090d16] px-6 py-6 space-y-6">
-                                <div class="flex justify-between items-center text-sm">
-                                    <span class="text-gray-400 font-medium">Total Harga</span>
-                                    <span class="text-lg font-bold text-white" x-text="formatRupiah(cartTotalSum())"></span>
-                                </div>
-                                <button @click="checkoutWhatsApp()" class="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 px-6 rounded-2xl transition-all shadow-lg shadow-emerald-600/10 cursor-pointer">
-                                    <i class="fab fa-whatsapp text-xl"></i>
-                                    Checkout via WhatsApp
-                                </button>
-                            </div>
-                        </template>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- REMOVED: Cart functionality no longer needed -->
     
     <!-- Scripts -->
     <script>
-        function cartHandler() {
-            return {
-                cart: [],
-                openCart: false,
-                storeWhatsapp: '{{ preg_replace('/[^0-9]/', '', $setting->whatsapp ?? '') }}',
-                storeName: '{{ $setting->store_name ?? 'Gamestore' }}',
-                
-                initCart() {
-                    let savedCart = localStorage.getItem('gamestore_cart');
-                    if (savedCart) {
-                        try {
-                            this.cart = JSON.parse(savedCart);
-                        } catch(e) {
-                            this.cart = [];
-                        }
-                    }
-                    this.$watch('cart', value => {
-                        localStorage.setItem('gamestore_cart', JSON.stringify(value));
-                    });
-                },
-                
-                addToCart(item) {
-                    let existingIndex = this.cart.findIndex(i => 
-                        i.productId === item.productId && 
-                        i.username === item.username && 
-                        i.uid === item.uid && 
-                        i.server === item.server
-                    );
-                    
-                    if (existingIndex !== -1) {
-                        this.cart[existingIndex].quantity += item.quantity;
-                    } else {
-                        this.cart.push(item);
-                    }
-                    
-                    this.openCart = true;
-                },
-                
-                removeItem(index) {
-                    this.cart.splice(index, 1);
-                },
-                
-                updateQty(index, delta) {
-                    let newQty = this.cart[index].quantity + delta;
-                    if (newQty > 0) {
-                        this.cart[index].quantity = newQty;
-                    } else {
-                        this.removeItem(index);
-                    }
-                },
-                
-                cartTotalQuantity() {
-                    return this.cart.reduce((sum, item) => sum + item.quantity, 0);
-                },
-                
-                cartTotalSum() {
-                    return this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-                },
-                
-                formatRupiah(number) {
-                    return new Intl.NumberFormat('id-ID', {
-                        style: 'currency',
-                        currency: 'IDR',
-                        minimumFractionDigits: 0,
-                        maximumFractionDigits: 0
-                    }).format(number);
-                },
-                
-                checkoutWhatsApp() {
-                    if (this.cart.length === 0) return;
-                    
-                    let message = `*PESANAN BARU - ${this.storeName.toUpperCase()}*\n`;
-                    message += `=================================\n`;
-                    message += `*Detail Pesanan:*\n\n`;
-                    
-                    this.cart.forEach((item, index) => {
-                        let idx = index + 1;
-                        message += `${idx}. *${item.gameName}*\n`;
-                        message += `   - Item: ${item.productName} (x${item.quantity})\n`;
-                        message += `   - Username: *${item.username}*\n`;
-                        message += `   - UID / ID Game: *${item.uid}*\n`;
-                        if (item.server) {
-                            message += `   - Server: *${item.server}*\n`;
-                        }
-                        message += `   - Harga: ${this.formatRupiah(item.price)}\n`;
-                        message += `   - Subtotal: ${this.formatRupiah(item.price * item.quantity)}\n\n`;
-                    });
-                    
-                    message += `=================================\n`;
-                    message += `*TOTAL TAGIHAN: ${this.formatRupiah(this.cartTotalSum())}*\n`;
-                    message += `=================================\n\n`;
-                    message += `Mohon segera diproses dan kirimkan instruksi pembayarannya. Terima kasih!`;
-                    
-                    let url = `https://wa.me/${this.storeWhatsapp}?text=${encodeURIComponent(message)}`;
-                    window.open(url, '_blank');
-                }
-            };
-        }
-        
         // Scroll Animation Observer
         document.addEventListener('DOMContentLoaded', function() {
             const observerOptions = {
@@ -597,6 +409,127 @@
             const animatedElements = document.querySelectorAll('.animate-on-scroll, .stagger-animation, .fade-in-left, .fade-in-right, .scale-in');
             animatedElements.forEach(el => observer.observe(el));
         });
+    </script>
+
+    <!-- Game Filter & Carousel Script -->
+    <script>
+        function gameFilter() {
+            return {
+                selectedCategory: 'all',
+                
+                filterGames() {
+                    const gameItems = document.querySelectorAll('.game-item');
+                    
+                    gameItems.forEach(item => {
+                        const categories = JSON.parse(item.dataset.categories);
+                        const isVisible = this.selectedCategory === 'all' || categories.includes(parseInt(this.selectedCategory));
+                        
+                        if (isVisible) {
+                            item.classList.remove('hidden', 'opacity-0');
+                            item.classList.add('animate-fadeIn');
+                        } else {
+                            item.classList.add('hidden', 'opacity-0');
+                        }
+                    });
+                }
+            };
+        }
+        
+        function gameCarousel() {
+            return {
+                currentPage: 0,
+                totalPages: Math.ceil(document.querySelectorAll('.game-item').length / 4) || 1,
+                touchStartX: 0,
+                wheelTimeout: null,
+                
+                nextPage() {
+                    if (this.currentPage < this.totalPages - 1) {
+                        this.currentPage++;
+                    }
+                },
+                
+                prevPage() {
+                    if (this.currentPage > 0) {
+                        this.currentPage--;
+                    }
+                },
+                
+                touchStart(event) {
+                    this.touchStartX = event.touches[0].clientX;
+                },
+                
+                touchEnd(event) {
+                    const touchEndX = event.changedTouches[0].clientX;
+                    const difference = this.touchStartX - touchEndX;
+                    
+                    if (difference > 50) {
+                        this.nextPage();
+                    } else if (difference < -50) {
+                        this.prevPage();
+                    }
+                },
+                
+                handleWheel(event) {
+                    event.preventDefault();
+                    
+                    // Debounce wheel events
+                    if (this.wheelTimeout) {
+                        clearTimeout(this.wheelTimeout);
+                    }
+                    
+                    this.wheelTimeout = setTimeout(() => {
+                        if (event.deltaY > 0) {
+                            this.nextPage();
+                        } else if (event.deltaY < 0) {
+                            this.prevPage();
+                        }
+                    }, 100);
+                }
+            };
+        }
+        
+        function gameSearchFilter() {
+            return {
+                searchQuery: '',
+                
+                filterBySearch() {
+                    const gameItems = document.querySelectorAll('.game-item');
+                    const query = this.searchQuery.toLowerCase();
+                    
+                    gameItems.forEach(item => {
+                        const gameName = item.querySelector('h3').textContent.toLowerCase();
+                        const gameDesc = item.querySelector('p').textContent.toLowerCase();
+                        const isVisible = gameName.includes(query) || gameDesc.includes(query) || query === '';
+                        
+                        if (isVisible) {
+                            item.classList.remove('hidden', 'opacity-0');
+                            item.classList.add('animate-fadeIn');
+                        } else {
+                            item.classList.add('hidden', 'opacity-0');
+                        }
+                    });
+                }
+            };
+        }
+        
+        // Add fadeIn animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: scale(0.95);
+                }
+                to {
+                    opacity: 1;
+                    transform: scale(1);
+                }
+            }
+            .animate-fadeIn {
+                animation: fadeIn 0.3s ease-out;
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>

@@ -21,12 +21,14 @@ class LandingController extends Controller
             $banners = $this->gameService->getActiveBanners();
             $setting = $this->gameService->getSettings();
             $testimonials = $this->gameService->getActiveTestimonials();
+            $categories = $this->gameService->getActiveCategories();
 
             return view('landing.index', compact(
                 'games', 
                 'banners', 
                 'setting', 
-                'testimonials'
+                'testimonials',
+                'categories'
             ));
 
         } catch (\Exception $e) {
@@ -37,7 +39,8 @@ class LandingController extends Controller
                 'games' => collect([]),
                 'banners' => collect([]),
                 'setting' => new Setting(),
-                'testimonials' => collect([])
+                'testimonials' => collect([]),
+                'categories' => collect([])
             ]);
         }
     }
