@@ -128,7 +128,7 @@
 
                         <!-- UID -->
                         <div class="space-y-2">
-                            <label class="block text-xs font-bold text-gray-300 uppercase tracking-wider">UID / Player ID</label>
+                            <label class="block text-xs font-bold text-gray-300 uppercase tracking-wider">UID / Player ID <span class="text-gray-500 text-[10px] lowercase font-normal">(opsional)</span></label>
                             <input x-model="uid" type="text" placeholder="Masukkan UID" class="w-full bg-bg-dark border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-primary transition-colors">
                         </div>
 
@@ -169,6 +169,55 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Other Games Section -->
+                @if($otherGames->count() > 0)
+                <div class="bg-bg-card border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl">
+                    <h3 class="text-lg font-heading font-bold text-white flex items-center gap-3 mb-6">
+                        <i class="fas fa-gamepad text-primary text-base"></i>
+                        Pilih Game Lainnya
+                        <a href="{{ route('home') }}#games" class="ml-auto text-[10px] font-semibold text-primary/70 hover:text-primary uppercase tracking-wider transition-colors">
+                            Lihat Semua →
+                        </a>
+                    </h3>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        @foreach($otherGames as $otherGame)
+                        <a href="{{ route('game.show', $otherGame->slug) }}"
+                           class="group relative flex flex-col items-center gap-3 bg-bg-dark border border-white/8 hover:border-primary/40 rounded-2xl p-4 transition-all duration-200 hover:bg-primary/5 overflow-hidden">
+
+                            {{-- Subtle glow on hover --}}
+                            <div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl pointer-events-none"></div>
+
+                            {{-- Banner / Thumbnail --}}
+                            <div class="w-full h-20 rounded-xl overflow-hidden relative shrink-0">
+                                @if($otherGame->banner && file_exists(public_path('img/' . $otherGame->banner)))
+                                    <img src="{{ asset('img/' . $otherGame->banner) }}"
+                                         alt="{{ $otherGame->name }}"
+                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                @else
+                                    <div class="w-full h-full bg-gradient-to-br from-primary/30 to-blue-900/40 flex items-center justify-center">
+                                        <i class="fas fa-gamepad text-primary/60 text-2xl"></i>
+                                    </div>
+                                @endif
+                                {{-- Dark overlay gradient --}}
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                            </div>
+
+                            {{-- Game Name --}}
+                            <span class="text-[11px] font-bold text-gray-300 group-hover:text-white text-center line-clamp-2 leading-tight transition-colors w-full relative z-10">
+                                {{ $otherGame->name }}
+                            </span>
+
+                            {{-- Product Count Badge --}}
+                            <span class="text-[10px] text-primary/70 font-semibold relative z-10">
+                                {{ $otherGame->products->count() }} Produk
+                            </span>
+                        </a>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
             </div>
         </div>
     </div>
@@ -221,10 +270,6 @@
                     this.validationError = 'Silakan masukkan Username Karakter Anda.';
                     return;
                 }
-                if (!this.uid.trim()) {
-                    this.validationError = 'Silakan masukkan UID / Player ID Anda.';
-                    return;
-                }
 
                 this.validationError = '';
 
@@ -235,7 +280,7 @@
                     productName: this.selectedProduct.name,
                     price: this.selectedProduct.price,
                     username: this.username.trim(),
-                    uid: this.uid.trim(),
+                    uid: this.uid.trim() || '-',
                     server: this.server.trim(),
                     quantity: this.quantity
                 });
@@ -250,10 +295,6 @@
                     this.validationError = 'Silakan masukkan Username Karakter Anda.';
                     return;
                 }
-                if (!this.uid.trim()) {
-                    this.validationError = 'Silakan masukkan UID / Player ID Anda.';
-                    return;
-                }
 
                 this.validationError = '';
 
@@ -266,7 +307,9 @@
                 msg += `*Item:* ${this.selectedProduct.name} (x${this.quantity})\n`;
                 msg += `\n*Data Akun:*\n`;
                 msg += `• Username: *${this.username.trim()}*\n`;
-                msg += `• UID / ID Game: *${this.uid.trim()}*\n`;
+                if (this.uid.trim()) {
+                    msg += `• UID / ID Game: *${this.uid.trim()}*\n`;
+                }
                 if (this.server.trim()) {
                     msg += `• Server: *${this.server.trim()}*\n`;
                 }

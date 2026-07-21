@@ -53,8 +53,12 @@ class LandingController extends Controller
         try {
             $game = $this->gameService->getGameBySlug($slug);
             $setting = $this->gameService->getSettings();
+            $otherGames = $this->gameService->getActiveGamesWithProducts()
+                ->where('id', '!=', $game->id)
+                ->take(6)
+                ->values();
 
-            return view('landing.game', compact('game', 'setting'));
+            return view('landing.game', compact('game', 'setting', 'otherGames'));
 
         } catch (\Exception $e) {
             Log::error("Game detail error for slug {$slug}: " . $e->getMessage());
@@ -115,7 +119,7 @@ class LandingController extends Controller
     }
 
     /**
-     * Get site settings untuk AJAX calls
+     * Get site settings untuk AJAX calls — hanya field non-sensitif
      */
     public function getSiteSettings()
     {
@@ -124,9 +128,7 @@ class LandingController extends Controller
 
             return response()->json([
                 'store_name' => $setting->store_name,
-                'whatsapp' => $setting->whatsapp,
-                'instagram' => $setting->instagram,
-                'facebook' => $setting->facebook,
+                // Nomor WA tidak diekspos ke publik
             ]);
 
         } catch (\Exception $e) {

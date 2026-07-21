@@ -137,6 +137,80 @@
                 </div>
             </div>
 
+            {{-- WhatsApp Templates --}}
+            <div class="admin-form-card p-6 space-y-5">
+                <h3 class="text-sm font-bold text-white flex items-center gap-2 border-b border-watt-border pb-4">
+                    <i data-lucide="message-circle" class="w-4 h-4 text-watt-cyan"></i>
+                    Template Pesan WhatsApp
+                </h3>
+
+                <div class="space-y-1.5">
+                    <label class="admin-field-label">Template: 1 Item</label>
+                    <textarea name="whatsapp_template_single" rows="5" placeholder="*PESANAN - @{{STORE_NAME}}*
+=================================
+*Item yang dipesan:*
+
+*Nama Game:* @{{GAME_NAME}}
+*Produk:* @{{PRODUCT_NAME}}
+*Username:* @{{USERNAME}}
+*UID:* @{{UID}}
+*Harga:* @{{PRICE}}
+
+=================================
+*TOTAL: @{{TOTAL}}*
+
+Terima kasih sudah berbelanja!"
+                        class="admin-textarea text-[11px] font-mono">{{ old('whatsapp_template_single', $setting->whatsapp_template_single) }}</textarea>
+                    
+                    <div class="flex flex-wrap gap-1.5 mt-2 bg-watt-bg/50 border border-watt-border/50 p-2.5 rounded-xl">
+                        <span class="text-[10px] text-watt-text-sec w-full mb-1">Klik untuk memasukkan tag di posisi kursor:</span>
+                        <button type="button" onclick="insertTag('whatsapp_template_single', '@{{STORE_NAME}}')" class="px-2 py-1 text-[10px] bg-watt-bg border border-watt-border rounded-lg text-watt-cyan hover:bg-watt-border transition cursor-pointer font-mono font-bold">+ @{{STORE_NAME}}</button>
+                        <button type="button" onclick="insertTag('whatsapp_template_single', '@{{GAME_NAME}}')" class="px-2 py-1 text-[10px] bg-watt-bg border border-watt-border rounded-lg text-watt-cyan hover:bg-watt-border transition cursor-pointer font-mono font-bold">+ @{{GAME_NAME}}</button>
+                        <button type="button" onclick="insertTag('whatsapp_template_single', '@{{PRODUCT_NAME}}')" class="px-2 py-1 text-[10px] bg-watt-bg border border-watt-border rounded-lg text-watt-cyan hover:bg-watt-border transition cursor-pointer font-mono font-bold">+ @{{PRODUCT_NAME}}</button>
+                        <button type="button" onclick="insertTag('whatsapp_template_single', '@{{USERNAME}}')" class="px-2 py-1 text-[10px] bg-watt-bg border border-watt-border rounded-lg text-watt-cyan hover:bg-watt-border transition cursor-pointer font-mono font-bold">+ @{{USERNAME}}</button>
+                        <button type="button" onclick="insertTag('whatsapp_template_single', '@{{UID}}')" class="px-2 py-1 text-[10px] bg-watt-bg border border-watt-border rounded-lg text-watt-cyan hover:bg-watt-border transition cursor-pointer font-mono font-bold">+ @{{UID}}</button>
+                        <button type="button" onclick="insertTag('whatsapp_template_single', '@{{PRICE}}')" class="px-2 py-1 text-[10px] bg-watt-bg border border-watt-border rounded-lg text-watt-cyan hover:bg-watt-border transition cursor-pointer font-mono font-bold">+ @{{PRICE}}</button>
+                        <button type="button" onclick="insertTag('whatsapp_template_single', '@{{TOTAL}}')" class="px-2 py-1 text-[10px] bg-watt-bg border border-watt-border rounded-lg text-watt-cyan hover:bg-watt-border transition cursor-pointer font-mono font-bold">+ @{{TOTAL}}</button>
+                    </div>
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="admin-field-label">Template: Multiple Items</label>
+                    <textarea name="whatsapp_template_multiple" rows="5" placeholder="*PESANAN MULTI ITEM - @{{STORE_NAME}}*
+=================================
+*Detail Pesanan:*
+
+@{{ITEMS}}
+
+=================================
+*TOTAL PEMBAYARAN: @{{TOTAL}}*
+=================================
+
+Mohon segera diproses pesanan ini. Terima kasih!"
+                        class="admin-textarea text-[11px] font-mono">{{ old('whatsapp_template_multiple', $setting->whatsapp_template_multiple) }}</textarea>
+                    
+                    <div class="flex flex-wrap gap-1.5 mt-2 bg-watt-bg/50 border border-watt-border/50 p-2.5 rounded-xl">
+                        <span class="text-[10px] text-watt-text-sec w-full mb-1">Klik untuk memasukkan tag di posisi kursor:</span>
+                        <button type="button" onclick="insertTag('whatsapp_template_multiple', '@{{STORE_NAME}}')" class="px-2 py-1 text-[10px] bg-watt-bg border border-watt-border rounded-lg text-watt-cyan hover:bg-watt-border transition cursor-pointer font-mono font-bold">+ @{{STORE_NAME}}</button>
+                        <button type="button" onclick="insertTag('whatsapp_template_multiple', '@{{ITEMS}}')" class="px-2 py-1 text-[10px] bg-watt-bg border border-watt-border rounded-lg text-watt-cyan hover:bg-watt-border transition cursor-pointer font-mono font-bold">+ @{{ITEMS}}</button>
+                        <button type="button" onclick="insertTag('whatsapp_template_multiple', '@{{TOTAL}}')" class="px-2 py-1 text-[10px] bg-watt-bg border border-watt-border rounded-lg text-watt-cyan hover:bg-watt-border transition cursor-pointer font-mono font-bold">+ @{{TOTAL}}</button>
+                    </div>
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="admin-field-label">Template: Hubungi Admin</label>
+                    <textarea name="whatsapp_contact_template" rows="4" placeholder="Halo @{{STORE_NAME}}, saya ingin bertanya tentang produk Anda.
+
+Mohon bantu saya. Terima kasih! 🙏"
+                        class="admin-textarea text-[11px] font-mono">{{ old('whatsapp_contact_template', $setting->whatsapp_contact_template) }}</textarea>
+                    
+                    <div class="flex flex-wrap gap-1.5 mt-2 bg-watt-bg/50 border border-watt-border/50 p-2.5 rounded-xl">
+                        <span class="text-[10px] text-watt-text-sec w-full mb-1">Klik untuk memasukkan tag di posisi kursor:</span>
+                        <button type="button" onclick="insertTag('whatsapp_contact_template', '@{{STORE_NAME}}')" class="px-2 py-1 text-[10px] bg-watt-bg border border-watt-border rounded-lg text-watt-cyan hover:bg-watt-border transition cursor-pointer font-mono font-bold">+ @{{STORE_NAME}}</button>
+                    </div>
+                </div>
+            </div>
+
             {{-- Cara Order --}}
             <div class="admin-form-card p-6 space-y-5">
                 <h3 class="text-sm font-bold text-white flex items-center gap-2 border-b border-watt-border pb-4">
@@ -161,8 +235,22 @@
 
     </div>
 </form>
+
+<script>
+    function insertTag(textareaName, tag) {
+        const textarea = document.querySelector(`textarea[name="${textareaName}"]`);
+        if (!textarea) return;
+        
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const text = textarea.value;
+        
+        // Insert tag at cursor position
+        textarea.value = text.substring(0, start) + tag + text.substring(end);
+        
+        // Focus and put cursor right after the inserted tag
+        textarea.focus();
+        textarea.selectionStart = textarea.selectionEnd = start + tag.length;
+    }
+</script>
 @endsection
-
-
-
-

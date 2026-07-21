@@ -237,15 +237,15 @@
     
     <!-- Floating WhatsApp Button -->
     @if($setting->whatsapp)
-    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $setting->whatsapp) }}?text=Halo%20{{ urlencode($setting->store_name ?? 'Gamestore') }}"
+    <button @click="contactAdmin()"
        class="whatsapp-float fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full flex items-center justify-center text-white text-3xl group"
-       target="_blank" rel="noopener noreferrer">
+       type="button">
         <i class="fab fa-whatsapp"></i>
         <!-- Tooltip -->
         <span class="whatsapp-tooltip absolute right-full mr-4 top-1/2 -translate-y-1/2 bg-white text-gray-800 px-4 py-2.5 rounded-lg text-sm font-semibold whitespace-nowrap shadow-xl">
             Hubungi Admin
         </span>
-    </a>
+    </button>
     @endif
     
     <!-- Header -->
@@ -269,7 +269,7 @@
             <!-- Actions -->
             <div class="flex items-center gap-4">
                 <!-- Cart Button -->
-                <button @click="$dispatch('toggle-cart')" class="relative bg-white/5 hover:bg-white/10 border border-white/10 w-10 h-10 rounded-full flex items-center justify-center text-gray-300 hover:text-white transition-all cursor-pointer">
+                <button @click.stop="$dispatch('toggle-cart')" class="relative bg-white/5 hover:bg-white/10 border border-white/10 w-10 h-10 rounded-full flex items-center justify-center text-gray-300 hover:text-white transition-all cursor-pointer">
                     <i class="fas fa-shopping-cart text-sm"></i>
                     <span x-show="cartCount > 0" x-text="cartCount" class="absolute -top-1 -right-1 bg-primary text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-bg-dark shadow-sm"></span>
                 </button>
@@ -395,7 +395,7 @@
          style="display: none;">
         
         <!-- Backdrop overlay -->
-        <div @click="isCartOpen = false" class="absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity"></div>
+        <div @click.stop="isCartOpen = false" class="absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity"></div>
 
         <div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
             <div x-show="isCartOpen"
@@ -418,7 +418,7 @@
                             <p class="text-xs text-gray-400" x-text="cartCount + ' Item Dipilih'"></p>
                         </div>
                     </div>
-                    <button @click="isCartOpen = false" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer">
+                    <button @click.stop="isCartOpen = false" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer">
                         <i class="fas fa-times text-sm"></i>
                     </button>
                 </div>
@@ -544,54 +544,47 @@
             };
         }
         
-        function gameCarousel() {
+        function gameCarouselMobile() {
             return {
                 currentPage: 0,
-                totalPages: Math.ceil(document.querySelectorAll('.game-item').length / 4) || 1,
+                totalPages: {{ $games->count() }},
                 touchStartX: 0,
-                wheelTimeout: null,
-                
+
                 nextPage() {
-                    if (this.currentPage < this.totalPages - 1) {
-                        this.currentPage++;
-                    }
+                    if (this.currentPage < this.totalPages - 1) this.currentPage++;
                 },
-                
                 prevPage() {
-                    if (this.currentPage > 0) {
-                        this.currentPage--;
-                    }
+                    if (this.currentPage > 0) this.currentPage--;
                 },
-                
                 touchStart(event) {
                     this.touchStartX = event.touches[0].clientX;
                 },
-                
                 touchEnd(event) {
-                    const touchEndX = event.changedTouches[0].clientX;
-                    const difference = this.touchStartX - touchEndX;
-                    
-                    if (difference > 50) {
-                        this.nextPage();
-                    } else if (difference < -50) {
-                        this.prevPage();
-                    }
+                    const diff = this.touchStartX - event.changedTouches[0].clientX;
+                    if (diff > 50) this.nextPage();
+                    else if (diff < -50) this.prevPage();
+                }
+            };
+        }
+
+        function gameCarouselDesktop() {
+            return {
+                currentPage: 0,
+                totalPages: {{ $games->chunk(4)->count() }},
+                wheelTimeout: null,
+
+                nextPage() {
+                    if (this.currentPage < this.totalPages - 1) this.currentPage++;
                 },
-                
+                prevPage() {
+                    if (this.currentPage > 0) this.currentPage--;
+                },
                 handleWheel(event) {
                     event.preventDefault();
-                    
-                    // Debounce wheel events
-                    if (this.wheelTimeout) {
-                        clearTimeout(this.wheelTimeout);
-                    }
-                    
+                    if (this.wheelTimeout) clearTimeout(this.wheelTimeout);
                     this.wheelTimeout = setTimeout(() => {
-                        if (event.deltaY > 0) {
-                            this.nextPage();
-                        } else if (event.deltaY < 0) {
-                            this.prevPage();
-                        }
+                        if (event.deltaY > 0) this.nextPage();
+                        else if (event.deltaY < 0) this.prevPage();
                     }, 100);
                 }
             };
@@ -698,27 +691,83 @@
                     }).format(number);
                 },
 
+                replaceTemplate(text, replacements) {
+                    let formatted = text;
+                    for (const [key, value] of Object.entries(replacements)) {
+                        const regex = new RegExp('(?:\\{\\{\\s*|\\{\\s*|\\[\\s*)' + key + '(?:\\s*\\}\\}|\\s*\\}|\\s*\\])', 'gi');
+                        formatted = formatted.replace(regex, value);
+                    }
+                    return formatted;
+                },
+
                 checkoutWhatsApp() {
                     if (this.cartItems.length === 0) return;
 
-                    let msg = `*PESANAN MULTI ITEM (KERANJANG)*\n`;
-                    msg += `=================================\n\n`;
+                    let msg;
 
-                    this.cartItems.forEach((item, index) => {
-                        let totalItem = this.formatRupiah(item.price * item.quantity);
-                        msg += `*${index + 1}. ${item.gameName}*\n`;
-                        msg += `• Produk: *${item.productName}*\n`;
-                        msg += `• Username: *${item.username}*\n`;
-                        msg += `• UID/ID: *${item.uid}*\n`;
-                        if (item.server) msg += `• Server: *${item.server}*\n`;
-                        msg += `• Jumlah: ${item.quantity}x @ ${this.formatRupiah(item.price)}\n`;
-                        msg += `• Subtotal: *${totalItem}*\n\n`;
-                    });
+                    if (this.cartItems.length === 1) {
+                        // Single item template
+                        const item = this.cartItems[0];
+                        const templateSingle = `{{ $setting->whatsapp_template_single ?? '' }}`;
+                        const storeName = '{{ $setting->store_name }}' || 'Gamestore';
+                        
+                        if (templateSingle) {
+                            msg = this.replaceTemplate(templateSingle, {
+                                'STORE_NAME': storeName,
+                                'GAME_NAME': item.gameName,
+                                'PRODUCT_NAME': item.productName,
+                                'USERNAME': item.username,
+                                'UID': item.uid,
+                                'PRICE': this.formatRupiah(item.price * item.quantity),
+                                'TOTAL': this.formatRupiah(item.price * item.quantity)
+                            });
+                        } else {
+                            // Fallback default template for single item
+                            msg = `*PESANAN - ${storeName}*\n`;
+                            msg += `=================================\n\n`;
+                            msg += `*${item.gameName}*\n`;
+                            msg += `• Produk: *${item.productName}*\n`;
+                            msg += `• Username: *${item.username}*\n`;
+                            msg += `• UID/ID: *${item.uid}*\n`;
+                            msg += `• Jumlah: ${item.quantity}x\n`;
+                            msg += `• Harga: ${this.formatRupiah(item.price)}\n\n`;
+                            msg += `=================================\n`;
+                            msg += `*TOTAL: ${this.formatRupiah(item.price * item.quantity)}*\n`;
+                            msg += `=================================\n\n`;
+                            msg += `Terima kasih! 🙏`;
+                        }
+                    } else {
+                        // Multiple items template
+                        const templateMultiple = `{{ $setting->whatsapp_template_multiple ?? '' }}`;
+                        const storeName = '{{ $setting->store_name }}' || 'Gamestore';
+                        
+                        let itemsMsg = '';
+                        this.cartItems.forEach((item, index) => {
+                            itemsMsg += `*${index + 1}. ${item.gameName}*\n`;
+                            itemsMsg += `   - Produk: ${item.productName}\n`;
+                            itemsMsg += `   - Username: *${item.username}*\n`;
+                            itemsMsg += `   - UID/ID: *${item.uid}*\n`;
+                            itemsMsg += `   - Jumlah: ${item.quantity}x @ ${this.formatRupiah(item.price)}\n`;
+                            itemsMsg += `   - Subtotal: *${this.formatRupiah(item.price * item.quantity)}*\n\n`;
+                        });
 
-                    msg += `=================================\n`;
-                    msg += `*TOTAL PEMBAYARAN: ${this.formatRupiah(this.cartTotal)}*\n`;
-                    msg += `=================================\n\n`;
-                    msg += `Mohon segera diproses pesanan ini. Terima kasih! 🙏`;
+                        if (templateMultiple) {
+                            msg = this.replaceTemplate(templateMultiple, {
+                                'STORE_NAME': storeName,
+                                'ITEMS': itemsMsg,
+                                'TOTAL': this.formatRupiah(this.cartTotal)
+                            });
+                        } else {
+                            // Fallback default template for multiple items
+                            msg = `*PESANAN MULTI ITEM (KERANJANG)*\n`;
+                            msg += `=================================\n\n`;
+                            msg += itemsMsg;
+                            msg += `=================================\n`;
+                            msg += `*TOTAL PEMBAYARAN: ${this.formatRupiah(this.cartTotal)}*\n`;
+                            msg += `=================================\n\n`;
+                            msg += `Mohon segera diproses pesanan ini. Terima kasih! 🙏`;
+                        }
+                    }
 
                     // Log click
                     fetch('/log-click', {
@@ -729,6 +778,24 @@
                             'Content-Type': 'application/json'
                         }
                     }).catch(err => console.error('Click log failed', err));
+
+                    let url = `https://wa.me/${this.waNumber}?text=${encodeURIComponent(msg)}`;
+                    window.open(url, '_blank');
+                },
+
+                contactAdmin() {
+                    const template = `{{ $setting->whatsapp_contact_template ?? '' }}`;
+                    const storeName = '{{ $setting->store_name }}' || 'Gamestore';
+                    
+                    let msg;
+                    if (template) {
+                        msg = this.replaceTemplate(template, {
+                            'STORE_NAME': storeName
+                        });
+                    } else {
+                        // Fallback default contact message
+                        msg = `Halo ${storeName}, saya ingin bertanya tentang produk Anda.\n\nMohon bantu saya. Terima kasih! 🙏`;
+                    }
 
                     let url = `https://wa.me/${this.waNumber}?text=${encodeURIComponent(msg)}`;
                     window.open(url, '_blank');

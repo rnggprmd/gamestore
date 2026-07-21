@@ -63,7 +63,7 @@ class CategoryController extends Controller
             $validated = $request->validate([
                 'name' => 'required|string|max:255|unique:categories,name',
                 'slug' => 'nullable|string|max:255|unique:categories,slug',
-                'description' => 'nullable|string',
+                'description' => 'nullable|string|max:2000',
                 'status' => 'boolean',
             ]);
 
@@ -88,17 +88,22 @@ class CategoryController extends Controller
             $this->gameService->clearCache();
 
             if ($request->has('_form_type')) {
-                // Store form type for modal reopening on validation errors
                 session()->flash('_form_type', $request->_form_type);
             }
 
             return redirect()->route('admin.categories.index')->with('success', 'Kategori berhasil ditambahkan.');
 
-        } catch (\Exception $e) {
+        } catch (\Illuminate\Validation\ValidationException $e) {
             if ($request->has('_form_type')) {
                 session()->flash('_form_type', $request->_form_type);
             }
-            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage())->withInput();
+            return back()->withErrors($e->errors())->withInput();
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Category store error: ' . $e->getMessage());
+            if ($request->has('_form_type')) {
+                session()->flash('_form_type', $request->_form_type);
+            }
+            return back()->with('error', 'Terjadi kesalahan, silakan coba lagi.')->withInput();
         }
     }
 
@@ -113,7 +118,7 @@ class CategoryController extends Controller
             $validated = $request->validate([
                 'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
                 'slug' => 'nullable|string|max:255|unique:categories,slug,' . $category->id,
-                'description' => 'nullable|string',
+                'description' => 'nullable|string|max:2000',
                 'status' => 'boolean',
             ]);
 
@@ -144,19 +149,25 @@ class CategoryController extends Controller
 
             return redirect()->route('admin.categories.index')->with('success', 'Kategori berhasil diperbarui.');
 
-        } catch (\Exception $e) {
+        } catch (\Illuminate\Validation\ValidationException $e) {
             if ($request->has('_form_type')) {
                 session()->flash('_form_type', $request->_form_type);
                 session()->flash('_edit_id', $category->id);
             }
-            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage())->withInput();
+            return back()->withErrors($e->errors())->withInput();
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Category update error: ' . $e->getMessage());
+            if ($request->has('_form_type')) {
+                session()->flash('_form_type', $request->_form_type);
+                session()->flash('_edit_id', $category->id);
+            }
+            return back()->with('error', 'Terjadi kesalahan, silakan coba lagi.')->withInput();
         }
     }
 
     public function destroy(Category $category)
     {
         try {
-            // Check if category has products
             if ($category->products()->count() > 0) {
                 return back()->with('error', 'Kategori tidak dapat dihapus karena masih memiliki produk.');
             }
@@ -167,7 +178,8 @@ class CategoryController extends Controller
             return redirect()->route('admin.categories.index')->with('success', 'Kategori berhasil dihapus.');
 
         } catch (\Exception $e) {
-            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            \Illuminate\Support\Facades\Log::error('Category delete error: ' . $e->getMessage());
+            return back()->with('error', 'Terjadi kesalahan, silakan coba lagi.');
         }
     }
 }

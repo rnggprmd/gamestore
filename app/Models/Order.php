@@ -13,9 +13,9 @@ class Order extends Model
         'customer_email',
         'customer_phone',
         'total_amount',
-        'status',
         'notes',
-        'admin_notes'
+        // 'status' dan 'admin_notes' TIDAK ada di fillable
+        // Harus di-set eksplisit via $order->status = ... untuk cegah mass assignment
     ];
 
     protected $casts = [

@@ -3,8 +3,58 @@
 @section('title', $setting->store_name ?? 'Gamestore Indonesia')
 
 @section('content')
+
+{{-- =============================================
+     BACKGROUND PATTERN STYLES (all sections)
+     ============================================= --}}
+<style>
+/* === DOT GRID — Hero === */
+.pattern-dots {
+    background-image: radial-gradient(circle, rgba(0,174,239,0.18) 1px, transparent 1px);
+    background-size: 28px 28px;
+}
+/* === DIAGONAL LINES — Games === */
+.pattern-diag {
+    background-image: repeating-linear-gradient(
+        -45deg,
+        rgba(0,174,239,0.06) 0px,
+        rgba(0,174,239,0.06) 1px,
+        transparent 1px,
+        transparent 18px
+    );
+}
+/* === HEXAGON / CROSS GRID — Features === */
+.pattern-hex {
+    background-image:
+        linear-gradient(rgba(0,174,239,0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,174,239,0.07) 1px, transparent 1px),
+        linear-gradient(rgba(0,174,239,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,174,239,0.03) 1px, transparent 1px);
+    background-size: 50px 50px, 50px 50px, 10px 10px, 10px 10px;
+}
+/* === CIRCUIT BOARD — How To Order === */
+.pattern-circuit {
+    background-image:
+        linear-gradient(rgba(0,174,239,0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,174,239,0.08) 1px, transparent 1px);
+    background-size: 40px 40px;
+    background-position: -1px -1px;
+}
+/* === NOISE / PIXEL GRID — Testimonials === */
+.pattern-noise {
+    background-image: radial-gradient(ellipse at center, rgba(0,174,239,0.05) 0%, transparent 70%),
+        repeating-conic-gradient(rgba(255,255,255,0.02) 0% 25%, transparent 0% 50%);
+    background-size: 100% 100%, 8px 8px;
+}
+</style>
+
 <!-- Hero Section -->
-<section class="max-w-7xl mx-auto px-6 pt-0 pb-12 lg:pt-0 lg:pb-16 relative flex flex-col gap-12 lg:gap-16 overflow-hidden">
+<section class="max-w-7xl mx-auto px-6 pt-0 pb-12 lg:pt-0 lg:pb-16 relative flex flex-col gap-6 sm:gap-12 lg:gap-16 overflow-hidden">
+    {{-- DOT GRID pattern overlay --}}
+    <div class="pattern-dots absolute inset-0 pointer-events-none opacity-60" style="mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%)"></div>
+    {{-- Ambient corner glows --}}
+    <div class="absolute top-0 -left-20 w-72 h-72 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute bottom-0 -right-20 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
     <!-- Main Hero content (Left: Text, Right: Character) -->
     <div class="flex flex-col-reverse lg:flex-row items-center gap-10 lg:gap-16 relative">
         <!-- Left: Content -->
@@ -103,7 +153,7 @@
     </div>
 
     <!-- Operating Hours Banner / Card -->
-    <div class="relative z-20 mt-3 sm:-mt-6 lg:-mt-10 fade-in">
+    <div class="relative z-20 -mt-2 sm:-mt-6 lg:-mt-10 fade-in">
         <div class="bg-gradient-to-r from-[#141A28] via-[#1a2336] to-[#141A28] border border-primary/30 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[0_0_25px_rgba(0,174,239,0.1)] hover:border-primary/50 transition-all duration-300">
             <div class="flex items-center gap-4">
                 <div class="w-11 h-11 bg-primary/15 rounded-xl flex items-center justify-center text-primary text-xl shrink-0 border border-primary/30 shadow-[0_0_15px_rgba(0,174,239,0.2)]">
@@ -119,9 +169,17 @@
                     <p class="text-xs text-gray-300 mt-0.5">Layanan transaksi dan dukungan pelanggan diproses sesuai jam operasional.</p>
                 </div>
             </div>
-            <div class="px-4 py-2 bg-primary/10 border border-primary/25 rounded-xl flex items-center gap-2 text-primary font-bold text-sm shrink-0 shadow-[0_0_10px_rgba(0,174,239,0.15)]">
-                <i class="fas fa-business-time text-xs"></i>
-                <span>{{ $setting->operating_hours ?? '09:00 - 22:00 WIB' }}</span>
+            <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto shrink-0 justify-center">
+                <div class="px-4 py-2 bg-primary/10 border border-primary/25 rounded-xl flex items-center gap-2 text-primary font-bold text-sm shadow-[0_0_10px_rgba(0,174,239,0.15)] w-full sm:w-auto justify-center">
+                    <i class="fas fa-business-time text-xs"></i>
+                    <span>{{ $setting->operating_hours ?? '09:00 - 22:00 WIB' }}</span>
+                </div>
+                @if($setting->whatsapp_channel)
+                <a href="{{ $setting->whatsapp_channel }}" target="_blank" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 border border-emerald-500/20 rounded-xl flex items-center gap-2 text-white font-bold text-xs shadow-md hover:scale-105 active:scale-95 transition-all w-full sm:w-auto justify-center cursor-pointer">
+                    <i class="fas fa-bullhorn text-xs"></i>
+                    <span>Gabung Saluran WA</span>
+                </a>
+                @endif
             </div>
         </div>
     </div>
@@ -131,7 +189,13 @@
 <div class="max-w-7xl mx-auto px-6"><div class="border-t border-white/5"></div></div>
 
 <!-- Popular Games -->
-<section id="games" class="max-w-7xl mx-auto px-6 py-8 lg:py-12">
+<section id="games" class="relative py-8 lg:py-12 overflow-hidden">
+    {{-- DIAGONAL LINES pattern --}}
+    <div class="pattern-diag absolute inset-0 pointer-events-none"></div>
+    {{-- Glow blobs at corners --}}
+    <div class="absolute top-1/4 -right-10 w-64 h-64 bg-primary/8 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute bottom-1/4 -left-10 w-56 h-56 bg-blue-900/20 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="max-w-7xl mx-auto px-6 relative z-10">
     <!-- Section Header -->
     <div class="mb-12 lg:mb-16 animate-on-scroll">
         <h2 class="text-2xl sm:text-3xl lg:text-4xl font-heading font-black mb-4">Daftar Game Populer</h2>
@@ -169,85 +233,157 @@
     </div>
     
     <!-- Carousel Container -->
-    <div class="relative group" x-data="gameCarousel()" 
-         @touchstart="touchStart($event)" 
-         @touchend="touchEnd($event)"
-         @wheel="handleWheel($event)"
-         @keydown.left="prevPage()"
-         @keydown.right="nextPage()"
-         tabindex="0"
-         class="pt-8 pb-12">
-        <!-- Games Grid with Carousel - Hidden overflow for clean edges -->
-        <div class="overflow-hidden">
-            <div class="flex transition-transform duration-500"
-                 :style="{ transform: `translateX(-${currentPage * 100}%)` }">
-                <!-- Each page: exactly 4 games -->
-                @foreach($games->chunk(4) as $page)
-                <div class="w-full flex-shrink-0 flex">
-                    <div class="w-full grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8 px-6 items-stretch">
-                        @foreach($page as $game)
-                        <a href="{{ route('game.show', $game->slug) }}" 
-                           class="game-card rounded-2xl p-4 flex flex-col relative group game-item transition-all duration-300 will-change-transform"
+    <div class="pt-8 pb-12">
+        <!-- ===== MOBILE CAROUSEL (1 card per slide) ===== -->
+        <div class="lg:hidden"
+             x-data="gameCarouselMobile()"
+             @touchstart="touchStart($event)"
+             @touchend="touchEnd($event)"
+             tabindex="0"
+             @keydown.left="prevPage()"
+             @keydown.right="nextPage()">
+
+            <div class="overflow-hidden">
+                <div class="flex transition-transform duration-500"
+                     :style="{ transform: `translateX(-${currentPage * 100}%)` }">
+                    @foreach($games as $game)
+                    <div class="w-full flex-shrink-0 px-4">
+                        <a href="{{ route('game.show', $game->slug) }}"
+                           class="game-card rounded-2xl p-4 flex flex-col relative group game-item transition-all duration-300 block"
                            data-categories="{{ json_encode($game->products->pluck('category_id')->unique()->toArray()) }}">
-                            <!-- Glow Effect -->
-                            <div class="absolute -inset-6 pointer-events-none">
+                            <!-- Glow -->
+                            <div class="absolute -inset-4 pointer-events-none">
                                 <div class="absolute -top-3 -right-3 w-24 h-24 bg-primary/30 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                             </div>
-                            
-                            <!-- Active Badge -->
+                            <!-- Badge -->
                             <div class="absolute top-4 left-4 z-20 bg-[#0B101E]/90 backdrop-blur-sm border border-white/10 text-primary text-[10px] font-bold px-3 py-1 rounded-lg tracking-wider uppercase">
                                 Active ⚡
                             </div>
-
                             <!-- Image -->
-                            <div class="w-full aspect-[4/5] overflow-hidden rounded-xl mb-4 relative z-10">
+                            <div class="w-full aspect-[16/9] overflow-hidden rounded-xl mb-4 relative z-10">
                                 @if($game->thumbnail && file_exists(public_path('img/' . $game->thumbnail)))
                                     <img src="{{ asset('img/' . $game->thumbnail) }}" alt="{{ $game->name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                                 @else
-                                    <div class="w-full h-full bg-gradient-to-br from-violet-800 to-indigo-900 flex items-center justify-center transition-transform duration-500 group-hover:scale-105">
-                                        <i class="fas fa-gamepad text-white/40 text-5xl"></i>
+                                    <div class="w-full h-full bg-gradient-to-br from-violet-800 to-indigo-900 flex items-center justify-center">
+                                        <i class="fas fa-gamepad text-white/40 text-4xl"></i>
                                     </div>
                                 @endif
-                                <div class="absolute inset-0 bg-gradient-to-t from-bg-dark/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-300"></div>
+                                <div class="absolute inset-0 bg-gradient-to-t from-bg-dark/80 via-transparent to-transparent opacity-60"></div>
                             </div>
-
                             <!-- Content -->
-                            <div class="flex-1 flex flex-col relative z-10">
-                                <h3 class="text-base font-bold mb-2 group-hover:text-primary transition-colors duration-300 line-clamp-2">{{ $game->name }}</h3>
-                                <p class="text-xs text-gray-400 mb-4 flex-grow line-clamp-2 leading-relaxed">{{ $game->description }}</p>
-                                
-                                <button class="w-full btn-primary py-2.5 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 shadow-[0_4px_12px_rgba(0,174,239,0.15)] group-hover:shadow-[0_4px_20px_rgba(0,174,239,0.35)] transition-all duration-300">
+                            <div class="relative z-10 flex flex-col">
+                                <h3 class="text-base font-bold group-hover:text-primary transition-colors duration-300 line-clamp-2 mb-2">{{ $game->name }}</h3>
+                                <div class="h-10 mb-4">
+                                    <p class="text-xs text-gray-400 line-clamp-2 leading-relaxed">{{ $game->description ?: 'Game terpopuler dengan berbagai fitur menarik.' }}</p>
+                                </div>
+                                <button class="w-full btn-primary py-2.5 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-300">
                                     <span>Beli Sekarang</span>
-                                    <i class="fas fa-arrow-right text-[10px] group-hover:translate-x-0.5 transition-transform"></i>
+                                    <i class="fas fa-arrow-right text-[10px]"></i>
                                 </button>
                             </div>
                         </a>
-                        @endforeach
                     </div>
+                    @endforeach
                 </div>
+            </div>
+
+            <!-- Mobile Pagination Dots -->
+            @if($games->count() > 1)
+            <div class="flex justify-center gap-2 mt-8">
+                @foreach($games as $index => $game)
+                <button @click="currentPage = {{ $loop->index }}"
+                        :class="currentPage === {{ $loop->index }} ? 'bg-primary w-8' : 'bg-white/30 hover:bg-white/50'"
+                        class="h-2.5 rounded-full transition-all duration-300 cursor-pointer"></button>
                 @endforeach
             </div>
+            @endif
         </div>
-        
-        <!-- Pagination Dots -->
-        @if($games->count() > 4)
-        <div class="flex justify-center gap-2 mt-10">
-            <template x-for="(page, index) in totalPages" :key="index">
-                <button @click="currentPage = index"
-                        :class="currentPage === index ? 'bg-primary w-8' : 'bg-white/30 hover:bg-white/50'"
+
+        <!-- ===== DESKTOP CAROUSEL (4 cards per slide) ===== -->
+        <div class="hidden lg:block"
+             x-data="gameCarouselDesktop()"
+             @wheel="handleWheel($event)"
+             @keydown.left="prevPage()"
+             @keydown.right="nextPage()"
+             tabindex="0">
+
+            <div class="overflow-hidden">
+                <div class="flex transition-transform duration-500"
+                     :style="{ transform: `translateX(-${currentPage * 100}%)` }">
+                    @foreach($games->chunk(4) as $pageIndex => $page)
+                    <div class="w-full flex-shrink-0">
+                        <div class="grid grid-cols-4 gap-8 px-6 grid-rows-1">
+                            @foreach($page as $game)
+                            <a href="{{ route('game.show', $game->slug) }}"
+                               class="game-card rounded-2xl p-4 flex flex-col relative group game-item transition-all duration-300 will-change-transform"
+                               data-categories="{{ json_encode($game->products->pluck('category_id')->unique()->toArray()) }}">
+                                <!-- Glow -->
+                                <div class="absolute -inset-6 pointer-events-none">
+                                    <div class="absolute -top-3 -right-3 w-24 h-24 bg-primary/30 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                </div>
+                                <!-- Badge -->
+                                <div class="absolute top-4 left-4 z-20 bg-[#0B101E]/90 backdrop-blur-sm border border-white/10 text-primary text-[10px] font-bold px-3 py-1 rounded-lg tracking-wider uppercase">
+                                    Active ⚡
+                                </div>
+                                <!-- Image -->
+                                <div class="w-full aspect-[4/5] overflow-hidden rounded-xl mb-4 relative z-10">
+                                    @if($game->thumbnail && file_exists(public_path('img/' . $game->thumbnail)))
+                                        <img src="{{ asset('img/' . $game->thumbnail) }}" alt="{{ $game->name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                                    @else
+                                        <div class="w-full h-full bg-gradient-to-br from-violet-800 to-indigo-900 flex items-center justify-center">
+                                            <i class="fas fa-gamepad text-white/40 text-5xl"></i>
+                                        </div>
+                                    @endif
+                                    <div class="absolute inset-0 bg-gradient-to-t from-bg-dark/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-300"></div>
+                                </div>
+                                <!-- Content -->
+                                <div class="relative z-10 flex flex-col flex-1">
+                                    <h3 class="text-base font-bold group-hover:text-primary transition-colors duration-300 line-clamp-2 mb-3">{{ $game->name }}</h3>
+                                    <div class="h-10 mb-4">
+                                        <p class="text-xs text-gray-400 line-clamp-2 leading-relaxed">{{ $game->description ?: 'Game terpopuler dengan berbagai fitur menarik yang dapat dinikmati.' }}</p>
+                                    </div>
+                                    <button class="w-full btn-primary py-2.5 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 shadow-[0_4px_12px_rgba(0,174,239,0.15)] group-hover:shadow-[0_4px_20px_rgba(0,174,239,0.35)] transition-all duration-300 mt-auto">
+                                        <span>Beli Sekarang</span>
+                                        <i class="fas fa-arrow-right text-[10px] group-hover:translate-x-0.5 transition-transform"></i>
+                                    </button>
+                                </div>
+                            </a>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+
+            <!-- Desktop Pagination Dots -->
+            @if($games->count() > 4)
+            <div class="flex justify-center gap-2 mt-10">
+                @foreach($games->chunk(4) as $index => $page)
+                <button @click="currentPage = {{ $loop->index }}"
+                        :class="currentPage === {{ $loop->index }} ? 'bg-primary w-8' : 'bg-white/30 hover:bg-white/50'"
                         class="h-2.5 rounded-full transition-all duration-300 cursor-pointer"></button>
-            </template>
+                @endforeach
+            </div>
+            @endif
         </div>
-        @endif
     </div>
 
+    </div>
 </section>
 
 <!-- Section Divider -->
 <div class="max-w-7xl mx-auto px-6"><div class="border-t border-white/5"></div></div>
 
 <!-- Why Choose Us -->
-<section id="features" class="max-w-7xl mx-auto px-6 py-8 lg:py-12">
+<section id="features" class="relative py-8 lg:py-12 overflow-hidden">
+    {{-- GRID / HEX pattern --}}
+    <div class="pattern-hex absolute inset-0 pointer-events-none"></div>
+    {{-- Central radial glow --}}
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_50%,rgba(0,174,239,0.06)_0%,transparent_100%)] pointer-events-none"></div>
+    {{-- Side accent lines --}}
+    <div class="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-primary/20 to-transparent pointer-events-none"></div>
+    <div class="absolute right-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-primary/20 to-transparent pointer-events-none"></div>
+    <div class="max-w-7xl mx-auto px-6 relative z-10">
     <div class="text-center mb-12 lg:mb-16 animate-on-scroll">
         <h2 class="text-3xl sm:text-4xl font-heading font-black mb-4">Mengapa Memilih Kami?</h2>
         <div class="w-20 h-1 bg-gradient-to-r from-primary to-primary-dark mx-auto rounded-full shadow-[0_0_15px_rgba(0,174,239,0.6)]"></div>
@@ -302,13 +438,23 @@
             <p class="text-sm text-gray-400 leading-relaxed">Tim bantuan customer support ramah kami siap mendampingi kendala Anda kapan pun dibutuhkan.</p>
         </div>
     </div>
+    </div>
 </section>
 
 <!-- Section Divider -->
 <div class="max-w-7xl mx-auto px-6"><div class="border-t border-white/5"></div></div>
 
 <!-- How to Order -->
-<section id="cara-order" class="max-w-7xl mx-auto px-6 py-8 lg:py-12">
+<section id="cara-order" class="relative py-8 lg:py-12 overflow-hidden">
+    {{-- CIRCUIT BOARD pattern --}}
+    <div class="pattern-circuit absolute inset-0 pointer-events-none"></div>
+    {{-- Glow spots --}}
+    <div class="absolute top-0 left-1/4 w-80 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute bottom-0 right-1/4 w-80 h-40 bg-blue-800/10 rounded-full blur-3xl pointer-events-none"></div>
+    {{-- Top & bottom separator lines --}}
+    <div class="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent pointer-events-none"></div>
+    <div class="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent pointer-events-none"></div>
+    <div class="max-w-7xl mx-auto px-6 relative z-10">
     <div class="text-center mb-12 lg:mb-16 animate-on-scroll">
         <h2 class="text-3xl sm:text-4xl font-heading font-black mt-3 mb-4">Cara Melakukan Order</h2>
         <div class="w-20 h-1 bg-gradient-to-r from-primary to-primary-dark mx-auto rounded-full shadow-[0_0_15px_rgba(0,174,239,0.6)]"></div>
@@ -426,13 +572,24 @@
             Mulai Belanja Sekarang
         </a>
     </div>
+    </div>
 </section>
 
 <!-- Section Divider -->
 <div class="max-w-7xl mx-auto px-6"><div class="border-t border-white/5"></div></div>
 
 <!-- Customer Reviews -->
-<section id="testimonials" class="max-w-7xl mx-auto px-6 py-8 lg:py-12">
+<section id="testimonials" class="relative py-8 lg:py-12 overflow-hidden">
+    {{-- NOISE / PIXEL pattern --}}
+    <div class="pattern-noise absolute inset-0 pointer-events-none"></div>
+    {{-- Large radial glow from top --}}
+    <div class="absolute -top-20 left-1/2 -translate-x-1/2 w-[700px] h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+    {{-- Star dots decoration --}}
+    <div class="absolute top-8 left-8 w-1 h-1 rounded-full bg-primary/40 pointer-events-none"></div>
+    <div class="absolute top-16 left-24 w-1.5 h-1.5 rounded-full bg-primary/30 pointer-events-none"></div>
+    <div class="absolute top-6 right-16 w-1 h-1 rounded-full bg-primary/40 pointer-events-none"></div>
+    <div class="absolute top-20 right-8 w-2 h-2 rounded-full bg-primary/20 pointer-events-none"></div>
+    <div class="max-w-7xl mx-auto px-6 relative z-10">
     <div class="text-center mb-12 lg:mb-16 animate-on-scroll">
         <h2 class="text-3xl sm:text-4xl font-heading font-black mt-3 mb-4">Ulasan Pelanggan</h2>
         <div class="w-20 h-1 bg-gradient-to-r from-primary to-primary-dark mx-auto rounded-full shadow-[0_0_15px_rgba(0,174,239,0.6)]"></div>
@@ -512,5 +669,6 @@
         </a>
     </div>
     @endif
+    </div>
 </section>
 @endsection
