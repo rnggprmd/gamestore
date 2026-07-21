@@ -6,15 +6,15 @@
 <!-- Hero Section -->
 <section class="max-w-7xl mx-auto px-6 pt-0 pb-12 lg:pt-0 lg:pb-16 relative flex flex-col gap-12 lg:gap-16 overflow-hidden">
     <!-- Main Hero content (Left: Text, Right: Character) -->
-    <div class="flex flex-col-reverse lg:flex-row items-center gap-10 lg:gap-16">
+    <div class="flex flex-col-reverse lg:flex-row items-center gap-10 lg:gap-16 relative">
         <!-- Left: Content -->
-        <div class="flex-1 text-center lg:text-left z-20 fade-in-left -mt-32 lg:mt-0">
-            <h1 class="text-4xl sm:text-5xl lg:text-7xl font-heading font-black leading-tight mb-5">
+        <div class="flex-1 text-center lg:text-left z-20 fade-in-left -mt-12 lg:mt-0 relative">
+            <h1 class="text-4xl sm:text-5xl lg:text-7xl font-heading font-black leading-tight mb-5 relative z-10">
                 Welcome To <br>
                 <span class="text-primary hero-glow">{{ strtoupper($setting->store_name ?? 'GAMESTORE') }}</span>
             </h1>
-            <p class="text-base sm:text-lg text-gray-300 mb-8 max-w-lg mx-auto lg:mx-0">
-                Premium Top Up Game at the Best Prices
+            <p class="text-base sm:text-lg text-gray-300 mb-8 max-w-lg mx-auto lg:mx-0 relative z-10">
+                Top Up Game Premium dengan Harga Terbaik
             </p>
         </div>
         
@@ -28,25 +28,25 @@
                          class="w-[420px] h-[420px] sm:w-[500px] sm:h-[500px] lg:w-[700px] lg:h-[700px] xl:w-[800px] xl:h-[800px] rounded-full opacity-25 animate-spin-slow drop-shadow-[0_0_60px_rgba(0,174,239,0.4)]">
                 </div>
 
-                <!-- Floating logo icons behind the character -->
+                <!-- Floating logo & robux icons behind/around the character -->
                 <img src="{{ asset('img/logo gamestore.png') }}" 
                      alt="Gamestore Logo Bubble"
                      class="absolute top-8 left-12 w-14 h-14 rounded-full border border-primary/20 shadow-[0_0_15px_rgba(0,174,239,0.2)] animate-float-slow opacity-60 z-0 select-none">
-                <img src="{{ asset('img/logo gamestore.png') }}" 
-                     alt="Gamestore Logo Bubble"
-                     class="absolute bottom-16 right-4 w-18 h-18 rounded-full border border-primary/30 shadow-[0_0_20px_rgba(0,174,239,0.35)] animate-float-fast opacity-50 z-0 select-none">
+                <img src="{{ asset('img/robux.png') }}" 
+                     alt="Robux Bubble"
+                     class="absolute bottom-16 right-4 w-18 h-18 rounded-full border border-primary/30 shadow-[0_0_20px_rgba(0,174,239,0.35)] animate-float-fast opacity-60 z-0 select-none">
                 <img src="{{ asset('img/logo gamestore.png') }}" 
                      alt="Gamestore Logo Bubble"
                      class="absolute top-1/2 -left-6 w-11 h-11 rounded-full border border-primary/15 shadow-[0_0_10px_rgba(0,174,239,0.15)] animate-float-medium opacity-40 z-0 select-none">
-                <img src="{{ asset('img/logo gamestore.png') }}" 
-                     alt="Gamestore Logo Bubble"
-                     class="absolute top-2 right-20 w-10 h-10 rounded-full border border-primary/15 shadow-[0_0_10px_rgba(0,174,239,0.15)] animate-float-medium opacity-35 z-0 select-none">
+                <img src="{{ asset('img/robux.png') }}" 
+                     alt="Robux Bubble"
+                     class="absolute top-2 right-20 w-12 h-12 rounded-full border border-primary/20 shadow-[0_0_12px_rgba(0,174,239,0.2)] animate-float-medium opacity-50 z-0 select-none">
                 <img src="{{ asset('img/logo gamestore.png') }}" 
                      alt="Gamestore Logo Bubble"
                      class="absolute bottom-6 left-16 w-15 h-15 rounded-full border border-primary/25 shadow-[0_0_18px_rgba(0,174,239,0.25)] animate-float-slow opacity-45 z-0 select-none">
-                <img src="{{ asset('img/logo gamestore.png') }}" 
-                     alt="Gamestore Logo Bubble"
-                     class="absolute top-1/3 -right-6 w-9 h-9 rounded-full border border-primary/15 shadow-[0_0_8px_rgba(0,174,239,0.15)] animate-float-fast opacity-50 z-0 select-none">
+                <img src="{{ asset('img/robux.png') }}" 
+                     alt="Robux Bubble"
+                     class="absolute top-1/3 -right-6 w-11 h-11 rounded-full border border-primary/20 shadow-[0_0_10px_rgba(0,174,239,0.2)] animate-float-fast opacity-55 z-0 select-none">
 
                 <img src="{{ asset('img/karakter.png') }}" 
                      alt="Gaming Character" 
@@ -56,48 +56,72 @@
     </div>
 
     <!-- Features Section (Merged under the Trusted by text & Character image) -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 relative z-20 md:-mt-20 lg:-mt-36 xl:-mt-48 stagger-animation">
+    <div class="grid grid-cols-4 gap-2 sm:gap-4 lg:gap-6 relative z-20 md:-mt-20 lg:-mt-36 xl:-mt-48 stagger-animation">
         <!-- Feature 1 -->
-        <div class="bg-[#141A28] border border-white/10 rounded-2xl p-5 flex items-center gap-4 transition-all duration-300 hover:border-primary/45 hover:-translate-y-1 shadow-lg group cursor-pointer">
-            <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary text-xl shrink-0 border border-primary/20 shadow-[0_0_15px_rgba(0,174,239,0.15)] group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+        <div class="bg-[#141A28] border border-white/10 rounded-xl sm:rounded-2xl p-2.5 sm:p-5 flex flex-col sm:flex-row items-center sm:items-center text-center sm:text-left gap-2 sm:gap-4 transition-all duration-300 hover:border-primary/45 hover:-translate-y-1 shadow-lg group cursor-pointer">
+            <div class="w-9 h-9 sm:w-12 sm:h-12 bg-primary/10 rounded-lg sm:rounded-xl flex items-center justify-center text-primary text-base sm:text-xl shrink-0 border border-primary/20 shadow-[0_0_15px_rgba(0,174,239,0.15)] group-hover:bg-primary group-hover:text-white transition-colors duration-300">
                 <i class="fas fa-users"></i>
             </div>
-            <div class="text-left">
-                <h3 class="text-sm font-bold text-white mb-0.5">100% Trusted</h3>
-                <p class="text-[11px] text-gray-400 leading-tight">Terpercaya dan aman untuk semua transaksi game.</p>
+            <div class="w-full">
+                <h3 class="text-[11px] sm:text-sm font-bold text-white mb-0.5 leading-tight">100% Terpercaya</h3>
+                <p class="text-[9px] sm:text-[11px] text-gray-400 leading-tight hidden sm:block">Terpercaya dan aman untuk semua transaksi game.</p>
             </div>
         </div>
         
         <!-- Feature 2 -->
-        <div class="bg-[#141A28] border border-white/10 rounded-2xl p-5 flex items-center gap-4 transition-all duration-300 hover:border-primary/45 hover:-translate-y-1 shadow-lg group cursor-pointer">
-            <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary text-xl shrink-0 border border-primary/20 shadow-[0_0_15px_rgba(0,174,239,0.15)] group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+        <div class="bg-[#141A28] border border-white/10 rounded-xl sm:rounded-2xl p-2.5 sm:p-5 flex flex-col sm:flex-row items-center sm:items-center text-center sm:text-left gap-2 sm:gap-4 transition-all duration-300 hover:border-primary/45 hover:-translate-y-1 shadow-lg group cursor-pointer">
+            <div class="w-9 h-9 sm:w-12 sm:h-12 bg-primary/10 rounded-lg sm:rounded-xl flex items-center justify-center text-primary text-base sm:text-xl shrink-0 border border-primary/20 shadow-[0_0_15px_rgba(0,174,239,0.15)] group-hover:bg-primary group-hover:text-white transition-colors duration-300">
                 <i class="fas fa-bolt"></i>
             </div>
-            <div class="text-left">
-                <h3 class="text-sm font-bold text-white mb-0.5">Instant Delivery</h3>
-                <p class="text-[11px] text-gray-400 leading-tight">Pengiriman instan otomatis hitungan detik.</p>
+            <div class="w-full">
+                <h3 class="text-[11px] sm:text-sm font-bold text-white mb-0.5 leading-tight">Proses Instan</h3>
+                <p class="text-[9px] sm:text-[11px] text-gray-400 leading-tight hidden sm:block">Pengiriman instan otomatis hitungan detik.</p>
             </div>
         </div>
         
         <!-- Feature 3 -->
-        <div class="bg-[#141A28] border border-white/10 rounded-2xl p-5 flex items-center gap-4 transition-all duration-300 hover:border-primary/45 hover:-translate-y-1 shadow-lg group cursor-pointer">
-            <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary text-xl shrink-0 border border-primary/20 shadow-[0_0_15px_rgba(0,174,239,0.15)] group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+        <div class="bg-[#141A28] border border-white/10 rounded-xl sm:rounded-2xl p-2.5 sm:p-5 flex flex-col sm:flex-row items-center sm:items-center text-center sm:text-left gap-2 sm:gap-4 transition-all duration-300 hover:border-primary/45 hover:-translate-y-1 shadow-lg group cursor-pointer">
+            <div class="w-9 h-9 sm:w-12 sm:h-12 bg-primary/10 rounded-lg sm:rounded-xl flex items-center justify-center text-primary text-base sm:text-xl shrink-0 border border-primary/20 shadow-[0_0_15px_rgba(0,174,239,0.15)] group-hover:bg-primary group-hover:text-white transition-colors duration-300">
                 <i class="fas fa-tag"></i>
             </div>
-            <div class="text-left">
-                <h3 class="text-sm font-bold text-white mb-0.5">Best Prices</h3>
-                <p class="text-[11px] text-gray-400 leading-tight">Harga paling kompetitif dan banyak promo.</p>
+            <div class="w-full">
+                <h3 class="text-[11px] sm:text-sm font-bold text-white mb-0.5 leading-tight">Harga Terbaik</h3>
+                <p class="text-[9px] sm:text-[11px] text-gray-400 leading-tight hidden sm:block">Harga paling kompetitif dan banyak promo.</p>
             </div>
         </div>
         
         <!-- Feature 4 -->
-        <div class="bg-[#141A28] border border-white/10 rounded-2xl p-5 flex items-center gap-4 transition-all duration-300 hover:border-primary/45 hover:-translate-y-1 shadow-lg group cursor-pointer">
-            <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary text-xl shrink-0 border border-primary/20 shadow-[0_0_15px_rgba(0,174,239,0.15)] group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+        <div class="bg-[#141A28] border border-white/10 rounded-xl sm:rounded-2xl p-2.5 sm:p-5 flex flex-col sm:flex-row items-center sm:items-center text-center sm:text-left gap-2 sm:gap-4 transition-all duration-300 hover:border-primary/45 hover:-translate-y-1 shadow-lg group cursor-pointer">
+            <div class="w-9 h-9 sm:w-12 sm:h-12 bg-primary/10 rounded-lg sm:rounded-xl flex items-center justify-center text-primary text-base sm:text-xl shrink-0 border border-primary/20 shadow-[0_0_15px_rgba(0,174,239,0.15)] group-hover:bg-primary group-hover:text-white transition-colors duration-300">
                 <i class="fas fa-headset"></i>
             </div>
-            <div class="text-left">
-                <h3 class="text-sm font-bold text-white mb-0.5">24/7 Support</h3>
-                <p class="text-[11px] text-gray-400 leading-tight">Customer support siap membantu kapan saja.</p>
+            <div class="w-full">
+                <h3 class="text-[11px] sm:text-sm font-bold text-white mb-0.5 leading-tight">Layanan 24/7</h3>
+                <p class="text-[9px] sm:text-[11px] text-gray-400 leading-tight hidden sm:block">Customer support siap membantu kapan saja.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Operating Hours Banner / Card -->
+    <div class="relative z-20 mt-3 sm:-mt-6 lg:-mt-10 fade-in">
+        <div class="bg-gradient-to-r from-[#141A28] via-[#1a2336] to-[#141A28] border border-primary/30 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[0_0_25px_rgba(0,174,239,0.1)] hover:border-primary/50 transition-all duration-300">
+            <div class="flex items-center gap-4">
+                <div class="w-11 h-11 bg-primary/15 rounded-xl flex items-center justify-center text-primary text-xl shrink-0 border border-primary/30 shadow-[0_0_15px_rgba(0,174,239,0.2)]">
+                    <i class="far fa-clock"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                        Jam Operasional Toko
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping mr-1"></span> Online
+                        </span>
+                    </h3>
+                    <p class="text-xs text-gray-300 mt-0.5">Layanan transaksi dan dukungan pelanggan diproses sesuai jam operasional.</p>
+                </div>
+            </div>
+            <div class="px-4 py-2 bg-primary/10 border border-primary/25 rounded-xl flex items-center gap-2 text-primary font-bold text-sm shrink-0 shadow-[0_0_10px_rgba(0,174,239,0.15)]">
+                <i class="fas fa-business-time text-xs"></i>
+                <span>{{ $setting->operating_hours ?? '09:00 - 22:00 WIB' }}</span>
             </div>
         </div>
     </div>
@@ -107,7 +131,7 @@
 <div class="max-w-7xl mx-auto px-6"><div class="border-t border-white/5"></div></div>
 
 <!-- Popular Games -->
-<section id="games" class="max-w-7xl mx-auto px-6 py-16 lg:py-24">
+<section id="games" class="max-w-7xl mx-auto px-6 py-8 lg:py-12">
     <!-- Section Header -->
     <div class="mb-12 lg:mb-16 animate-on-scroll">
         <h2 class="text-2xl sm:text-3xl lg:text-4xl font-heading font-black mb-4">Daftar Game Populer</h2>
@@ -223,7 +247,7 @@
 <div class="max-w-7xl mx-auto px-6"><div class="border-t border-white/5"></div></div>
 
 <!-- Why Choose Us -->
-<section id="features" class="max-w-7xl mx-auto px-6 py-16 lg:py-20">
+<section id="features" class="max-w-7xl mx-auto px-6 py-8 lg:py-12">
     <div class="text-center mb-12 lg:mb-16 animate-on-scroll">
         <h2 class="text-3xl sm:text-4xl font-heading font-black mb-4">Mengapa Memilih Kami?</h2>
         <div class="w-20 h-1 bg-gradient-to-r from-primary to-primary-dark mx-auto rounded-full shadow-[0_0_15px_rgba(0,174,239,0.6)]"></div>
@@ -284,7 +308,7 @@
 <div class="max-w-7xl mx-auto px-6"><div class="border-t border-white/5"></div></div>
 
 <!-- How to Order -->
-<section id="cara-order" class="max-w-7xl mx-auto px-6 py-16 lg:py-24">
+<section id="cara-order" class="max-w-7xl mx-auto px-6 py-8 lg:py-12">
     <div class="text-center mb-12 lg:mb-16 animate-on-scroll">
         <h2 class="text-3xl sm:text-4xl font-heading font-black mt-3 mb-4">Cara Melakukan Order</h2>
         <div class="w-20 h-1 bg-gradient-to-r from-primary to-primary-dark mx-auto rounded-full shadow-[0_0_15px_rgba(0,174,239,0.6)]"></div>
@@ -408,7 +432,7 @@
 <div class="max-w-7xl mx-auto px-6"><div class="border-t border-white/5"></div></div>
 
 <!-- Customer Reviews -->
-<section id="testimonials" class="max-w-7xl mx-auto px-6 py-16 lg:py-24">
+<section id="testimonials" class="max-w-7xl mx-auto px-6 py-8 lg:py-12">
     <div class="text-center mb-12 lg:mb-16 animate-on-scroll">
         <h2 class="text-3xl sm:text-4xl font-heading font-black mt-3 mb-4">Ulasan Pelanggan</h2>
         <div class="w-20 h-1 bg-gradient-to-r from-primary to-primary-dark mx-auto rounded-full shadow-[0_0_15px_rgba(0,174,239,0.6)]"></div>
@@ -428,7 +452,7 @@
     </div>
     
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 stagger-animation">
-        @foreach($testimonials as $index => $testimonial)
+        @foreach($testimonials->take(3) as $index => $testimonial)
         @php
             // Assign gradient classes for avatars to make it look premium
             $gradients = [

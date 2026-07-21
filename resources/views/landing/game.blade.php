@@ -149,17 +149,24 @@
                         </div>
                     </div>
 
-                    <!-- Buy Now Action -->
+                    <!-- Buy Now Action & Add to Cart -->
                     <div class="pt-5 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-4">
                         <div class="text-center sm:text-left">
                             <span class="text-gray-400 text-xs">Total Pembayaran</span>
                             <div class="text-2xl font-black text-white mt-0.5" x-text="formatRupiah(calculateTotal())"></div>
                         </div>
                         
-                        <button @click="buyNowWhatsApp()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-8 py-4 rounded-2xl transition-all shadow-lg shadow-emerald-600/10 hover:scale-105 cursor-pointer">
-                            <i class="fab fa-whatsapp text-lg"></i>
-                            Beli via WhatsApp
-                        </button>
+                        <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+                            <button @click="addCurrentToCart()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-primary/10 hover:bg-primary/20 border border-primary/30 text-primary font-bold px-5 py-3.5 rounded-2xl transition-all hover:scale-105 cursor-pointer">
+                                <i class="fas fa-cart-plus text-base"></i>
+                                <span>+ Keranjang</span>
+                            </button>
+
+                            <button @click="buyNowWhatsApp()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-7 py-3.5 rounded-2xl transition-all shadow-lg shadow-emerald-600/10 hover:scale-105 cursor-pointer">
+                                <i class="fab fa-whatsapp text-lg"></i>
+                                <span>Beli Langsung</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -203,6 +210,35 @@
                     minimumFractionDigits: 0,
                     maximumFractionDigits: 0
                 }).format(number);
+            },
+
+            addCurrentToCart() {
+                if (!this.selectedProduct) {
+                    this.validationError = 'Silakan pilih salah satu produk/nominal terlebih dahulu.';
+                    return;
+                }
+                if (!this.username.trim()) {
+                    this.validationError = 'Silakan masukkan Username Karakter Anda.';
+                    return;
+                }
+                if (!this.uid.trim()) {
+                    this.validationError = 'Silakan masukkan UID / Player ID Anda.';
+                    return;
+                }
+
+                this.validationError = '';
+
+                this.$dispatch('add-to-cart', {
+                    gameId: gameId,
+                    gameName: this.gameName,
+                    productId: this.selectedProduct.id,
+                    productName: this.selectedProduct.name,
+                    price: this.selectedProduct.price,
+                    username: this.username.trim(),
+                    uid: this.uid.trim(),
+                    server: this.server.trim(),
+                    quantity: this.quantity
+                });
             },
 
             buyNowWhatsApp() {

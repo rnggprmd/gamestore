@@ -233,7 +233,7 @@
         }
     </style>
 </head>
-<body class="landing-body text-white">
+<body x-data="globalCartStore('{{ preg_replace('/[^0-9]/', '', $setting->whatsapp) }}')" @toggle-cart.window="isCartOpen = !isCartOpen" @add-to-cart.window="addToCart($event.detail)" class="landing-body text-white">
     
     <!-- Floating WhatsApp Button -->
     @if($setting->whatsapp)
@@ -267,7 +267,13 @@
             </nav>
             
             <!-- Actions -->
-            <div class="flex items-center gap-5">
+            <div class="flex items-center gap-4">
+                <!-- Cart Button -->
+                <button @click="$dispatch('toggle-cart')" class="relative bg-white/5 hover:bg-white/10 border border-white/10 w-10 h-10 rounded-full flex items-center justify-center text-gray-300 hover:text-white transition-all cursor-pointer">
+                    <i class="fas fa-shopping-cart text-sm"></i>
+                    <span x-show="cartCount > 0" x-text="cartCount" class="absolute -top-1 -right-1 bg-primary text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-bg-dark shadow-sm"></span>
+                </button>
+
                 <a href="{{ route('home') }}#games" class="hidden md:flex items-center gap-2 bg-primary hover:bg-primary/90 px-6 py-2 rounded-full text-white font-semibold text-sm transition-colors">
                     <span>Beli Sekarang</span>
                     <i class="fas fa-arrow-right text-xs"></i>
@@ -308,33 +314,36 @@
                 @endif
             </div>
             
-            <!-- Quick Links -->
-            <div>
-                <h4 class="text-white font-bold mb-6 text-sm uppercase tracking-wider flex items-center gap-2">
-                    <span class="w-1.5 h-3 bg-primary rounded-full"></span>
-                    Navigasi
-                </h4>
-                <ul class="flex flex-col gap-3.5">
-                    <li><a href="{{ route('home') }}" class="text-gray-400 hover:text-primary transition-colors text-sm flex items-center gap-1.5 group"><i class="fas fa-chevron-right text-[9px] text-gray-600 group-hover:text-primary transition-colors"></i> Beranda</a></li>
-                    <li><a href="{{ route('home') }}#games" class="text-gray-400 hover:text-primary transition-colors text-sm flex items-center gap-1.5 group"><i class="fas fa-chevron-right text-[9px] text-gray-600 group-hover:text-primary transition-colors"></i> Daftar Game</a></li>
-                    <li><a href="{{ route('home') }}#features" class="text-gray-400 hover:text-primary transition-colors text-sm flex items-center gap-1.5 group"><i class="fas fa-chevron-right text-[9px] text-gray-600 group-hover:text-primary transition-colors"></i> Mengapa Kami</a></li>
-                    <li><a href="{{ route('home') }}#cara-order" class="text-gray-400 hover:text-primary transition-colors text-sm flex items-center gap-1.5 group"><i class="fas fa-chevron-right text-[9px] text-gray-600 group-hover:text-primary transition-colors"></i> Cara Order</a></li>
-                    <li><a href="{{ route('home') }}#testimonials" class="text-gray-400 hover:text-primary transition-colors text-sm flex items-center gap-1.5 group"><i class="fas fa-chevron-right text-[9px] text-gray-600 group-hover:text-primary transition-colors"></i> Testimoni</a></li>
-                </ul>
-            </div>
-            
-            <!-- Support -->
-            <div>
-                <h4 class="text-white font-bold mb-6 text-sm uppercase tracking-wider flex items-center gap-2">
-                    <span class="w-1.5 h-3 bg-primary rounded-full"></span>
-                    Bantuan
-                </h4>
-                <ul class="flex flex-col gap-3.5">
-                    <li><a href="#" class="text-gray-400 hover:text-primary transition-colors text-sm flex items-center gap-1.5 group"><i class="fas fa-chevron-right text-[9px] text-gray-600 group-hover:text-primary transition-colors"></i> Hubungi CS</a></li>
-                    <li><a href="#" class="text-gray-400 hover:text-primary transition-colors text-sm flex items-center gap-1.5 group"><i class="fas fa-chevron-right text-[9px] text-gray-600 group-hover:text-primary transition-colors"></i> Kebijakan Privasi</a></li>
-                    <li><a href="#" class="text-gray-400 hover:text-primary transition-colors text-sm flex items-center gap-1.5 group"><i class="fas fa-chevron-right text-[9px] text-gray-600 group-hover:text-primary transition-colors"></i> Syarat & Ketentuan</a></li>
-                    <li><a href="#" class="text-gray-400 hover:text-primary transition-colors text-sm flex items-center gap-1.5 group"><i class="fas fa-chevron-right text-[9px] text-gray-600 group-hover:text-primary transition-colors"></i> Metode Pembayaran</a></li>
-                </ul>
+            <!-- Navigasi & Bantuan Wrapper (Side-by-side on mobile) -->
+            <div class="grid grid-cols-2 gap-6 sm:contents">
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="text-white font-bold mb-6 text-sm uppercase tracking-wider flex items-center gap-2">
+                        <span class="w-1.5 h-3 bg-primary rounded-full"></span>
+                        Navigasi
+                    </h4>
+                    <ul class="flex flex-col gap-3.5">
+                        <li><a href="{{ route('home') }}" class="text-gray-400 hover:text-primary transition-colors text-sm flex items-center gap-1.5 group"><i class="fas fa-chevron-right text-[9px] text-gray-600 group-hover:text-primary transition-colors"></i> Beranda</a></li>
+                        <li><a href="{{ route('home') }}#games" class="text-gray-400 hover:text-primary transition-colors text-sm flex items-center gap-1.5 group"><i class="fas fa-chevron-right text-[9px] text-gray-600 group-hover:text-primary transition-colors"></i> Daftar Game</a></li>
+                        <li><a href="{{ route('home') }}#features" class="text-gray-400 hover:text-primary transition-colors text-sm flex items-center gap-1.5 group"><i class="fas fa-chevron-right text-[9px] text-gray-600 group-hover:text-primary transition-colors"></i> Mengapa Kami</a></li>
+                        <li><a href="{{ route('home') }}#cara-order" class="text-gray-400 hover:text-primary transition-colors text-sm flex items-center gap-1.5 group"><i class="fas fa-chevron-right text-[9px] text-gray-600 group-hover:text-primary transition-colors"></i> Cara Order</a></li>
+                        <li><a href="{{ route('home') }}#testimonials" class="text-gray-400 hover:text-primary transition-colors text-sm flex items-center gap-1.5 group"><i class="fas fa-chevron-right text-[9px] text-gray-600 group-hover:text-primary transition-colors"></i> Testimoni</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Support -->
+                <div>
+                    <h4 class="text-white font-bold mb-6 text-sm uppercase tracking-wider flex items-center gap-2">
+                        <span class="w-1.5 h-3 bg-primary rounded-full"></span>
+                        Bantuan
+                    </h4>
+                    <ul class="flex flex-col gap-3.5">
+                        <li><a href="#" class="text-gray-400 hover:text-primary transition-colors text-sm flex items-center gap-1.5 group"><i class="fas fa-chevron-right text-[9px] text-gray-600 group-hover:text-primary transition-colors"></i> Hubungi CS</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-primary transition-colors text-sm flex items-center gap-1.5 group"><i class="fas fa-chevron-right text-[9px] text-gray-600 group-hover:text-primary transition-colors"></i> Kebijakan Privasi</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-primary transition-colors text-sm flex items-center gap-1.5 group"><i class="fas fa-chevron-right text-[9px] text-gray-600 group-hover:text-primary transition-colors"></i> Syarat & Ketentuan</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-primary transition-colors text-sm flex items-center gap-1.5 group"><i class="fas fa-chevron-right text-[9px] text-gray-600 group-hover:text-primary transition-colors"></i> Metode Pembayaran</a></li>
+                    </ul>
+                </div>
             </div>
             
             <!-- Contact -->
@@ -371,20 +380,120 @@
         <!-- Copyright / Payment Methods logos -->
         <div class="max-w-7xl mx-auto pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 relative z-10">
             <p class="text-gray-500 text-xs tracking-wide">&copy; {{ date('Y') }} {{ $setting->store_name ?? 'Gamestore' }}. All rights reserved.</p>
-            
-            <div class="flex items-center gap-4 flex-wrap justify-center opacity-40 grayscale hover:opacity-85 hover:grayscale-0 transition-all duration-500">
-                <span class="text-[9px] uppercase tracking-widest text-gray-500 font-bold mr-2">Metode Pembayaran Aman</span>
-                <i class="fab fa-cc-visa text-2xl text-white"></i>
-                <i class="fab fa-cc-mastercard text-2xl text-white"></i>
-                <i class="fab fa-cc-paypal text-2xl text-white"></i>
-                <span class="text-xs font-black text-white font-mono">QRIS</span>
-                <span class="text-xs font-black text-white font-mono">E-WALLET</span>
-            </div>
         </div>
     </footer>
     
-    <!-- Shopping Cart Drawer -->
-    <!-- REMOVED: Cart functionality no longer needed -->
+    <!-- Shopping Cart Drawer Side Panel -->
+    <div x-show="isCartOpen" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-50 overflow-hidden" 
+         style="display: none;">
+        
+        <!-- Backdrop overlay -->
+        <div @click="isCartOpen = false" class="absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity"></div>
+
+        <div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
+            <div x-show="isCartOpen"
+                 x-transition:enter="transform transition ease-in-out duration-300 sm:duration-500"
+                 x-transition:enter-start="translate-x-full"
+                 x-transition:enter-end="translate-x-0"
+                 x-transition:leave="transform transition ease-in-out duration-300 sm:duration-500"
+                 x-transition:leave-start="translate-x-0"
+                 x-transition:leave-end="translate-x-full"
+                 class="w-screen max-w-md bg-[#0D1322] border-l border-white/10 shadow-2xl flex flex-col justify-between">
+                
+                <!-- Drawer Header -->
+                <div class="p-6 border-b border-white/10 flex items-center justify-between bg-bg-card">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
+                            <i class="fas fa-shopping-cart text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-white">Keranjang Belanja</h3>
+                            <p class="text-xs text-gray-400" x-text="cartCount + ' Item Dipilih'"></p>
+                        </div>
+                    </div>
+                    <button @click="isCartOpen = false" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer">
+                        <i class="fas fa-times text-sm"></i>
+                    </button>
+                </div>
+
+                <!-- Drawer Content / Items List -->
+                <div class="flex-1 overflow-y-auto p-6 space-y-4">
+                    <template x-if="cartItems.length === 0">
+                        <div class="h-full flex flex-col items-center justify-center text-center py-16 text-gray-500">
+                            <div class="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mb-4 text-3xl text-gray-600">
+                                <i class="fas fa-shopping-bag"></i>
+                            </div>
+                            <h4 class="text-sm font-bold text-gray-300 mb-1">Keranjang Masih Kosong</h4>
+                            <p class="text-xs text-gray-500 max-w-xs">Pilih game favoritmu dan tambahkan beberapa produk ke keranjang belanja.</p>
+                        </div>
+                    </template>
+
+                    <template x-for="(item, index) in cartItems" :key="index">
+                        <div class="bg-bg-card border border-white/10 rounded-2xl p-4 flex flex-col gap-3 relative group">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <span class="text-[10px] font-extrabold uppercase tracking-wider text-primary px-2 py-0.5 rounded bg-primary/10 border border-primary/20" x-text="item.gameName"></span>
+                                    <h4 class="text-sm font-bold text-white mt-1.5" x-text="item.productName"></h4>
+                                </div>
+                                <button @click="removeItem(index)" class="text-gray-500 hover:text-rose-400 text-xs transition-colors p-1 cursor-pointer">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+
+                            <!-- Account info badge -->
+                            <div class="bg-bg-dark/80 rounded-xl p-2.5 text-xs text-gray-300 space-y-1 font-mono border border-white/5">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500">User:</span>
+                                    <span class="font-bold text-white" x-text="item.username"></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500">ID/UID:</span>
+                                    <span class="font-bold text-white" x-text="item.uid"></span>
+                                </div>
+                                <template x-if="item.server">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-500">Server:</span>
+                                        <span class="font-bold text-white" x-text="item.server"></span>
+                                    </div>
+                                </template>
+                            </div>
+
+                            <!-- Price & Qty Row -->
+                            <div class="flex items-center justify-between pt-1">
+                                <span class="text-xs font-bold text-primary" x-text="formatRupiah(item.price * item.quantity)"></span>
+                                
+                                <div class="flex items-center gap-2 bg-bg-dark border border-white/10 rounded-lg p-1">
+                                    <button @click="updateQty(index, -1)" class="w-6 h-6 rounded flex items-center justify-center bg-white/5 text-gray-300 hover:text-white text-xs cursor-pointer">-</button>
+                                    <span class="text-xs font-bold text-white px-1" x-text="item.quantity"></span>
+                                    <button @click="updateQty(index, 1)" class="w-6 h-6 rounded flex items-center justify-center bg-white/5 text-gray-300 hover:text-white text-xs cursor-pointer">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Drawer Footer & Checkout -->
+                <div x-show="cartItems.length > 0" class="p-6 border-t border-white/10 bg-bg-card space-y-4">
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-gray-400">Total Harga</span>
+                        <span class="text-xl font-black text-white" x-text="formatRupiah(cartTotal)"></span>
+                    </div>
+
+                    <button @click="checkoutWhatsApp()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-600/20 cursor-pointer">
+                        <i class="fab fa-whatsapp text-lg"></i>
+                        <span>Checkout Semua via WhatsApp</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
     
     <!-- Scripts -->
     <script>
@@ -530,6 +639,102 @@
             }
         `;
         document.head.appendChild(style);
+        function globalCartStore(waNumber) {
+            return {
+                isCartOpen: false,
+                waNumber: waNumber,
+                cartItems: JSON.parse(localStorage.getItem('gamestore_cart') || '[]'),
+
+                get cartCount() {
+                    return this.cartItems.reduce((sum, item) => sum + item.quantity, 0);
+                },
+
+                get cartTotal() {
+                    return this.cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                },
+
+                saveCart() {
+                    localStorage.setItem('gamestore_cart', JSON.stringify(this.cartItems));
+                },
+
+                addToCart(item) {
+                    let existingIndex = this.cartItems.findIndex(i => 
+                        i.gameId === item.gameId && 
+                        i.productId === item.productId && 
+                        i.uid === item.uid && 
+                        i.server === item.server
+                    );
+
+                    if (existingIndex > -1) {
+                        this.cartItems[existingIndex].quantity += item.quantity;
+                    } else {
+                        this.cartItems.push(item);
+                    }
+                    this.saveCart();
+                    this.isCartOpen = true;
+                },
+
+                removeItem(index) {
+                    this.cartItems.splice(index, 1);
+                    this.saveCart();
+                },
+
+                updateQty(index, delta) {
+                    let next = this.cartItems[index].quantity + delta;
+                    if (next > 0) {
+                        this.cartItems[index].quantity = next;
+                    } else {
+                        this.cartItems.splice(index, 1);
+                    }
+                    this.saveCart();
+                },
+
+                formatRupiah(number) {
+                    return new Intl.NumberFormat('id-ID', {
+                        style: 'currency',
+                        currency: 'IDR',
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0
+                    }).format(number);
+                },
+
+                checkoutWhatsApp() {
+                    if (this.cartItems.length === 0) return;
+
+                    let msg = `*PESANAN MULTI ITEM (KERANJANG)*\n`;
+                    msg += `=================================\n\n`;
+
+                    this.cartItems.forEach((item, index) => {
+                        let totalItem = this.formatRupiah(item.price * item.quantity);
+                        msg += `*${index + 1}. ${item.gameName}*\n`;
+                        msg += `• Produk: *${item.productName}*\n`;
+                        msg += `• Username: *${item.username}*\n`;
+                        msg += `• UID/ID: *${item.uid}*\n`;
+                        if (item.server) msg += `• Server: *${item.server}*\n`;
+                        msg += `• Jumlah: ${item.quantity}x @ ${this.formatRupiah(item.price)}\n`;
+                        msg += `• Subtotal: *${totalItem}*\n\n`;
+                    });
+
+                    msg += `=================================\n`;
+                    msg += `*TOTAL PEMBAYARAN: ${this.formatRupiah(this.cartTotal)}*\n`;
+                    msg += `=================================\n\n`;
+                    msg += `Mohon segera diproses pesanan ini. Terima kasih! 🙏`;
+
+                    // Log click
+                    fetch('/log-click', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        }
+                    }).catch(err => console.error('Click log failed', err));
+
+                    let url = `https://wa.me/${this.waNumber}?text=${encodeURIComponent(msg)}`;
+                    window.open(url, '_blank');
+                }
+            };
+        }
     </script>
 </body>
 </html>

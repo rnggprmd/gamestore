@@ -10,7 +10,7 @@ class Testimonial extends Model
     use Searchable;
     
     protected $fillable = [
-        'name',
+        'customer_name',
         'message',
         'rating',
         'image',
