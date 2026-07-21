@@ -4,12 +4,15 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Testimonial;
+use App\Services\GameService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
 
 class TestimonialController extends Controller
 {
+    public function __construct(private GameService $gameService) {}
+
     public function index()
     {
         $search = request('search');
@@ -64,7 +67,7 @@ class TestimonialController extends Controller
 
             Testimonial::create($data);
 
-            Cache::forget('active_testimonials');
+            $this->gameService->clearCache();
 
             return redirect()->route('admin.testimonials.index')->with('success', 'Testimoni berhasil ditambahkan.');
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -100,7 +103,7 @@ class TestimonialController extends Controller
 
             $testimonial->update($data);
 
-            Cache::forget('active_testimonials');
+            $this->gameService->clearCache();
 
             return redirect()->route('admin.testimonials.index')->with('success', 'Testimoni berhasil diperbarui.');
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -117,7 +120,7 @@ class TestimonialController extends Controller
         $this->deleteFile($testimonial->image);
         $testimonial->delete();
 
-        Cache::forget('active_testimonials');
+        $this->gameService->clearCache();
         
         return redirect()->route('admin.testimonials.index')->with('success', 'Testimoni berhasil dihapus.');
 

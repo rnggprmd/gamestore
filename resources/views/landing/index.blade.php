@@ -249,7 +249,7 @@
                     @foreach($games as $game)
                     <div class="w-full flex-shrink-0 px-4">
                         <a href="{{ route('game.show', $game->slug) }}"
-                           class="game-card rounded-2xl p-4 flex flex-col relative group game-item transition-all duration-300 block"
+                           class="game-card rounded-2xl p-4 flex flex-col relative group game-item transition-all duration-300 block h-full"
                            data-categories="{{ json_encode($game->products->pluck('category_id')->unique()->toArray()) }}">
                             <!-- Glow -->
                             <div class="absolute -inset-4 pointer-events-none">
@@ -260,7 +260,7 @@
                                 Active ⚡
                             </div>
                             <!-- Image -->
-                            <div class="w-full aspect-[16/9] overflow-hidden rounded-xl mb-4 relative z-10">
+                            <div class="w-full h-48 overflow-hidden rounded-xl mb-4 relative z-10">
                                 @if($game->thumbnail && file_exists(public_path('img/' . $game->thumbnail)))
                                     <img src="{{ asset('img/' . $game->thumbnail) }}" alt="{{ $game->name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                                 @else
@@ -271,9 +271,9 @@
                                 <div class="absolute inset-0 bg-gradient-to-t from-bg-dark/80 via-transparent to-transparent opacity-60"></div>
                             </div>
                             <!-- Content -->
-                            <div class="relative z-10 flex flex-col">
+                            <div class="relative z-10 flex flex-col flex-1">
                                 <h3 class="text-base font-bold group-hover:text-primary transition-colors duration-300 line-clamp-2 mb-2">{{ $game->name }}</h3>
-                                <div class="h-10 mb-4">
+                                <div class="flex-1 mb-4">
                                     <p class="text-xs text-gray-400 line-clamp-2 leading-relaxed">{{ $game->description ?: 'Game terpopuler dengan berbagai fitur menarik.' }}</p>
                                 </div>
                                 <button class="w-full btn-primary py-2.5 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-300">
@@ -315,7 +315,7 @@
                         <div class="grid grid-cols-4 gap-8 px-6 grid-rows-1">
                             @foreach($page as $game)
                             <a href="{{ route('game.show', $game->slug) }}"
-                               class="game-card rounded-2xl p-4 flex flex-col relative group game-item transition-all duration-300 will-change-transform"
+                               class="game-card rounded-2xl p-4 flex flex-col relative group game-item transition-all duration-300 will-change-transform h-full"
                                data-categories="{{ json_encode($game->products->pluck('category_id')->unique()->toArray()) }}">
                                 <!-- Glow -->
                                 <div class="absolute -inset-6 pointer-events-none">
@@ -326,7 +326,7 @@
                                     Active ⚡
                                 </div>
                                 <!-- Image -->
-                                <div class="w-full aspect-[4/5] overflow-hidden rounded-xl mb-4 relative z-10">
+                                <div class="w-full h-56 overflow-hidden rounded-xl mb-4 relative z-10">
                                     @if($game->thumbnail && file_exists(public_path('img/' . $game->thumbnail)))
                                         <img src="{{ asset('img/' . $game->thumbnail) }}" alt="{{ $game->name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                                     @else
@@ -339,7 +339,7 @@
                                 <!-- Content -->
                                 <div class="relative z-10 flex flex-col flex-1">
                                     <h3 class="text-base font-bold group-hover:text-primary transition-colors duration-300 line-clamp-2 mb-3">{{ $game->name }}</h3>
-                                    <div class="h-10 mb-4">
+                                    <div class="flex-1 mb-4">
                                         <p class="text-xs text-gray-400 line-clamp-2 leading-relaxed">{{ $game->description ?: 'Game terpopuler dengan berbagai fitur menarik yang dapat dinikmati.' }}</p>
                                     </div>
                                     <button class="w-full btn-primary py-2.5 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 shadow-[0_4px_12px_rgba(0,174,239,0.15)] group-hover:shadow-[0_4px_20px_rgba(0,174,239,0.35)] transition-all duration-300 mt-auto">
