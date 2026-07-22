@@ -77,47 +77,74 @@
                     </div>
                 </div>
 
-                <!-- Responsive Area Chart SVG -->
+                <!-- Dynamic Area Chart Canvas -->
                 <div class="relative w-full h-64 bg-watt-bg/30 rounded-xl border border-watt-border/40 p-4">
-                    <svg viewBox="0 0 500 200" class="w-full h-full overflow-visible" preserveAspectRatio="none">
-                        <defs>
-                            <!-- Neon Gradient for area chart as per DESIGN.md -->
-                            <linearGradient id="chart-grad" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stop-color="#00E5FF" stop-opacity="0.45"/>
-                                <stop offset="100%" stop-color="#32D74B" stop-opacity="0.0"/>
-                            </linearGradient>
-                        </defs>
-
-                        <!-- Grid Lines (1px solid #2C2C2E) -->
-                        <line x1="0" y1="40" x2="500" y2="40" stroke="#2C2C2E" stroke-width="1" stroke-dasharray="4" />
-                        <line x1="0" y1="90" x2="500" y2="90" stroke="#2C2C2E" stroke-width="1" stroke-dasharray="4" />
-                        <line x1="0" y1="140" x2="500" y2="140" stroke="#2C2C2E" stroke-width="1" stroke-dasharray="4" />
-                        <line x1="0" y1="180" x2="500" y2="180" stroke="#2C2C2E" stroke-width="1" />
-
-                        <!-- Area under the curve -->
-                        <path d="M 0 180 L 0 160 Q 80 120 150 140 T 300 80 T 450 60 L 500 70 L 500 180 Z" fill="url(#chart-grad)" />
-
-                        <!-- Main Curve line (00E5FF) -->
-                        <path d="M 0 160 Q 80 120 150 140 T 300 80 T 450 60 L 500 70" fill="none" stroke="#00E5FF" stroke-width="2.5" stroke-linecap="round" />
-
-                        <!-- Data node markers -->
-                        <circle cx="150" cy="140" r="4.5" fill="#00E5FF" stroke="#121212" stroke-width="1.5" />
-                        <circle cx="300" cy="80" r="4.5" fill="#32D74B" stroke="#121212" stroke-width="1.5" />
-                        <circle cx="450" cy="60" r="4.5" fill="#00E5FF" stroke="#121212" stroke-width="1.5" />
-                    </svg>
-
-                    <!-- Monospaced Data Labels -->
-                    <div class="absolute bottom-2 left-6 right-6 flex justify-between text-[10px] font-mono text-watt-text-sec">
-                        <span>Senin</span>
-                        <span>Selasa</span>
-                        <span>Rabu</span>
-                        <span>Kamis</span>
-                        <span>Jumat</span>
-                        <span>Sabtu</span>
-                        <span>Minggu</span>
-                    </div>
+                    <canvas id="activityChart" class="w-full h-full"></canvas>
                 </div>
             </div>
+
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const ctx = document.getElementById('activityChart').getContext('2d');
+                    const gradient = ctx.createLinearGradient(0, 0, 0, 200);
+                    gradient.addColorStop(0, 'rgba(0, 229, 255, 0.35)');
+                    gradient.addColorStop(1, 'rgba(0, 229, 255, 0.0)');
+
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: @json($chartLabels),
+                            datasets: [{
+                                label: 'Transaksi / Pesanan',
+                                data: @json($chartData),
+                                borderColor: '#00E5FF',
+                                borderWidth: 2.5,
+                                backgroundColor: gradient,
+                                fill: true,
+                                tension: 0.4,
+                                pointBackgroundColor: '#00E5FF',
+                                pointBorderColor: '#121212',
+                                pointBorderWidth: 2,
+                                pointRadius: 4,
+                                pointHoverRadius: 6
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    backgroundColor: '#1E293B',
+                                    titleColor: '#F8FAFC',
+                                    bodyColor: '#00E5FF',
+                                    borderColor: 'rgba(255,255,255,0.1)',
+                                    borderWidth: 1,
+                                    padding: 10,
+                                    displayColors: false,
+                                    callbacks: {
+                                        label: function(context) {
+                                            return context.parsed.y + ' Transaksi';
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    grid: { display: false },
+                                    ticks: { color: '#94A3B8', font: { family: 'monospace', size: 10 } }
+                                },
+                                y: {
+                                    beginAtZero: true,
+                                    grid: { color: 'rgba(255,255,255,0.05)' },
+                                    ticks: { color: '#94A3B8', precision: 0, font: { family: 'monospace', size: 10 } }
+                                }
+                            }
+                        }
+                    });
+                });
+            </script>
 
             <!-- Top Products List Table -->
             <div class="admin-form-card p-5 space-y-6 admin-table-shell">

@@ -40,6 +40,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Admin Gamestore',
                 'password' => bcrypt('password'),
+                'role' => 'admin',
             ]
         );
 

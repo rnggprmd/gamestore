@@ -29,12 +29,26 @@ class AdminController extends Controller
             ->take(5)
             ->get();
 
+        // Calculate 7-day activity data (orders per day for past 7 days)
+        $chartLabels = [];
+        $chartData = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date = \Carbon\Carbon::now()->subDays($i);
+            $dayName = $date->translatedFormat('D'); // e.g. Sen, Sel, Rab...
+            $count = \App\Models\Order::whereDate('created_at', $date->toDateString())->count();
+            
+            $chartLabels[] = $dayName;
+            $chartData[] = $count;
+        }
+
         return view('admin.dashboard', compact(
             'totalGames', 
             'totalProducts', 
             'whatsappClicks', 
             'activeProductsCount', 
-            'topProducts'
+            'topProducts',
+            'chartLabels',
+            'chartData'
         ));
     }
 }
