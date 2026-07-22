@@ -27,27 +27,43 @@
                 {{-- Logo Upload --}}
                 <div class="space-y-1.5">
                     <label class="admin-field-label">Logo Toko</label>
-                    @if($setting->logo && file_exists(public_path('img/' . $setting->logo)))
-                        <div class="mb-2 flex items-center gap-3 bg-watt-bg border border-watt-border p-3 rounded-xl">
-                            <img src="{{ asset('img/' . $setting->logo) }}" alt="Logo" class="h-10 w-auto object-contain">
-                            <span class="text-[10px] text-watt-text-sec font-mono">{{ $setting->logo }}</span>
+                    <div class="flex items-center gap-4 bg-watt-bg border border-watt-border p-3 rounded-xl">
+                        @if($setting->logo && file_exists(public_path('img/' . $setting->logo)))
+                            <div class="flex-shrink-0 bg-watt-surface p-1.5 rounded-lg border border-watt-border max-w-[120px] flex items-center justify-center">
+                                <img src="{{ asset('img/' . $setting->logo) }}" alt="Logo Saat Ini" class="h-10 max-w-full object-contain rounded">
+                            </div>
+                        @else
+                            <div class="flex-shrink-0 bg-watt-surface p-1.5 rounded-lg border border-watt-border max-w-[120px] flex items-center justify-center">
+                                <img src="{{ asset('img/logo gamestore.png') }}" alt="Logo Default" class="h-10 max-w-full object-contain rounded opacity-50">
+                            </div>
+                        @endif
+                        <div class="flex-1 min-w-0">
+                            <input type="file" name="logo" accept="image/*"
+                                class="w-full text-xs text-watt-text-sec file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-watt-cyan file:text-watt-bg hover:file:opacity-90 cursor-pointer">
+                            <p class="text-[10px] text-watt-text-sec mt-1">Format: JPG, PNG, GIF, SVG (Maks 2MB)</p>
                         </div>
-                    @endif
-                    <input type="file" name="logo" accept="image/*"
-                        class="admin-field file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-watt-cyan file:text-watt-bg hover:file:opacity-90 cursor-pointer">
+                    </div>
                 </div>
 
                 {{-- Favicon Upload --}}
                 <div class="space-y-1.5">
-                    <label class="admin-field-label">Favicon (ICO/PNG)</label>
-                    @if($setting->favicon && file_exists(public_path('img/' . $setting->favicon)))
-                        <div class="mb-2 flex items-center gap-3 bg-watt-bg border border-watt-border p-3 rounded-xl">
-                            <img src="{{ asset('img/' . $setting->favicon) }}" alt="Favicon" class="h-8 w-8 object-contain">
-                            <span class="text-[10px] text-watt-text-sec font-mono">{{ $setting->favicon }}</span>
+                    <label class="admin-field-label">Favicon (Icon Tab Browser)</label>
+                    <div class="flex items-center gap-4 bg-watt-bg border border-watt-border p-3 rounded-xl">
+                        @if($setting->favicon && file_exists(public_path('img/' . $setting->favicon)))
+                            <div class="flex-shrink-0 bg-watt-surface p-1.5 rounded-lg border border-watt-border">
+                                <img src="{{ asset('img/' . $setting->favicon) }}" alt="Favicon Saat Ini" class="h-8 w-8 object-contain rounded">
+                            </div>
+                        @else
+                            <div class="flex-shrink-0 bg-watt-surface p-1.5 rounded-lg border border-watt-border">
+                                <img src="{{ asset('img/logo gamestore.png') }}" alt="Favicon Default" class="h-8 w-8 object-contain rounded opacity-50">
+                            </div>
+                        @endif
+                        <div class="flex-1 min-w-0">
+                            <input type="file" name="favicon" accept="image/*,.ico"
+                                class="w-full text-xs text-watt-text-sec file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-watt-cyan file:text-watt-bg hover:file:opacity-90 cursor-pointer">
+                            <p class="text-[10px] text-watt-text-sec mt-1">Format: ICO, PNG, JPG (Maks 1MB)</p>
                         </div>
-                    @endif
-                    <input type="file" name="favicon" accept="image/*,.ico"
-                        class="admin-field file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-watt-cyan file:text-watt-bg hover:file:opacity-90 cursor-pointer">
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">

@@ -15,7 +15,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
     
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="{{ asset('img/logo gamestore.png') }}">
+    @if(isset($setting) && $setting->favicon && file_exists(public_path('img/' . $setting->favicon)))
+        <link rel="icon" type="image/png" href="{{ asset('img/' . $setting->favicon) }}">
+    @elseif(isset($setting) && $setting->logo && file_exists(public_path('img/' . $setting->logo)))
+        <link rel="icon" type="image/png" href="{{ asset('img/' . $setting->logo) }}">
+    @else
+        <link rel="icon" type="image/png" href="{{ asset('img/logo gamestore.png') }}">
+    @endif
     
     <!-- Tailwind & Vite -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -287,7 +293,11 @@
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <!-- Logo -->
             <div class="flex items-center gap-2">
-                <img src="{{ asset('img/logo gamestore.png') }}" alt="{{ $setting->store_name ?? 'Gamestore' }} Logo" class="w-8 h-8 rounded-full">
+                @if(isset($setting) && $setting->logo && file_exists(public_path('img/' . $setting->logo)))
+                    <img src="{{ asset('img/' . $setting->logo) }}" alt="{{ $setting->store_name ?? 'Gamestore' }} Logo" class="w-8 h-8 rounded-full object-contain">
+                @else
+                    <img src="{{ asset('img/logo gamestore.png') }}" alt="{{ $setting->store_name ?? 'Gamestore' }} Logo" class="w-8 h-8 rounded-full object-contain">
+                @endif
                 <span class="text-xl font-heading font-bold uppercase tracking-wider">{{ $setting->store_name ?? 'Gamestore' }}</span>
             </div>
             
@@ -345,7 +355,11 @@
                 <!-- Mobile Menu Header -->
                 <div class="sticky top-0 bg-gradient-to-b from-[#0D1322] to-[#0a0e1a] border-b border-white/10 p-6 flex items-center justify-between z-10">
                     <div class="flex items-center gap-2">
-                        <img src="{{ asset('img/logo gamestore.png') }}" alt="{{ $setting->store_name ?? 'Gamestore' }} Logo" class="w-6 h-6 rounded-full">
+                        @if(isset($setting) && $setting->logo && file_exists(public_path('img/' . $setting->logo)))
+                            <img src="{{ asset('img/' . $setting->logo) }}" alt="{{ $setting->store_name ?? 'Gamestore' }} Logo" class="w-6 h-6 rounded-full object-contain">
+                        @else
+                            <img src="{{ asset('img/logo gamestore.png') }}" alt="{{ $setting->store_name ?? 'Gamestore' }} Logo" class="w-6 h-6 rounded-full object-contain">
+                        @endif
                         <span class="text-sm font-heading font-bold uppercase tracking-wider">{{ $setting->store_name ?? 'Gamestore' }}</span>
                     </div>
                     <button @click="isMobileMenuOpen = false" class="w-9 h-9 rounded-full bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center transition-all cursor-pointer">
@@ -484,7 +498,11 @@
             <!-- Brand Column -->
             <div class="flex flex-col gap-5">
                 <div class="flex items-center gap-3">
-                    <img src="{{ asset('img/logo gamestore.png') }}" alt="{{ $setting->store_name ?? 'Gamestore' }} Logo" class="w-9 h-9 rounded-full shadow-lg border border-white/10">
+                    @if(isset($setting) && $setting->logo && file_exists(public_path('img/' . $setting->logo)))
+                        <img src="{{ asset('img/' . $setting->logo) }}" alt="{{ $setting->store_name ?? 'Gamestore' }} Logo" class="w-9 h-9 rounded-full shadow-lg border border-white/10 object-contain">
+                    @else
+                        <img src="{{ asset('img/logo gamestore.png') }}" alt="{{ $setting->store_name ?? 'Gamestore' }} Logo" class="w-9 h-9 rounded-full shadow-lg border border-white/10 object-contain">
+                    @endif
                     <span class="text-xl font-heading font-black uppercase tracking-wider text-white">
                         {{ $setting->store_name ?? 'Gamestore' }}<span class="text-primary">.</span>
                     </span>

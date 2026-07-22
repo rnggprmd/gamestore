@@ -71,29 +71,34 @@
         <!-- Right: Illustration -->
         <div class="flex-1 relative z-0 flex justify-center lg:justify-end w-full fade-in-right">
             <div class="character-glow relative">
+                @php
+                    $storeLogoUrl = (isset($setting) && $setting->logo && file_exists(public_path('img/' . $setting->logo)))
+                        ? asset('img/' . $setting->logo)
+                        : asset('img/logo gamestore.png');
+                @endphp
                 <!-- Giant watermark logo way in the back -->
                 <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none select-none">
-                    <img src="{{ asset('img/logo gamestore.png') }}" 
+                    <img src="{{ $storeLogoUrl }}" 
                          alt="Gamestore Watermark Background" 
-                         class="w-[420px] h-[420px] sm:w-[500px] sm:h-[500px] lg:w-[700px] lg:h-[700px] xl:w-[800px] xl:h-[800px] rounded-full opacity-25 animate-spin-slow drop-shadow-[0_0_60px_rgba(0,174,239,0.4)]">
+                         class="w-[420px] h-[420px] sm:w-[500px] sm:h-[500px] lg:w-[700px] lg:h-[700px] xl:w-[800px] xl:h-[800px] rounded-full opacity-25 animate-spin-slow drop-shadow-[0_0_60px_rgba(0,174,239,0.4)] object-contain">
                 </div>
 
                 <!-- Floating logo & robux icons behind/around the character -->
-                <img src="{{ asset('img/logo gamestore.png') }}" 
+                <img src="{{ $storeLogoUrl }}" 
                      alt="Gamestore Logo Bubble"
-                     class="absolute top-8 left-12 w-14 h-14 rounded-full border border-primary/20 shadow-[0_0_15px_rgba(0,174,239,0.2)] animate-float-slow opacity-60 z-0 select-none">
+                     class="absolute top-8 left-12 w-14 h-14 rounded-full border border-primary/20 shadow-[0_0_15px_rgba(0,174,239,0.2)] animate-float-slow opacity-60 z-0 select-none object-contain">
                 <img src="{{ asset('img/robux.png') }}" 
                      alt="Robux Bubble"
                      class="absolute bottom-16 right-4 w-18 h-18 rounded-full border border-primary/30 shadow-[0_0_20px_rgba(0,174,239,0.35)] animate-float-fast opacity-60 z-0 select-none">
-                <img src="{{ asset('img/logo gamestore.png') }}" 
+                <img src="{{ $storeLogoUrl }}" 
                      alt="Gamestore Logo Bubble"
-                     class="absolute top-1/2 -left-6 w-11 h-11 rounded-full border border-primary/15 shadow-[0_0_10px_rgba(0,174,239,0.15)] animate-float-medium opacity-40 z-0 select-none">
+                     class="absolute top-1/2 -left-6 w-11 h-11 rounded-full border border-primary/15 shadow-[0_0_10px_rgba(0,174,239,0.15)] animate-float-medium opacity-40 z-0 select-none object-contain">
                 <img src="{{ asset('img/robux.png') }}" 
                      alt="Robux Bubble"
                      class="absolute top-2 right-20 w-12 h-12 rounded-full border border-primary/20 shadow-[0_0_12px_rgba(0,174,239,0.2)] animate-float-medium opacity-50 z-0 select-none">
-                <img src="{{ asset('img/logo gamestore.png') }}" 
+                <img src="{{ $storeLogoUrl }}" 
                      alt="Gamestore Logo Bubble"
-                     class="absolute bottom-6 left-16 w-15 h-15 rounded-full border border-primary/25 shadow-[0_0_18px_rgba(0,174,239,0.25)] animate-float-slow opacity-45 z-0 select-none">
+                     class="absolute bottom-6 left-16 w-15 h-15 rounded-full border border-primary/25 shadow-[0_0_18px_rgba(0,174,239,0.25)] animate-float-slow opacity-45 z-0 select-none object-contain">
                 <img src="{{ asset('img/robux.png') }}" 
                      alt="Robux Bubble"
                      class="absolute top-1/3 -right-6 w-11 h-11 rounded-full border border-primary/20 shadow-[0_0_10px_rgba(0,174,239,0.2)] animate-float-fast opacity-55 z-0 select-none">
