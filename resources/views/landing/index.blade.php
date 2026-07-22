@@ -315,11 +315,12 @@
              @touchend="touchEnd($event)"
              tabindex="0"
              @keydown.left="prevPage()"
-             @keydown.right="nextPage()">
+             @keydown.right="nextPage()"
+             x-init="init()">
 
             <div class="overflow-hidden">
                 <div class="flex transition-transform duration-500"
-                     :style="{ transform: `translateX(-${currentPage * 100}%)` }">
+                     :style="{ transform: `translateX(${translateX}%)` }">
                     @foreach($games as $game)
                     <div class="w-full flex-shrink-0 px-4">
                         <a href="{{ route('game.show', $game->slug) }}"
@@ -362,15 +363,13 @@
             </div>
 
             <!-- Mobile Pagination Dots -->
-            @if($games->count() > 1)
-            <div class="flex justify-center gap-2 mt-8">
-                @foreach($games as $index => $game)
-                <button @click="currentPage = {{ $loop->index }}"
-                        :class="currentPage === {{ $loop->index }} ? 'bg-primary w-8' : 'bg-white/30 hover:bg-white/50'"
-                        class="h-2.5 rounded-full transition-all duration-300 cursor-pointer"></button>
-                @endforeach
+            <div class="flex justify-center gap-2 mt-8" x-show="totalPages > 1">
+                <template x-for="i in totalPages" :key="i">
+                    <button @click="currentPage = i - 1"
+                            :class="currentPage === (i - 1) ? 'bg-primary w-8' : 'bg-white/30 hover:bg-white/50'"
+                            class="h-2.5 rounded-full transition-all duration-300 cursor-pointer"></button>
+                </template>
             </div>
-            @endif
         </div>
 
         <!-- ===== DESKTOP CAROUSEL (4 cards per slide) ===== -->
@@ -379,7 +378,8 @@
              @wheel="handleWheel($event)"
              @keydown.left="prevPage()"
              @keydown.right="nextPage()"
-             tabindex="0">
+             tabindex="0"
+             x-init="init()">
 
             <div class="overflow-hidden">
                 <div class="flex transition-transform duration-500"
@@ -560,7 +560,7 @@
                     @endphp
                     
                     @if(!empty($youtube_id))
-                        <iframe class="w-full h-full" src="https://www.youtube.com/embed/{{ $youtube_id }}" title="Tutorial" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        <iframe class="w-full h-full" src="https://www.youtube.com/embed/{{ $youtube_id }}?autoplay=1&mute=1&loop=1&playlist={{ $youtube_id }}" title="Tutorial" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                     @else
                         <div class="w-full h-full flex flex-col items-center justify-center p-6 text-center">
                             <div class="w-16 h-16 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center mb-3">
