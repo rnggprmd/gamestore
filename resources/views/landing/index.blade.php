@@ -66,6 +66,75 @@
             <p class="text-base sm:text-lg text-gray-300 mb-8 max-w-lg mx-auto lg:mx-0 relative z-10">
                 Top Up Game Premium dengan Harga Terbaik
             </p>
+
+            @if(isset($banners) && $banners->count() > 0)
+            <!-- Hero Banner Carousel -->
+            <div class="mb-8 max-w-xl mx-auto lg:mx-0 relative z-20" x-data="{
+                activeSlide: 0,
+                slides: {{ $banners->count() }},
+                timer: null,
+                init() {
+                    if (this.slides > 1) {
+                        this.timer = setInterval(() => {
+                            this.activeSlide = (this.activeSlide + 1) % this.slides;
+                        }, 4000);
+                    }
+                }
+            }">
+                <div class="relative overflow-hidden rounded-2xl border border-white/10 shadow-2xl bg-[#141A28]">
+                    <div class="flex transition-transform duration-500 ease-out" :style="'transform: translateX(-' + (activeSlide * 100) + '%)'">
+                        @foreach($banners as $banner)
+                        @php
+                            $bannerUrl = $banner->button_link ?: ($banner->link ?: null);
+                        @endphp
+                        <div class="w-full shrink-0 relative group">
+                            @if($bannerUrl)
+                                <a href="{{ $bannerUrl }}" class="block relative group z-10">
+                            @endif
+                            
+                            @if($banner->image && file_exists(public_path('img/' . $banner->image)))
+                                <img src="{{ asset('img/' . $banner->image) }}" alt="{{ $banner->title }}" class="w-full h-48 sm:h-56 lg:h-60 object-cover">
+                            @else
+                                <div class="w-full h-48 sm:h-56 lg:h-60 bg-gradient-to-r from-primary/30 to-blue-900/50 flex items-center justify-center p-6 text-center">
+                                    <div>
+                                        <h3 class="text-xl font-bold text-white mb-2">{{ $banner->title }}</h3>
+                                        <p class="text-xs text-gray-300">{{ $banner->description }}</p>
+                                    </div>
+                                </div>
+                            @endif
+
+                            <div class="absolute inset-0 bg-gradient-to-b from-black/80 via-black/30 to-transparent flex flex-col justify-start p-4 sm:p-5 text-left">
+                                <h3 class="text-base sm:text-lg font-bold text-white drop-shadow-md tracking-wide">{{ $banner->title }}</h3>
+                                @if($banner->description || $banner->subtitle)
+                                    <p class="text-xs text-gray-200 line-clamp-2 drop-shadow mt-0.5 max-w-[80%]">{{ $banner->description ?: $banner->subtitle }}</p>
+                                @endif
+                                @if($banner->button_text)
+                                    <span class="inline-block mt-2 px-3 py-1 bg-primary text-white text-[11px] font-bold rounded-lg shadow-md w-fit">
+                                        {{ $banner->button_text }} <i class="fas fa-arrow-right text-[9px] ml-1"></i>
+                                    </span>
+                                @endif
+                            </div>
+
+                            @if($bannerUrl)
+                                </a>
+                            @endif
+                        </div>
+                        @endforeach
+                    </div>
+
+                    @if($banners->count() > 1)
+                    <!-- Carousel Indicators -->
+                    <div class="absolute bottom-2.5 right-4 z-30 flex gap-1.5">
+                        <template x-for="(slide, index) in slides" :key="index">
+                            <button @click="activeSlide = index" 
+                                    :class="activeSlide === index ? 'w-5 bg-primary' : 'w-1.5 bg-white/40 hover:bg-white/70'" 
+                                    class="h-1.5 rounded-full transition-all duration-300 cursor-pointer"></button>
+                        </template>
+                    </div>
+                    @endif
+                </div>
+            </div>
+            @endif
         </div>
         
         <!-- Right: Illustration -->

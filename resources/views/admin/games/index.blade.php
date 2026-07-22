@@ -160,7 +160,7 @@
                 <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>
-        <form action="{{ route('admin.games.store') }}" method="POST" enctype="multipart/form-data" class="flex flex-col flex-1 min-h-0">
+        <form action="{{ route('admin.games.store') }}" method="POST" enctype="multipart/form-data" class="flex flex-col flex-1 min-h-0" onsubmit="this.querySelector('button[type=submit]').disabled = true;">
             @csrf
             <input type="hidden" name="_form_type" value="create">
             <div class="admin-modal-body">
@@ -245,7 +245,7 @@
                 <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>
-        <form id="form-edit-game" action="" method="POST" enctype="multipart/form-data" class="flex flex-col flex-1 min-h-0">
+        <form id="form-edit-game" action="" method="POST" enctype="multipart/form-data" class="flex flex-col flex-1 min-h-0" onsubmit="this.querySelector('button[type=submit]').disabled = true;">
             @csrf @method('PUT')
             <input type="hidden" name="_form_type" value="edit">
             <input type="hidden" name="_edit_id" id="edit-game-hidden-id" value="">

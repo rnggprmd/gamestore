@@ -304,10 +304,10 @@
             <!-- Navigation (Desktop) -->
             <nav class="hidden lg:flex items-center gap-6 text-sm font-medium text-gray-300">
                 <a href="{{ route('home') }}" :class="activeMenu === '' ? 'text-primary' : 'hover:text-white'" class="transition-colors cursor-pointer">Beranda</a>
-                <a href="javascript:void(0)" @click="scrollToSection('games')" :class="activeMenu === 'games' ? 'text-primary' : 'hover:text-white'" class="transition-colors cursor-pointer">Daftar Game</a>
-                <a href="javascript:void(0)" @click="scrollToSection('features')" :class="activeMenu === 'features' ? 'text-primary' : 'hover:text-white'" class="transition-colors cursor-pointer">Tentang Kami</a>
-                <a href="javascript:void(0)" @click="scrollToSection('cara-order')" :class="activeMenu === 'cara-order' ? 'text-primary' : 'hover:text-white'" class="transition-colors cursor-pointer">Cara Order</a>
-                <a href="javascript:void(0)" @click="scrollToSection('testimonials')" :class="activeMenu === 'testimonials' ? 'text-primary' : 'hover:text-white'" class="transition-colors cursor-pointer">Ulasan</a>
+                <a href="{{ route('home') }}#games" @click.prevent="scrollToSection('games')" :class="activeMenu === 'games' ? 'text-primary' : 'hover:text-white'" class="transition-colors cursor-pointer">Daftar Game</a>
+                <a href="{{ route('home') }}#features" @click.prevent="scrollToSection('features')" :class="activeMenu === 'features' ? 'text-primary' : 'hover:text-white'" class="transition-colors cursor-pointer">Tentang Kami</a>
+                <a href="{{ route('home') }}#cara-order" @click.prevent="scrollToSection('cara-order')" :class="activeMenu === 'cara-order' ? 'text-primary' : 'hover:text-white'" class="transition-colors cursor-pointer">Cara Order</a>
+                <a href="{{ route('home') }}#testimonials" @click.prevent="scrollToSection('testimonials')" :class="activeMenu === 'testimonials' ? 'text-primary' : 'hover:text-white'" class="transition-colors cursor-pointer">Ulasan</a>
             </nav>
             
             <!-- Actions -->
@@ -315,10 +315,10 @@
                 <!-- Cart Button -->
                 <button @click.stop="$dispatch('toggle-cart')" class="relative bg-white/5 hover:bg-white/10 border border-white/10 w-10 h-10 rounded-full flex items-center justify-center text-gray-300 hover:text-white transition-all cursor-pointer">
                     <i class="fas fa-shopping-cart text-sm"></i>
-                    <span x-show="cartCount > 0" x-text="cartCount" class="absolute -top-1 -right-1 bg-primary text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-bg-dark shadow-sm"></span>
+                    <span x-show="cartItems.length > 0" x-text="cartItems.length" class="absolute -top-1 -right-1 bg-primary text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-bg-dark shadow-sm"></span>
                 </button>
 
-                <a href="javascript:void(0)" @click="scrollToSection('games')" class="hidden md:flex items-center gap-2 bg-primary hover:bg-primary/90 px-6 py-2 rounded-full text-white font-semibold text-sm transition-colors">
+                <a href="{{ route('home') }}#games" @click.prevent="scrollToSection('games')" class="hidden md:flex items-center gap-2 bg-primary hover:bg-primary/90 px-6 py-2 rounded-full text-white font-semibold text-sm transition-colors">
                     <span>Beli Sekarang</span>
                     <i class="fas fa-arrow-right text-xs"></i>
                 </a>
@@ -378,7 +378,7 @@
                     </a>
 
                     <!-- Daftar Game -->
-                    <a href="javascript:void(0)" @click="scrollToSection('games'); isMobileMenuOpen = false" class="menu-item-animate menu-item-2 block px-4 py-3 text-base text-gray-300 hover:text-primary hover:bg-white/5 transition-all rounded-xl font-medium">
+                    <a href="{{ route('home') }}#games" @click.prevent="scrollToSection('games'); isMobileMenuOpen = false" class="menu-item-animate menu-item-2 block px-4 py-3 text-base text-gray-300 hover:text-primary hover:bg-white/5 transition-all rounded-xl font-medium">
                         <div class="flex items-center gap-3">
                             <i class="fas fa-gamepad w-5 text-primary/60"></i>
                             <span>Daftar Game</span>
@@ -386,7 +386,7 @@
                     </a>
 
                     <!-- Tentang Kami -->
-                    <a href="javascript:void(0)" @click="scrollToSection('features'); isMobileMenuOpen = false" class="menu-item-animate menu-item-3 block px-4 py-3 text-base text-gray-300 hover:text-primary hover:bg-white/5 transition-all rounded-xl font-medium">
+                    <a href="{{ route('home') }}#features" @click.prevent="scrollToSection('features'); isMobileMenuOpen = false" class="menu-item-animate menu-item-3 block px-4 py-3 text-base text-gray-300 hover:text-primary hover:bg-white/5 transition-all rounded-xl font-medium">
                         <div class="flex items-center gap-3">
                             <i class="fas fa-star w-5 text-primary/60"></i>
                             <span>Tentang Kami</span>
@@ -394,7 +394,7 @@
                     </a>
 
                     <!-- Cara Order -->
-                    <a href="javascript:void(0)" @click="scrollToSection('cara-order'); isMobileMenuOpen = false" class="menu-item-animate menu-item-4 block px-4 py-3 text-base text-gray-300 hover:text-primary hover:bg-white/5 transition-all rounded-xl font-medium">
+                    <a href="{{ route('home') }}#cara-order" @click.prevent="scrollToSection('cara-order'); isMobileMenuOpen = false" class="menu-item-animate menu-item-4 block px-4 py-3 text-base text-gray-300 hover:text-primary hover:bg-white/5 transition-all rounded-xl font-medium">
                         <div class="flex items-center gap-3">
                             <i class="fas fa-shopping-cart w-5 text-primary/60"></i>
                             <span>Cara Order</span>
@@ -402,7 +402,7 @@
                     </a>
 
                     <!-- Ulasan -->
-                    <a href="javascript:void(0)" @click="scrollToSection('testimonials'); isMobileMenuOpen = false" class="menu-item-animate menu-item-5 block px-4 py-3 text-base text-gray-300 hover:text-primary hover:bg-white/5 transition-all rounded-xl font-medium">
+                    <a href="{{ route('home') }}#testimonials" @click.prevent="scrollToSection('testimonials'); isMobileMenuOpen = false" class="menu-item-animate menu-item-5 block px-4 py-3 text-base text-gray-300 hover:text-primary hover:bg-white/5 transition-all rounded-xl font-medium">
                         <div class="flex items-center gap-3">
                             <i class="fas fa-comments w-5 text-primary/60"></i>
                             <span>Ulasan</span>
@@ -425,7 +425,7 @@
                     <button @click="$dispatch('toggle-cart'); isMobileMenuOpen = false" class="menu-item-animate menu-button-2 w-full bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 hover:text-white font-semibold py-3.5 rounded-xl flex items-center justify-center gap-2.5 transition-all cursor-pointer">
                         <i class="fas fa-shopping-bag text-lg"></i>
                         <span>Keranjang</span>
-                        <span x-show="cartCount > 0" x-text="'(' + cartCount + ')'" class="text-primary font-bold"></span>
+                        <span x-show="cartItems.length > 0" x-text="'(' + cartItems.length + ')'" class="text-primary font-bold text-sm"></span>
                     </button>
                 </div>
 
@@ -621,7 +621,7 @@
                         </div>
                         <div>
                             <h3 class="text-base font-bold text-white">Keranjang Belanja</h3>
-                            <p class="text-xs text-gray-400" x-text="cartCount + ' Item Dipilih'"></p>
+                            <p class="text-xs text-gray-400" x-text="cartItems.length + ' Item Dipilih'"></p>
                         </div>
                     </div>
                     <button @click.stop="isCartOpen = false" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer">
@@ -672,8 +672,11 @@
                             </div>
 
                             <!-- Price & Qty Row -->
-                            <div class="flex items-center justify-between pt-1">
-                                <span class="text-xs font-bold text-primary" x-text="formatRupiah(item.price * item.quantity)"></span>
+                            <div class="flex items-center justify-between pt-1 border-t border-white/5 mt-1">
+                                <div>
+                                    <span class="text-[10px] text-gray-400 block" x-text="formatRupiah(parseFloat(item.price) || 0) + ' /pcs'"></span>
+                                    <span class="text-xs font-bold text-primary" x-text="formatRupiah((parseFloat(item.price) || 0) * (parseInt(item.quantity, 10) || 0))"></span>
+                                </div>
                                 
                                 <div class="flex items-center gap-2 bg-bg-dark border border-white/10 rounded-lg p-1">
                                     <button @click="updateQty(index, -1)" class="w-6 h-6 rounded flex items-center justify-center bg-white/5 text-gray-300 hover:text-white text-xs cursor-pointer">-</button>
@@ -687,9 +690,15 @@
 
                 <!-- Drawer Footer & Checkout -->
                 <div x-show="cartItems.length > 0" class="p-6 border-t border-white/10 bg-bg-card space-y-4">
-                    <div class="flex justify-between items-center text-sm">
-                        <span class="text-gray-400">Total Harga</span>
-                        <span class="text-xl font-black text-white" x-text="formatRupiah(cartTotal)"></span>
+                    <div class="space-y-2 bg-bg-dark/60 p-3.5 rounded-xl border border-white/5 text-xs">
+                        <div class="flex justify-between text-gray-400">
+                            <span>Total Item Pesanan:</span>
+                            <span class="font-bold text-white" x-text="cartItems.length + ' jenis item (' + cartItems.reduce((sum, i) => sum + (parseInt(i.quantity, 10) || 0), 0) + ' pcs)'"></span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm pt-2 border-t border-white/5">
+                            <span class="font-bold text-gray-300">Total Pembayaran</span>
+                            <span class="text-xl font-black text-primary drop-shadow-[0_0_10px_rgba(0,174,239,0.3)]" x-text="formatRupiah(cartItems.reduce((sum, i) => sum + ((parseFloat(i.price) || 0) * (parseInt(i.quantity, 10) || 0)), 0))"></span>
+                        </div>
                     </div>
 
                     <button @click="checkoutWhatsApp()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-600/20 cursor-pointer">
@@ -843,14 +852,32 @@
                 isCartOpen: false,
                 isMobileMenuOpen: false,
                 waNumber: waNumber,
-                cartItems: JSON.parse(localStorage.getItem('gamestore_cart') || '[]'),
+                cartItems: JSON.parse(localStorage.getItem('gamestore_cart') || '[]').map(item => ({
+                    ...item,
+                    price: Number(item.price) || 0,
+                    quantity: Number(item.quantity) || 1
+                })),
 
                 get cartCount() {
-                    return this.cartItems.reduce((sum, item) => sum + item.quantity, 0);
+                    return this.cartItems.length;
+                },
+
+                get cartTotalPcs() {
+                    return this.cartItems.reduce((sum, item) => sum + (parseInt(item.quantity, 10) || 0), 0);
                 },
 
                 get cartTotal() {
-                    return this.cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                    return this.cartItems.reduce((sum, item) => {
+                        let price = parseFloat(item.price) || 0;
+                        let qty = parseInt(item.quantity, 10) || 0;
+                        return sum + (price * qty);
+                    }, 0);
+                },
+
+                calculateItemSubtotal(item) {
+                    let price = parseFloat(item.price) || 0;
+                    let qty = parseInt(item.quantity, 10) || 0;
+                    return price * qty;
                 },
 
                 saveCart() {
@@ -858,33 +885,45 @@
                 },
 
                 addToCart(item) {
+                    let priceNum = Number(item.price) || 0;
+                    let qtyNum = Number(item.quantity) || 1;
+
                     let existingIndex = this.cartItems.findIndex(i => 
                         i.gameId === item.gameId && 
                         i.productId === item.productId && 
+                        i.username === item.username &&
                         i.uid === item.uid && 
                         i.server === item.server
                     );
 
                     if (existingIndex > -1) {
-                        this.cartItems[existingIndex].quantity += item.quantity;
+                        this.cartItems[existingIndex].quantity = (Number(this.cartItems[existingIndex].quantity) || 0) + qtyNum;
+                        // Trigger reactivity
+                        this.cartItems = [...this.cartItems];
                     } else {
-                        this.cartItems.push(item);
+                        this.cartItems = [...this.cartItems, {
+                            ...item,
+                            price: priceNum,
+                            quantity: qtyNum
+                        }];
                     }
                     this.saveCart();
                     this.isCartOpen = true;
                 },
 
                 removeItem(index) {
-                    this.cartItems.splice(index, 1);
+                    this.cartItems = this.cartItems.filter((_, i) => i !== index);
                     this.saveCart();
                 },
 
                 updateQty(index, delta) {
-                    let next = this.cartItems[index].quantity + delta;
+                    let current = Number(this.cartItems[index].quantity) || 1;
+                    let next = current + delta;
                     if (next > 0) {
                         this.cartItems[index].quantity = next;
+                        this.cartItems = [...this.cartItems];
                     } else {
-                        this.cartItems.splice(index, 1);
+                        this.cartItems = this.cartItems.filter((_, i) => i !== index);
                     }
                     this.saveCart();
                 },
@@ -1082,6 +1121,9 @@
                     if (element) {
                         element.scrollIntoView({ behavior: 'smooth', block: 'start' });
                         this.activeMenu = sectionId;
+                    } else {
+                        // Not on home page, navigate to home with hash
+                        window.location.href = '{{ route("home") }}' + '#' + sectionId;
                     }
                 }
             };

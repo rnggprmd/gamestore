@@ -141,10 +141,10 @@
                         <!-- Quantity -->
                         <div class="space-y-2">
                             <label class="block text-xs font-bold text-gray-300 uppercase tracking-wider">Jumlah Pembelian</label>
-                            <div class="flex items-center gap-2 bg-bg-dark border border-white/10 rounded-xl p-1 max-w-[150px]">
-                                <button @click="updateFormQty(-1)" class="w-9 h-9 flex items-center justify-center rounded-lg bg-bg-card hover:bg-white/5 border border-white/5 text-gray-300 transition-colors cursor-pointer font-bold">-</button>
-                                <span class="flex-1 text-center font-bold text-white text-sm" x-text="quantity"></span>
-                                <button @click="updateFormQty(1)" class="w-9 h-9 flex items-center justify-center rounded-lg bg-bg-card hover:bg-white/5 border border-white/5 text-gray-300 transition-colors cursor-pointer font-bold">+</button>
+                            <div class="flex items-center gap-2 bg-bg-dark border border-white/10 rounded-xl p-1 max-w-[160px]">
+                                <button type="button" @click="updateFormQty(-1)" class="w-9 h-9 flex items-center justify-center rounded-lg bg-bg-card hover:bg-white/5 border border-white/5 text-gray-300 transition-colors cursor-pointer font-bold select-none">-</button>
+                                <input type="number" x-model.number="quantity" @input="if (quantity < 1 || isNaN(quantity)) quantity = 1" min="1" class="w-12 text-center font-bold text-white text-sm bg-transparent focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
+                                <button type="button" @click="updateFormQty(1)" class="w-9 h-9 flex items-center justify-center rounded-lg bg-bg-card hover:bg-white/5 border border-white/5 text-gray-300 transition-colors cursor-pointer font-bold select-none">+</button>
                             </div>
                         </div>
                     </div>
@@ -153,7 +153,7 @@
                     <div class="pt-5 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-4">
                         <div class="text-center sm:text-left">
                             <span class="text-gray-400 text-xs">Total Pembayaran</span>
-                            <div class="text-2xl font-black text-white mt-0.5" x-text="formatRupiah(calculateTotal())"></div>
+                            <div class="text-2xl font-black text-white mt-0.5" x-text="formatRupiah(selectedProduct ? (parseFloat(selectedProduct.price) || 0) * (parseInt(quantity, 10) || 1) : 0)"></div>
                         </div>
                         
                         <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
@@ -236,12 +236,17 @@
             gameName: gameName,
 
             selectProduct(id, name, price) {
-                this.selectedProduct = { id, name, price };
+                this.selectedProduct = { 
+                    id: id, 
+                    name: name, 
+                    price: Number(price) || 0 
+                };
                 this.validationError = '';
             },
 
             updateFormQty(delta) {
-                let next = this.quantity + delta;
+                let current = parseInt(this.quantity) || 1;
+                let next = current + delta;
                 if (next > 0) {
                     this.quantity = next;
                 }
@@ -249,7 +254,7 @@
 
             calculateTotal() {
                 if (!this.selectedProduct) return 0;
-                return this.selectedProduct.price * this.quantity;
+                return (parseFloat(this.selectedProduct.price) || 0) * (parseInt(this.quantity, 10) || 1);
             },
 
             formatRupiah(number) {
