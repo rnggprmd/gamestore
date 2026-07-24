@@ -117,23 +117,4 @@ class LandingController extends Controller
             return response()->json(['error' => 'Search failed'], 500);
         }
     }
-
-    /**
-     * Get site settings untuk AJAX calls — hanya field non-sensitif
-     */
-    public function getSiteSettings()
-    {
-        try {
-            $setting = $this->gameService->getSettings();
-
-            return response()->json([
-                'store_name' => $setting->store_name,
-                // Nomor WA tidak diekspos ke publik
-            ]);
-
-        } catch (\Exception $e) {
-            Log::error('Site settings API error: ' . $e->getMessage());
-            return response()->json(['error' => 'Settings unavailable'], 500);
-        }
-    }
 }

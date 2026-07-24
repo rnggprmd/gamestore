@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Cache;
 use App\Models\Setting;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,14 +24,18 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Share $setting with ALL views so admin.layout (and landing) can always access it
+        // Share $setting with ALL views so admin.layout (and landing) can always access it.
+        // Uses cache to avoid querying DB on every partial view render.
         View::composer('*', function ($view) {
             if (!$view->offsetExists('setting')) {
-                $view->with('setting', Setting::first() ?? new Setting([
-                    'store_name'  => 'Gamestore Indonesia',
-                    'whatsapp'    => '628123456789',
-                    'footer'      => 'Gamestore Indonesia - Penyedia Top Up Game Instan Terlengkap & Terpercaya.',
-                ]));
+                $setting = Cache::remember('site_settings_global', 3600, function () {
+                    return Setting::first() ?? new Setting([
+                        'store_name' => 'Gamestore Indonesia',
+                        'whatsapp'   => '628123456789',
+                        'footer'     => 'Gamestore Indonesia - Penyedia Top Up Game Instan Terlengkap & Terpercaya.',
+                    ]);
+                });
+                $view->with('setting', $setting);
             }
         });
     }

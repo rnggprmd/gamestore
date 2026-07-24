@@ -9,7 +9,6 @@ use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\CategoryController;
-use App\Http\Controllers\Admin\OrderController;
 use Illuminate\Support\Facades\Route;
 
 // ============================================================

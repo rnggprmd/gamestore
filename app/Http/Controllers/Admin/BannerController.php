@@ -4,14 +4,16 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Banner;
+use App\Services\GameService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Cache;
 
 
 class BannerController extends Controller
 {
+    public function __construct(private GameService $gameService) {}
+
     public function index()
     {
         $search = request('search');
@@ -64,7 +66,7 @@ class BannerController extends Controller
 
             Banner::create($data);
 
-            Cache::forget('active_banners');
+            $this->gameService->clearCache();
 
             return redirect()->route('admin.banners.index')->with('success', 'Banner berhasil ditambahkan.');
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -105,7 +107,7 @@ class BannerController extends Controller
 
             $banner->update($data);
 
-            Cache::forget('active_banners');
+            $this->gameService->clearCache();
 
             return redirect()->route('admin.banners.index')->with('success', 'Banner berhasil diperbarui.');
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -122,7 +124,7 @@ class BannerController extends Controller
         $this->deleteFile($banner->image);
         $banner->delete();
 
-        Cache::forget('active_banners');
+        $this->gameService->clearCache();
         
         return redirect()->route('admin.banners.index')->with('success', 'Banner berhasil dihapus.');
 

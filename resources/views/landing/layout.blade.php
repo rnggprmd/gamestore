@@ -977,8 +977,8 @@
                     if (this.cartItems.length === 1) {
                         // Single item template
                         const item = this.cartItems[0];
-                        const templateSingle = `{{ $setting->whatsapp_template_single ?? '' }}`;
-                        const storeName = '{{ $setting->store_name }}' || 'Gamestore';
+                        const templateSingle = {!! json_encode($setting->whatsapp_template_single ?? '') !!};
+                        const storeName = {!! json_encode($setting->store_name ?? 'Gamestore') !!};
                         
                         if (templateSingle) {
                             msg = this.replaceTemplate(templateSingle, {
@@ -1007,8 +1007,8 @@
                         }
                     } else {
                         // Multiple items template
-                        const templateMultiple = `{{ $setting->whatsapp_template_multiple ?? '' }}`;
-                        const storeName = '{{ $setting->store_name }}' || 'Gamestore';
+                        const templateMultiple = {!! json_encode($setting->whatsapp_template_multiple ?? '') !!};
+                        const storeName = {!! json_encode($setting->store_name ?? 'Gamestore') !!};
                         
                         let itemsMsg = '';
                         this.cartItems.forEach((item, index) => {
@@ -1053,8 +1053,8 @@
                 },
 
                 contactAdmin() {
-                    const template = `{{ $setting->whatsapp_contact_template ?? '' }}`;
-                    const storeName = '{{ $setting->store_name }}' || 'Gamestore';
+                    const template = {!! json_encode($setting->whatsapp_contact_template ?? '') !!};
+                    const storeName = {!! json_encode($setting->store_name ?? 'Gamestore') !!};
                     
                     let msg;
                     if (template) {

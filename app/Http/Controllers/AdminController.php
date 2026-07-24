@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 use App\Models\Game;
 use App\Models\Product;
 use App\Models\Setting;
+use App\Models\Order;
 use App\Models\OrderItem;
 use App\Services\GameService;
 
@@ -23,7 +26,7 @@ class AdminController extends Controller
         $whatsappClicks = $setting ? $setting->whatsapp_clicks : 0;
         
         // Optimized top products query with eager loading
-        $topProducts = OrderItem::select('product_name', 'game_name', \DB::raw('SUM(quantity) as total_qty'))
+        $topProducts = OrderItem::select('product_name', 'game_name', DB::raw('SUM(quantity) as total_qty'))
             ->groupBy('product_name', 'game_name')
             ->orderBy('total_qty', 'desc')
             ->take(5)
@@ -33,9 +36,9 @@ class AdminController extends Controller
         $chartLabels = [];
         $chartData = [];
         for ($i = 6; $i >= 0; $i--) {
-            $date = \Carbon\Carbon::now()->subDays($i);
+            $date = Carbon::now()->subDays($i);
             $dayName = $date->translatedFormat('D'); // e.g. Sen, Sel, Rab...
-            $count = \App\Models\Order::whereDate('created_at', $date->toDateString())->count();
+            $count = Order::whereDate('created_at', $date->toDateString())->count();
             
             $chartLabels[] = $dayName;
             $chartData[] = $count;

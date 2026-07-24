@@ -61,10 +61,14 @@ class SettingController extends Controller
         } catch (\Exception $e) {
             // If service injection fails, clear caches manually
             Cache::forget('site_settings');
+            Cache::forget('site_settings_global');
             Cache::forget('active_games_with_products');
             Cache::forget('active_banners');
             Cache::forget('active_testimonials');
         }
+
+        // Always clear the global view-composer cache
+        Cache::forget('site_settings_global');
 
         return redirect()->route('admin.settings.index')->with('success', 'Pengaturan website berhasil diperbarui.');
     }

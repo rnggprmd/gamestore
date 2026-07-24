@@ -12,6 +12,9 @@ class OrderItem extends Model
         'product_id',
         'product_name',
         'game_name',
+        'username',
+        'uid',
+        'server',
         'quantity',
         'price',
         'subtotal'
