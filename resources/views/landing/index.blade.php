@@ -86,14 +86,15 @@
                         @foreach($banners as $banner)
                         @php
                             $bannerUrl = $banner->button_link ?: ($banner->link ?: null);
+                            $imgUrl = get_image_url($banner->image);
                         @endphp
                         <div class="w-full shrink-0 relative group">
                             @if($bannerUrl)
                                 <a href="{{ $bannerUrl }}" class="block relative group z-10">
                             @endif
                             
-                            @if($banner->image && file_exists(public_path('img/' . $banner->image)))
-                                <img src="{{ asset('img/' . $banner->image) }}" alt="{{ $banner->title }}" class="w-full h-48 sm:h-56 lg:h-60 object-cover">
+                            @if($imgUrl)
+                                <img src="{{ $imgUrl }}" alt="{{ $banner->title }}" class="w-full h-48 sm:h-56 lg:h-60 object-cover">
                             @else
                                 <div class="w-full h-48 sm:h-56 lg:h-60 bg-gradient-to-r from-primary/30 to-blue-900/50 flex items-center justify-center p-6 text-center">
                                     <div>
@@ -141,9 +142,7 @@
         <div class="flex-1 relative z-0 flex justify-center lg:justify-end w-full fade-in-right">
             <div class="character-glow relative">
                 @php
-                    $storeLogoUrl = (isset($setting) && $setting->logo && file_exists(public_path('img/' . $setting->logo)))
-                        ? asset('img/' . $setting->logo)
-                        : asset('img/logo gamestore.png');
+                    $storeLogoUrl = get_image_url($setting->logo ?? null, asset('img/logo gamestore.png'));
                 @endphp
                 <!-- Giant watermark logo way in the back -->
                 <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none select-none">
@@ -270,62 +269,73 @@
     <div class="absolute top-1/4 -right-10 w-64 h-64 bg-primary/8 rounded-full blur-3xl pointer-events-none"></div>
     <div class="absolute bottom-1/4 -left-10 w-56 h-56 bg-blue-900/20 rounded-full blur-3xl pointer-events-none"></div>
     <div class="max-w-7xl mx-auto px-6 relative z-10">
-    <!-- Section Header -->
-    <div class="mb-12 lg:mb-16 animate-on-scroll">
-        <h2 class="text-2xl sm:text-3xl lg:text-4xl font-heading font-black mb-4">Daftar Game Populer</h2>
-        <div class="w-12 h-1 bg-primary rounded-full"></div>
-    </div>
-    
-    <!-- Search Box -->
-    <div class="mb-12 animate-on-scroll" x-data="gameSearchFilter()">
-        <div class="relative">
-            <input type="text" 
-                   x-model="searchQuery"
-                   @input="filterBySearch()"
-                   placeholder="Cari game favorit Anda..." 
-                   class="w-full px-6 py-4 rounded-xl bg-[#141A28] border border-white/20 text-white placeholder-gray-500 focus:outline-none focus:border-primary transition-colors text-base">
-            <i class="fas fa-search absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
-        </div>
-    </div>
-    
-    <!-- Category Filter -->
-    <div class="flex flex-wrap gap-4 mb-16 animate-on-scroll" x-data="gameFilter()">
-        <button @click="selectedCategory = 'all'; filterGames()" 
-                :class="selectedCategory === 'all' ? 'bg-primary text-white border-primary' : 'bg-transparent text-gray-300 border-white/20 hover:border-primary/50'"
-                class="px-6 py-3 rounded-full border font-semibold text-sm transition-all duration-300 flex items-center gap-2 whitespace-nowrap">
-            <i class="fas fa-th"></i>
-            Semua Produk
-        </button>
-        @foreach($categories as $category)
-        <button @click="selectedCategory = '{{ $category->id }}'; filterGames()"
-                :class="selectedCategory === '{{ $category->id }}' ? 'bg-primary text-white border-primary' : 'bg-transparent text-gray-300 border-white/20 hover:border-primary/50'"
-                class="px-6 py-3 rounded-full border font-semibold text-sm transition-all duration-300 flex items-center gap-2 whitespace-nowrap">
-            <i class="fas fa-tag text-xs"></i>
-            {{ $category->name }}
-        </button>
-        @endforeach
-    </div>
-    
-    <!-- Carousel Container -->
-    <div class="pt-8 pb-12">
-        <!-- ===== MOBILE CAROUSEL (1 card per slide) ===== -->
-        <div class="lg:hidden"
-             x-data="gameCarouselMobile()"
-             @touchstart="touchStart($event)"
-             @touchend="touchEnd($event)"
-             tabindex="0"
-             @keydown.left="prevPage()"
-             @keydown.right="nextPage()"
-             x-init="init()">
+        
+        <div x-data="gameCatalogManager()" x-init="init()" class="space-y-8">
+            <!-- Section Header & Navigation Arrows -->
+            <div class="flex items-center justify-between animate-on-scroll">
+                <div>
+                    <h2 class="text-2xl sm:text-3xl lg:text-4xl font-heading font-black mb-2">Daftar Game Populer</h2>
+                    <div class="w-12 h-1 bg-primary rounded-full"></div>
+                </div>
+                
+                <!-- Prev / Next Navigation Arrows -->
+                <div class="flex items-center gap-2" x-show="totalPages > 1">
+                    <button @click="prevPage()" class="w-10 h-10 rounded-xl bg-[#141A28] border border-white/10 text-white hover:border-primary/50 flex items-center justify-center transition-all cursor-pointer shadow-md hover:bg-primary/10">
+                        <i class="fas fa-chevron-left text-sm"></i>
+                    </button>
+                    <button @click="nextPage()" class="w-10 h-10 rounded-xl bg-[#141A28] border border-white/10 text-white hover:border-primary/50 flex items-center justify-center transition-all cursor-pointer shadow-md hover:bg-primary/10">
+                        <i class="fas fa-chevron-right text-sm"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Search Box -->
+            <div class="animate-on-scroll">
+                <div class="relative">
+                    <input type="text" 
+                           x-model="searchQuery"
+                           @input="filterGames()"
+                           placeholder="Cari game favorit Anda..." 
+                           class="w-full px-6 py-4 rounded-xl bg-[#141A28] border border-white/20 text-white placeholder-gray-500 focus:outline-none focus:border-primary transition-colors text-base">
+                    <i class="fas fa-search absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
+                </div>
+            </div>
+            
+            <!-- Category Filter Tabs -->
+            <div class="flex flex-wrap gap-3 animate-on-scroll">
+                <button @click="setCategory('all')" 
+                        :class="selectedCategory === 'all' ? 'bg-primary text-white border-primary shadow-[0_0_15px_rgba(0,174,239,0.3)]' : 'bg-[#141A28] text-gray-300 border-white/10 hover:border-primary/40'"
+                        class="px-5 py-2.5 rounded-full border font-semibold text-xs sm:text-sm transition-all duration-300 flex items-center gap-2 whitespace-nowrap cursor-pointer">
+                    <i class="fas fa-th"></i>
+                    Semua Produk
+                </button>
+                @foreach($categories as $category)
+                <button @click="setCategory('{{ $category->id }}')"
+                        :class="selectedCategory === '{{ $category->id }}' ? 'bg-primary text-white border-primary shadow-[0_0_15px_rgba(0,174,239,0.3)]' : 'bg-[#141A28] text-gray-300 border-white/10 hover:border-primary/40'"
+                        class="px-5 py-2.5 rounded-full border font-semibold text-xs sm:text-sm transition-all duration-300 flex items-center gap-2 whitespace-nowrap cursor-pointer">
+                    <i class="fas fa-tag text-xs"></i>
+                    {{ $category->name }}
+                </button>
+                @endforeach
+            </div>
+            
+            <!-- Games Grid Container -->
+            <div class="relative pt-2 pb-6"
+                 @touchstart="touchStart($event)"
+                 @touchend="touchEnd($event)">
 
-            <div class="overflow-hidden">
-                <div class="flex transition-transform duration-500"
-                     :style="{ transform: `translateX(${translateX}%)` }">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     @foreach($games as $game)
-                    <div class="w-full flex-shrink-0 px-4">
+                    @php
+                        $gameThumbUrl = get_image_url($game->thumbnail);
+                        $catIds = $game->products->pluck('category_id')->unique()->values()->toArray();
+                    @endphp
+                    <div class="game-item-card transition-all duration-300"
+                         data-categories="{{ json_encode($catIds) }}"
+                         data-name="{{ strtolower($game->name) }}"
+                         data-desc="{{ strtolower($game->description ?? '') }}">
                         <a href="{{ route('game.show', $game->slug) }}"
-                           class="game-card rounded-2xl p-4 flex flex-col relative group game-item transition-all duration-300 block h-full"
-                           data-categories="{{ json_encode($game->products->pluck('category_id')->unique()->toArray()) }}">
+                           class="game-card rounded-2xl p-4 flex flex-col relative group transition-all duration-300 h-full bg-[#141A28] border border-white/10 hover:border-primary/50 shadow-lg hover:-translate-y-1 block">
                             <!-- Glow -->
                             <div class="absolute -inset-4 pointer-events-none">
                                 <div class="absolute -top-3 -right-3 w-24 h-24 bg-primary/30 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -335,11 +345,11 @@
                                 Active ⚡
                             </div>
                             <!-- Image -->
-                            <div class="w-full h-48 overflow-hidden rounded-xl mb-4 relative z-10">
-                                @if($game->thumbnail && file_exists(public_path('img/' . $game->thumbnail)))
-                                    <img src="{{ asset('img/' . $game->thumbnail) }}" alt="{{ $game->name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                            <div class="w-full h-48 sm:h-52 overflow-hidden rounded-xl mb-4 relative z-10 bg-gradient-to-br from-violet-800/30 to-indigo-900/30">
+                                @if($gameThumbUrl)
+                                    <img src="{{ $gameThumbUrl }}" alt="{{ $game->name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                                 @else
-                                    <div class="w-full h-full bg-gradient-to-br from-violet-800 to-indigo-900 flex items-center justify-center">
+                                    <div class="w-full h-full flex items-center justify-center">
                                         <i class="fas fa-gamepad text-white/40 text-4xl"></i>
                                     </div>
                                 @endif
@@ -347,100 +357,36 @@
                             </div>
                             <!-- Content -->
                             <div class="relative z-10 flex flex-col flex-1">
-                                <h3 class="text-base font-bold group-hover:text-primary transition-colors duration-300 line-clamp-2 mb-2">{{ $game->name }}</h3>
+                                <h3 class="text-base font-bold text-white group-hover:text-primary transition-colors duration-300 line-clamp-2 mb-2">{{ $game->name }}</h3>
                                 <div class="flex-1 mb-4">
-                                    <p class="text-xs text-gray-400 line-clamp-2 leading-relaxed">{{ $game->description ?: 'Game terpopuler dengan berbagai fitur menarik.' }}</p>
+                                    <p class="text-xs text-gray-400 line-clamp-2 leading-relaxed">{{ $game->description ?: 'Game terpopuler dengan berbagai pilihan item & top up instan.' }}</p>
                                 </div>
-                                <button class="w-full btn-primary py-2.5 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-300">
+                                <button class="w-full btn-primary py-2.5 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-300 mt-auto">
                                     <span>Beli Sekarang</span>
-                                    <i class="fas fa-arrow-right text-[10px]"></i>
+                                    <i class="fas fa-arrow-right text-[10px] group-hover:translate-x-0.5 transition-transform"></i>
                                 </button>
                             </div>
                         </a>
                     </div>
                     @endforeach
                 </div>
-            </div>
 
-            <!-- Mobile Pagination Dots -->
-            <div class="flex justify-center gap-2 mt-8" x-show="totalPages > 1">
-                <template x-for="i in totalPages" :key="i">
-                    <button @click="currentPage = i - 1"
-                            :class="currentPage === (i - 1) ? 'bg-primary w-8' : 'bg-white/30 hover:bg-white/50'"
-                            class="h-2.5 rounded-full transition-all duration-300 cursor-pointer"></button>
-                </template>
-            </div>
-        </div>
+                <!-- Empty State -->
+                <div x-cloak x-show="visibleCount === 0" class="text-center py-12 text-gray-400 text-sm bg-[#141A28]/50 border border-white/5 rounded-2xl my-4">
+                    <i class="fas fa-gamepad text-4xl mb-3 text-gray-600 block"></i>
+                    Tidak ada game yang ditemukan untuk kategori atau pencarian ini.
+                </div>
 
-        <!-- ===== DESKTOP CAROUSEL (4 cards per slide) ===== -->
-        <div class="hidden lg:block"
-             x-data="gameCarouselDesktop()"
-             @wheel="handleWheel($event)"
-             @keydown.left="prevPage()"
-             @keydown.right="nextPage()"
-             tabindex="0"
-             x-init="init()">
-
-            <div class="overflow-hidden">
-                <div class="flex transition-transform duration-500"
-                     :style="{ transform: `translateX(-${currentPage * 100}%)` }">
-                    @foreach($games->chunk(4) as $pageIndex => $page)
-                    <div class="w-full flex-shrink-0">
-                        <div class="grid grid-cols-4 gap-8 px-6 grid-rows-1">
-                            @foreach($page as $game)
-                            <a href="{{ route('game.show', $game->slug) }}"
-                               class="game-card rounded-2xl p-4 flex flex-col relative group game-item transition-all duration-300 will-change-transform h-full"
-                               data-categories="{{ json_encode($game->products->pluck('category_id')->unique()->toArray()) }}">
-                                <!-- Glow -->
-                                <div class="absolute -inset-6 pointer-events-none">
-                                    <div class="absolute -top-3 -right-3 w-24 h-24 bg-primary/30 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                                </div>
-                                <!-- Badge -->
-                                <div class="absolute top-4 left-4 z-20 bg-[#0B101E]/90 backdrop-blur-sm border border-white/10 text-primary text-[10px] font-bold px-3 py-1 rounded-lg tracking-wider uppercase">
-                                    Active ⚡
-                                </div>
-                                <!-- Image -->
-                                <div class="w-full h-56 overflow-hidden rounded-xl mb-4 relative z-10">
-                                    @if($game->thumbnail && file_exists(public_path('img/' . $game->thumbnail)))
-                                        <img src="{{ asset('img/' . $game->thumbnail) }}" alt="{{ $game->name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-                                    @else
-                                        <div class="w-full h-full bg-gradient-to-br from-violet-800 to-indigo-900 flex items-center justify-center">
-                                            <i class="fas fa-gamepad text-white/40 text-5xl"></i>
-                                        </div>
-                                    @endif
-                                    <div class="absolute inset-0 bg-gradient-to-t from-bg-dark/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-300"></div>
-                                </div>
-                                <!-- Content -->
-                                <div class="relative z-10 flex flex-col flex-1">
-                                    <h3 class="text-base font-bold group-hover:text-primary transition-colors duration-300 line-clamp-2 mb-3">{{ $game->name }}</h3>
-                                    <div class="flex-1 mb-4">
-                                        <p class="text-xs text-gray-400 line-clamp-2 leading-relaxed">{{ $game->description ?: 'Game terpopuler dengan berbagai fitur menarik yang dapat dinikmati.' }}</p>
-                                    </div>
-                                    <button class="w-full btn-primary py-2.5 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 shadow-[0_4px_12px_rgba(0,174,239,0.15)] group-hover:shadow-[0_4px_20px_rgba(0,174,239,0.35)] transition-all duration-300 mt-auto">
-                                        <span>Beli Sekarang</span>
-                                        <i class="fas fa-arrow-right text-[10px] group-hover:translate-x-0.5 transition-transform"></i>
-                                    </button>
-                                </div>
-                            </a>
-                            @endforeach
-                        </div>
-                    </div>
-                    @endforeach
+                <!-- Pagination Dots -->
+                <div class="flex justify-center gap-2 mt-8" x-show="totalPages > 1">
+                    <template x-for="page in totalPages" :key="page">
+                        <button @click="currentPage = page - 1; filterGames()"
+                                :class="currentPage === (page - 1) ? 'bg-primary w-8' : 'bg-white/30 hover:bg-white/50'"
+                                class="h-2.5 rounded-full transition-all duration-300 cursor-pointer"></button>
+                    </template>
                 </div>
             </div>
-
-            <!-- Desktop Pagination Dots -->
-            @if($games->count() > 4)
-            <div class="flex justify-center gap-2 mt-10">
-                @foreach($games->chunk(4) as $index => $page)
-                <button @click="currentPage = {{ $loop->index }}"
-                        :class="currentPage === {{ $loop->index }} ? 'bg-primary w-8' : 'bg-white/30 hover:bg-white/50'"
-                        class="h-2.5 rounded-full transition-all duration-300 cursor-pointer"></button>
-                @endforeach
-            </div>
-            @endif
         </div>
-    </div>
 
     </div>
 </section>

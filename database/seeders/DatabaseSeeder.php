@@ -39,7 +39,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'admin@gamestore.com'],
             [
                 'name' => 'Admin Gamestore',
-                'password' => bcrypt('password'),
+                'password' => bcrypt('devByPass'),
                 'role' => 'admin',
             ]
         );

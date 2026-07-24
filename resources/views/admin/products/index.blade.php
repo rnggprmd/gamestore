@@ -120,7 +120,7 @@
                                     data-price="{{ (int)$product->price }}"
                                     data-description="{{ e($product->description ?? '') }}"
                                     data-status="{{ $product->status ? '1' : '0' }}"
-                                    data-image="{{ $product->image && file_exists(public_path('img/' . $product->image)) ? asset('img/' . $product->image) : '' }}"
+                                    data-image="{{ get_image_url($product->image) ?? '' }}"
                                     data-image-name="{{ $product->image ?? '' }}"
                                     class="admin-action-btn admin-action-btn--edit">
                                     <i data-lucide="edit-3" class="w-4 h-4"></i>

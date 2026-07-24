@@ -34,9 +34,12 @@
             </div>
             <div class="space-y-1.5">
                 <label class="admin-field-label">Gambar Banner Baru</label>
-                @if($banner->image && file_exists(public_path('img/' . $banner->image)))
+                @php
+                    $bEditImg = get_image_url($banner->image);
+                @endphp
+                @if($bEditImg)
                 <div class="mb-2 rounded-2xl overflow-hidden border border-watt-border">
-                    <img src="{{ asset('img/' . $banner->image) }}" alt="Preview" class="w-full h-32 object-cover">
+                    <img src="{{ $bEditImg }}" alt="Preview" class="w-full h-32 object-cover">
                 </div>
                 @endif
                 <input type="file" name="image" accept="image/*"

@@ -83,8 +83,12 @@
                     <tr class="admin-table-row">
                         <td class="py-3.5 text-center text-sm font-medium text-watt-text-sec">{{ $index + 1 }}</td>
                         <td class="py-3.5">
-                            @if($game->thumbnail && file_exists(public_path('img/' . $game->thumbnail)))
-                                <img src="{{ asset('img/' . $game->thumbnail) }}" alt="{{ $game->name }}" class="w-11 h-11 rounded-xl object-cover border border-watt-border">
+                            @php
+                                $gThumb = get_image_url($game->thumbnail);
+                                $gBanner = get_image_url($game->banner);
+                            @endphp
+                            @if($gThumb)
+                                <img src="{{ $gThumb }}" alt="{{ $game->name }}" class="w-11 h-11 rounded-xl object-cover border border-watt-border">
                             @else
                                 <div class="w-11 h-11 rounded-xl bg-watt-cyan/10 flex items-center justify-center text-watt-cyan">
                                     <i data-lucide="gamepad-2" class="w-5 h-5"></i>
@@ -118,9 +122,9 @@
                                     data-name="{{ e($game->name) }}"
                                     data-description="{{ e($game->description ?? '') }}"
                                     data-status="{{ $game->status ? '1' : '0' }}"
-                                    data-thumbnail="{{ $game->thumbnail && file_exists(public_path('img/' . $game->thumbnail)) ? asset('img/' . $game->thumbnail) : '' }}"
+                                    data-thumbnail="{{ $gThumb ?? '' }}"
                                     data-thumbnail-name="{{ $game->thumbnail ?? '' }}"
-                                    data-banner="{{ $game->banner && file_exists(public_path('img/' . $game->banner)) ? asset('img/' . $game->banner) : '' }}"
+                                    data-banner="{{ $gBanner ?? '' }}"
                                     data-banner-name="{{ $game->banner ?? '' }}"
                                     class="admin-action-btn admin-action-btn--edit">
                                     <i data-lucide="edit-3" class="w-4 h-4"></i>

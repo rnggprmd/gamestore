@@ -47,9 +47,13 @@
             <div class="grid grid-cols-2 gap-4">
                 <div class="space-y-1.5">
                     <label class="admin-field-label">Logo / Thumbnail Baru</label>
-                    @if($game->thumbnail && file_exists(public_path('img/' . $game->thumbnail)))
+                    @php
+                        $editThumb = get_image_url($game->thumbnail);
+                        $editBanner = get_image_url($game->banner);
+                    @endphp
+                    @if($editThumb)
                     <div class="mb-2 flex items-center gap-3 bg-watt-bg border border-watt-border p-3 rounded-xl">
-                        <img src="{{ asset('img/' . $game->thumbnail) }}" alt="Preview" class="w-12 h-12 rounded-xl object-cover">
+                        <img src="{{ $editThumb }}" alt="Preview" class="w-12 h-12 rounded-xl object-cover">
                         <span class="text-[10px] text-watt-text-sec font-mono truncate">{{ $game->thumbnail }}</span>
                     </div>
                     @endif
@@ -65,9 +69,9 @@
                 </div>
                 <div class="space-y-1.5">
                     <label class="admin-field-label">Banner Detail Baru</label>
-                    @if($game->banner && file_exists(public_path('img/' . $game->banner)))
+                    @if($editBanner)
                     <div class="mb-2 flex items-center gap-3 bg-watt-bg border border-watt-border p-3 rounded-xl">
-                        <img src="{{ asset('img/' . $game->banner) }}" alt="Preview" class="w-20 h-12 rounded-lg object-cover">
+                        <img src="{{ $editBanner }}" alt="Preview" class="w-20 h-12 rounded-lg object-cover">
                         <span class="text-[10px] text-watt-text-sec font-mono truncate">{{ $game->banner }}</span>
                     </div>
                     @endif

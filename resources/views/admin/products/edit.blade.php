@@ -57,9 +57,12 @@
             </div>
             <div class="space-y-1.5">
                 <label class="admin-field-label">Gambar Baru (Opsional)</label>
-                @if($product->image && file_exists(public_path('img/' . $product->image)))
+                @php
+                    $pEditImg = get_image_url($product->image);
+                @endphp
+                @if($pEditImg)
                 <div class="mb-2 flex items-center gap-3 bg-watt-bg border border-watt-border p-3 rounded-xl">
-                    <img src="{{ asset('img/' . $product->image) }}" alt="Preview" class="w-12 h-12 rounded-xl object-cover">
+                    <img src="{{ $pEditImg }}" alt="Preview" class="w-12 h-12 rounded-xl object-cover">
                     <span class="text-[10px] text-watt-text-sec font-mono truncate">{{ $product->image }}</span>
                 </div>
                 @endif

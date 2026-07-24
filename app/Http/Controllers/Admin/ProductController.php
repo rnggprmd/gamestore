@@ -135,8 +135,12 @@ class ProductController extends Controller
 
     private function uploadFile($file)
     {
+        $targetDir = public_path('img');
+        if (!File::exists($targetDir)) {
+            File::makeDirectory($targetDir, 0755, true);
+        }
         $filename = time() . '_prod_' . Str::random(5) . '.' . $file->getClientOriginalExtension();
-        $file->move(public_path('img'), $filename);
+        $file->move($targetDir, $filename);
         return $filename;
     }
 

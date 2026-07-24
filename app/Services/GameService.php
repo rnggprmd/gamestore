@@ -30,7 +30,7 @@ class GameService
             return Game::where('slug', $slug)
                 ->where('status', true)
                 ->with(['products' => function ($q) {
-                    $q->where('status', true);
+                    $q->where('status', true)->with('category');
                 }])
                 ->firstOrFail();
         });
@@ -80,6 +80,16 @@ class GameService
         Cache::forget('active_testimonials');
         Cache::forget('active_categories');
         Cache::forget('site_settings');
+
+        // Clear all game slug caches so new/updated products appear instantly
+        try {
+            $slugs = Game::pluck('slug');
+            foreach ($slugs as $slug) {
+                Cache::forget("game_slug_{$slug}");
+            }
+        } catch (\Throwable $e) {
+            // Ignore if DB is not ready during setup
+        }
     }
 
     public function clearGameCache(string $slug): void

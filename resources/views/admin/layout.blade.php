@@ -17,14 +17,10 @@
     <!-- Favicon -->
     @php
         $adminSetting = \App\Models\Setting::first();
+        $adminFaviconUrl = get_image_url($adminSetting->favicon ?? null) ?: (get_image_url($adminSetting->logo ?? null) ?: asset('img/logo gamestore.png'));
+        $adminLogoUrl = get_image_url($adminSetting->logo ?? null, asset('img/logo gamestore.png'));
     @endphp
-    @if(isset($adminSetting) && $adminSetting->favicon && file_exists(public_path('img/' . $adminSetting->favicon)))
-        <link rel="icon" type="image/png" href="{{ asset('img/' . $adminSetting->favicon) }}">
-    @elseif(isset($adminSetting) && $adminSetting->logo && file_exists(public_path('img/' . $adminSetting->logo)))
-        <link rel="icon" type="image/png" href="{{ asset('img/' . $adminSetting->logo) }}">
-    @else
-        <link rel="icon" type="image/png" href="{{ asset('img/logo gamestore.png') }}">
-    @endif
+    <link rel="icon" type="image/png" href="{{ $adminFaviconUrl }}">
 
     <!-- Tailwind & Vite -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -438,11 +434,7 @@
             <!-- Sidebar Header -->
             <div class="h-28 flex items-center justify-center px-6 pt-4 bg-watt-bg border-b border-watt-border relative">
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2 logo-animated">
-                    @if(isset($adminSetting) && $adminSetting->logo && file_exists(public_path('img/' . $adminSetting->logo)))
-                        <img src="{{ asset('img/' . $adminSetting->logo) }}" alt="Gamestore Logo" class="h-20 w-auto sidebar-text object-contain">
-                    @else
-                        <img src="{{ asset('img/logo gamestore.png') }}" alt="Gamestore Logo" class="h-20 w-auto sidebar-text object-contain">
-                    @endif
+                    <img src="{{ $adminLogoUrl }}" alt="Gamestore Logo" class="h-20 w-auto sidebar-text object-contain">
                 </a>
                 <button id="sidebar-collapse-btn" onclick="toggleSidebarCollapse()" class="absolute right-6 p-2 rounded-lg collapse-btn flex-shrink-0 text-watt-text-sec hover:text-watt-cyan">
                     <i id="collapse-icon" data-lucide="chevron-left" class="w-5 h-5"></i>
@@ -546,11 +538,7 @@
                 <div class="w-64 bg-watt-surface text-watt-text-sec flex flex-col h-full">
                     <div class="h-28 flex items-center justify-center px-6 border-b border-watt-border bg-watt-bg relative">
                         <a href="{{ route('admin.dashboard') }}" class="flex items-center logo-animated">
-                            @if(isset($adminSetting) && $adminSetting->logo && file_exists(public_path('img/' . $adminSetting->logo)))
-                                <img src="{{ asset('img/' . $adminSetting->logo) }}" alt="Gamestore Logo" class="h-20 w-auto object-contain">
-                            @else
-                                <img src="{{ asset('img/logo gamestore.png') }}" alt="Gamestore Logo" class="h-20 w-auto object-contain">
-                            @endif
+                            <img src="{{ $adminLogoUrl }}" alt="Gamestore Logo" class="h-20 w-auto object-contain">
                         </a>
                         <button id="mobile-close" class="absolute right-6 p-2 rounded-lg hover:bg-watt-hover text-watt-text-sec hover:text-white">
                             <i data-lucide="x" class="w-5 h-5"></i>

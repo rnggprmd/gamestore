@@ -293,11 +293,7 @@
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <!-- Logo -->
             <div class="flex items-center gap-2">
-                @if(isset($setting) && $setting->logo && file_exists(public_path('img/' . $setting->logo)))
-                    <img src="{{ asset('img/' . $setting->logo) }}" alt="{{ $setting->store_name ?? 'Gamestore' }} Logo" class="w-8 h-8 rounded-full object-contain">
-                @else
-                    <img src="{{ asset('img/logo gamestore.png') }}" alt="{{ $setting->store_name ?? 'Gamestore' }} Logo" class="w-8 h-8 rounded-full object-contain">
-                @endif
+                <img src="{{ $headerLogoUrl }}" alt="{{ $setting->store_name ?? 'Gamestore' }} Logo" class="w-8 h-8 rounded-full object-contain">
                 <span class="text-xl font-heading font-bold uppercase tracking-wider">{{ $setting->store_name ?? 'Gamestore' }}</span>
             </div>
             
@@ -735,234 +731,123 @@
         });
     </script>
 
-    <!-- Game Filter & Carousel Script -->
+    <!-- Game Filter & Catalog Manager Script -->
     <script>
-        function gameFilter() {
+        function gameCatalogManager() {
             return {
                 selectedCategory: 'all',
-                
-                filterGames() {
-                    const gameItems = document.querySelectorAll('.game-item');
-                    
-                    gameItems.forEach(item => {
-                        const categories = JSON.parse(item.dataset.categories);
-                        const isVisible = this.selectedCategory === 'all' || categories.includes(parseInt(this.selectedCategory));
-                        
-                        // Get the parent slide container (for mobile: .w-full.flex-shrink-0)
-                        const parentSlide = item.closest('.w-full.flex-shrink-0');
-                        
-                        if (isVisible) {
-                            item.classList.remove('hidden', 'opacity-0');
-                            item.classList.add('animate-fadeIn');
-                            if (parentSlide) {
-                                parentSlide.style.display = '';
-                            }
-                        } else {
-                            item.classList.add('hidden', 'opacity-0');
-                            if (parentSlide) {
-                                parentSlide.style.display = 'none';
-                            }
-                        }
-                    });
-                    
-                    // Reset carousel to first page after filtering
-                    this.resetCarousels();
-                },
-                
-                resetCarousels() {
-                    // Trigger carousel reset by dispatching event
-                    window.dispatchEvent(new CustomEvent('carousel-reset'));
-                }
-            };
-        }
-        
-        function gameCarouselMobile() {
-            return {
+                searchQuery: '',
                 currentPage: 0,
+                visibleCount: 0,
+                itemsPerPage: 4,
                 touchStartX: 0,
-                initialized: false,
-                
+
                 init() {
-                    // Wait for DOM to be fully ready
+                    this.updateItemsPerPage();
+                    window.addEventListener('resize', () => {
+                        this.updateItemsPerPage();
+                        this.filterGames();
+                    });
                     setTimeout(() => {
-                        this.initialized = true;
-                    }, 100);
-                    
-                    // Listen for carousel reset event
-                    window.addEventListener('carousel-reset', () => {
-                        this.currentPage = 0;
-                    });
+                        this.filterGames();
+                    }, 50);
                 },
-                
-                get translateX() {
-                    // Calculate translateX based on visible slides only
-                    const container = this.$el?.querySelector('.overflow-hidden .flex');
-                    if (!container) return 0;
-                    
-                    const slides = Array.from(container.querySelectorAll('.w-full.flex-shrink-0'));
-                    let visibleCount = 0;
-                    
-                    for (let i = 0; i < slides.length; i++) {
-                        const slide = slides[i];
-                        const gameItem = slide.querySelector('.game-item');
-                        const isVisible = slide.style.display !== 'none' && 
-                                        !slide.classList.contains('hidden') &&
-                                        gameItem && 
-                                        !gameItem.classList.contains('hidden');
-                        
-                        if (isVisible) {
-                            if (visibleCount === this.currentPage) {
-                                // Found the target visible slide, calculate offset
-                                // We need to count how many total slides (including hidden) come before this
-                                return -i * 100;
-                            }
-                            visibleCount++;
+
+                updateItemsPerPage() {
+                    this.itemsPerPage = window.innerWidth >= 1024 ? 4 : (window.innerWidth >= 640 ? 2 : 1);
+                },
+
+                setCategory(catId) {
+                    this.selectedCategory = String(catId);
+                    this.currentPage = 0;
+                    this.filterGames();
+                },
+
+                filterGames() {
+                    const cards = Array.from(document.querySelectorAll('.game-item-card'));
+                    const query = this.searchQuery.trim().toLowerCase();
+                    const selectedCat = String(this.selectedCategory);
+
+                    let matchingCards = [];
+
+                    cards.forEach(card => {
+                        const categoriesStr = card.dataset.categories || '[]';
+                        let categories = [];
+                        try { categories = JSON.parse(categoriesStr); } catch (e) {}
+
+                        const name = card.dataset.name || '';
+                        const desc = card.dataset.desc || '';
+
+                        const matchesCat = selectedCat === 'all' || 
+                                         categories.map(String).includes(selectedCat) || 
+                                         categories.length === 0;
+                        const matchesSearch = query === '' || name.includes(query) || desc.includes(query);
+
+                        if (matchesCat && matchesSearch) {
+                            matchingCards.push(card);
+                        } else {
+                            card.style.display = 'none';
+                            card.classList.add('hidden');
                         }
-                    }
-                    
-                    return 0;
-                },
-                
-                get totalPages() {
-                    // Count only visible game items in mobile carousel
-                    const container = this.$el?.querySelector('.overflow-hidden .flex');
-                    if (!container) return 1;
-                    
-                    const items = container.querySelectorAll('.w-full.flex-shrink-0');
-                    const visibleItems = Array.from(items).filter(item => {
-                        const gameItem = item.querySelector('.game-item');
-                        // Check both the slide container and the game item
-                        return item.style.display !== 'none' && 
-                               !item.classList.contains('hidden') &&
-                               gameItem && 
-                               !gameItem.classList.contains('hidden');
                     });
-                    
-                    return Math.max(1, visibleItems.length);
+
+                    this.visibleCount = matchingCards.length;
+                    const maxPage = Math.max(0, Math.ceil(this.visibleCount / this.itemsPerPage) - 1);
+                    if (this.currentPage > maxPage) {
+                        this.currentPage = 0;
+                    }
+
+                    const startIndex = this.currentPage * this.itemsPerPage;
+                    const endIndex = startIndex + this.itemsPerPage;
+
+                    matchingCards.forEach((card, index) => {
+                        if (index >= startIndex && index < endIndex) {
+                            card.style.display = '';
+                            card.classList.remove('hidden');
+                            card.classList.add('animate-fadeIn');
+                        } else {
+                            card.style.display = 'none';
+                            card.classList.add('hidden');
+                        }
+                    });
+                },
+
+                get totalPages() {
+                    return Math.max(1, Math.ceil(this.visibleCount / this.itemsPerPage));
                 },
 
                 nextPage() {
                     if (this.currentPage < this.totalPages - 1) {
                         this.currentPage++;
                     } else {
-                        this.currentPage = 0; // Loop to start
+                        this.currentPage = 0;
                     }
+                    this.filterGames();
                 },
-                
+
                 prevPage() {
                     if (this.currentPage > 0) {
                         this.currentPage--;
                     } else {
-                        this.currentPage = this.totalPages - 1; // Loop to end
+                        this.currentPage = this.totalPages - 1;
                     }
+                    this.filterGames();
                 },
-                
+
                 touchStart(event) {
                     this.touchStartX = event.touches[0].clientX;
                 },
-                
+
                 touchEnd(event) {
                     const touchEndX = event.changedTouches[0].clientX;
                     const diff = this.touchStartX - touchEndX;
-                    
-                    // Swipe threshold = 50px
                     if (Math.abs(diff) > 50) {
                         if (diff > 0) {
-                            this.nextPage(); // Swipe left = next
-                        } else {
-                            this.prevPage(); // Swipe right = prev
-                        }
-                    }
-                }
-            };
-        }
-
-        function gameCarouselDesktop() {
-            return {
-                currentPage: 0,
-                wheelTimeout: null,
-                initialized: false,
-                
-                init() {
-                    // Wait for DOM to be fully ready
-                    setTimeout(() => {
-                        this.initialized = true;
-                    }, 100);
-                },
-                
-                get totalPages() {
-                    // Count game items and calculate pages (4 items per page)
-                    const container = this.$el?.querySelector('.overflow-hidden .flex');
-                    if (!container) return 1;
-                    
-                    const pages = container.querySelectorAll('.w-full.flex-shrink-0');
-                    return Math.max(1, pages.length);
-                },
-
-                nextPage() {
-                    if (this.currentPage < this.totalPages - 1) {
-                        this.currentPage++;
-                    } else {
-                        this.currentPage = 0; // Loop to start
-                    }
-                },
-                
-                prevPage() {
-                    if (this.currentPage > 0) {
-                        this.currentPage--;
-                    } else {
-                        this.currentPage = this.totalPages - 1; // Loop to end
-                    }
-                },
-                
-                handleWheel(event) {
-                    event.preventDefault();
-                    
-                    if (this.wheelTimeout) clearTimeout(this.wheelTimeout);
-                    
-                    this.wheelTimeout = setTimeout(() => {
-                        if (event.deltaY > 0) {
                             this.nextPage();
-                        } else if (event.deltaY < 0) {
+                        } else {
                             this.prevPage();
                         }
-                    }, 100);
-                }
-            };
-        }
-        
-        function gameSearchFilter() {
-            return {
-                searchQuery: '',
-                
-                filterBySearch() {
-                    const gameItems = document.querySelectorAll('.game-item');
-                    const query = this.searchQuery.toLowerCase();
-                    
-                    gameItems.forEach(item => {
-                        const gameName = item.querySelector('h3').textContent.toLowerCase();
-                        const gameDesc = item.querySelector('p').textContent.toLowerCase();
-                        const isVisible = gameName.includes(query) || gameDesc.includes(query) || query === '';
-                        
-                        // Get the parent slide container (for mobile: .w-full.flex-shrink-0)
-                        const parentSlide = item.closest('.w-full.flex-shrink-0');
-                        
-                        if (isVisible) {
-                            item.classList.remove('hidden', 'opacity-0');
-                            item.classList.add('animate-fadeIn');
-                            if (parentSlide) {
-                                parentSlide.style.display = '';
-                            }
-                        } else {
-                            item.classList.add('hidden', 'opacity-0');
-                            if (parentSlide) {
-                                parentSlide.style.display = 'none';
-                            }
-                        }
-                    });
-                    
-                    // Reset carousel to first page after filtering
-                    window.dispatchEvent(new CustomEvent('carousel-reset'));
+                    }
                 }
             };
         }

@@ -28,9 +28,12 @@
                 <div class="space-y-1.5">
                     <label class="admin-field-label">Logo Toko</label>
                     <div class="flex items-center gap-4 bg-watt-bg border border-watt-border p-3 rounded-xl">
-                        @if($setting->logo && file_exists(public_path('img/' . $setting->logo)))
+                        @php
+                            $settingLogoUrl = get_image_url($setting->logo ?? null);
+                        @endphp
+                        @if($settingLogoUrl)
                             <div class="flex-shrink-0 bg-watt-surface p-1.5 rounded-lg border border-watt-border max-w-[120px] flex items-center justify-center">
-                                <img src="{{ asset('img/' . $setting->logo) }}" alt="Logo Saat Ini" class="h-10 max-w-full object-contain rounded">
+                                <img src="{{ $settingLogoUrl }}" alt="Logo Saat Ini" class="h-10 max-w-full object-contain rounded">
                             </div>
                         @else
                             <div class="flex-shrink-0 bg-watt-surface p-1.5 rounded-lg border border-watt-border max-w-[120px] flex items-center justify-center">
@@ -49,9 +52,12 @@
                 <div class="space-y-1.5">
                     <label class="admin-field-label">Favicon (Icon Tab Browser)</label>
                     <div class="flex items-center gap-4 bg-watt-bg border border-watt-border p-3 rounded-xl">
-                        @if($setting->favicon && file_exists(public_path('img/' . $setting->favicon)))
+                        @php
+                            $settingFaviconUrl = get_image_url($setting->favicon ?? null);
+                        @endphp
+                        @if($settingFaviconUrl)
                             <div class="flex-shrink-0 bg-watt-surface p-1.5 rounded-lg border border-watt-border">
-                                <img src="{{ asset('img/' . $setting->favicon) }}" alt="Favicon Saat Ini" class="h-8 w-8 object-contain rounded">
+                                <img src="{{ $settingFaviconUrl }}" alt="Favicon Saat Ini" class="h-8 w-8 object-contain rounded">
                             </div>
                         @else
                             <div class="flex-shrink-0 bg-watt-surface p-1.5 rounded-lg border border-watt-border">

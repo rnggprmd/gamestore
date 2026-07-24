@@ -22,9 +22,13 @@
                     <div class="absolute -top-12 -left-12 w-32 h-32 bg-primary/10 rounded-full blur-2xl pointer-events-none"></div>
 
                     <!-- Banner Graphic -->
-                    <div class="w-full h-44 rounded-2xl overflow-hidden relative mb-6 border border-white/5">
-                        <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 hover:scale-105" 
-                             style="background-image: @if($game->banner && file_exists(public_path('img/' . $game->banner))) url('{{ asset('img/' . $game->banner) }}') @else linear-gradient(to right, #00AEEF, #0077B5) @endif ;"></div>
+                    @php
+                        $gameBannerUrl = get_image_url($game->banner ?: $game->thumbnail);
+                    @endphp
+                    <div class="w-full h-44 rounded-2xl overflow-hidden relative mb-6 border border-white/5 bg-gradient-to-r from-[#00AEEF] to-[#0077B5]">
+                        @if($gameBannerUrl)
+                            <img src="{{ $gameBannerUrl }}" alt="{{ $game->name }}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                        @endif
                         <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-4 z-10">
                             <span class="inline-flex w-fit items-center gap-1 px-2.5 py-1 rounded-lg bg-primary/20 border border-primary/30 text-primary text-[9px] font-extrabold tracking-wider uppercase mb-2">
                                 ⚡ Top Up Instan
@@ -75,16 +79,42 @@
             <!-- Right Side: Order Forms & Product Grid (8 Cols) -->
             <div class="lg:col-span-8 space-y-6 game-fade-right">
                 <!-- STEP 1: Choose Product -->
-                <div class="bg-bg-card border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
-                    <h3 class="text-lg font-heading font-bold text-white flex items-center gap-3">
-                        <span class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-xs font-black text-white shadow-[0_0_15px_rgba(0,174,239,0.3)]">1</span>
-                        Pilih Nominal Produk
-                    </h3>
+                <div class="bg-bg-card border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6" x-data="{ selectedProdCat: 'all' }">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <h3 class="text-lg font-heading font-bold text-white flex items-center gap-3">
+                            <span class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-xs font-black text-white shadow-[0_0_15px_rgba(0,174,239,0.3)]">1</span>
+                            Pilih Nominal Produk
+                        </h3>
+
+                        @php
+                            $productCategories = $game->products->map(fn($p) => $p->category)->filter()->unique('id')->values();
+                        @endphp
+
+                        @if($productCategories->count() > 1)
+                        <!-- Product Category Filter Tabs -->
+                        <div class="flex flex-wrap gap-1.5 bg-bg-dark border border-white/10 p-1 rounded-xl">
+                            <button type="button" @click="selectedProdCat = 'all'"
+                                    :class="selectedProdCat === 'all' ? 'bg-primary text-white font-bold' : 'text-gray-400 hover:text-white'"
+                                    class="px-3 py-1.5 rounded-lg text-xs transition-colors cursor-pointer">
+                                Semua
+                            </button>
+                            @foreach($productCategories as $cat)
+                            <button type="button" @click="selectedProdCat = '{{ $cat->id }}'"
+                                    :class="selectedProdCat === '{{ $cat->id }}' ? 'bg-primary text-white font-bold' : 'text-gray-400 hover:text-white'"
+                                    class="px-3 py-1.5 rounded-lg text-xs transition-colors cursor-pointer">
+                                {{ $cat->name }}
+                            </button>
+                            @endforeach
+                        </div>
+                        @endif
+                    </div>
 
                     <!-- Products Grid -->
                     <div class="product-grid grid grid-cols-2 sm:grid-cols-3 gap-4">
                         @foreach($game->products as $product)
                             <button 
+                                type="button"
+                                x-show="selectedProdCat === 'all' || selectedProdCat === '{{ $product->category_id }}'"
                                 @click="selectProduct({{ $product->id }}, '{{ $product->name }}', {{ $product->price }})"
                                 :class="selectedProduct && selectedProduct.id === {{ $product->id }} ? 'border-primary bg-primary/5 text-white shadow-[0_0_15px_rgba(0,174,239,0.1)]' : 'border-white/10 bg-bg-dark text-gray-300'"
                                 class="border rounded-2xl p-4 text-left hover:border-primary/40 transition-all duration-200 relative overflow-hidden flex flex-col justify-between h-28 cursor-pointer group"
@@ -190,9 +220,12 @@
                             <div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl pointer-events-none"></div>
 
                             {{-- Banner / Thumbnail --}}
+                            @php
+                                $otherGameImg = get_image_url($otherGame->banner ?: $otherGame->thumbnail);
+                            @endphp
                             <div class="w-full h-20 rounded-xl overflow-hidden relative shrink-0">
-                                @if($otherGame->banner && file_exists(public_path('img/' . $otherGame->banner)))
-                                    <img src="{{ asset('img/' . $otherGame->banner) }}"
+                                @if($otherGameImg)
+                                    <img src="{{ $otherGameImg }}"
                                          alt="{{ $otherGame->name }}"
                                          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                                 @else

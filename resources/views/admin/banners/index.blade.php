@@ -83,8 +83,11 @@
                     <tr class="admin-table-row">
                         <td class="py-3.5 text-center text-sm font-medium text-watt-text-sec">{{ $index + 1 }}</td>
                         <td class="py-3.5">
-                            @if($banner->image && file_exists(public_path('img/' . $banner->image)))
-                                <img src="{{ asset('img/' . $banner->image) }}" alt="{{ $banner->title }}" class="w-24 h-14 rounded-xl object-cover border border-watt-border">
+                            @php
+                                $bImg = get_image_url($banner->image);
+                            @endphp
+                            @if($bImg)
+                                <img src="{{ $bImg }}" alt="{{ $banner->title }}" class="w-24 h-14 rounded-xl object-cover border border-watt-border">
                             @else
                                 <div class="w-24 h-14 rounded-xl bg-watt-cyan/10 flex items-center justify-center text-watt-cyan">
                                     <i data-lucide="image" class="w-5 h-5"></i>
@@ -120,7 +123,7 @@
                                     data-button-text="{{ e($banner->button_text ?? '') }}"
                                     data-button-link="{{ e($banner->button_link ?? '') }}"
                                     data-status="{{ $banner->status ? '1' : '0' }}"
-                                    data-image="{{ $banner->image && file_exists(public_path('img/' . $banner->image)) ? asset('img/' . $banner->image) : '' }}"
+                                    data-image="{{ $bImg ?? '' }}"
                                     data-image-name="{{ $banner->image ?? '' }}"
                                     class="admin-action-btn admin-action-btn--edit">
                                     <i data-lucide="edit-3" class="w-4 h-4"></i>
