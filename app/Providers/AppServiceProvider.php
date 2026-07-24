@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Carbon\Carbon;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Cache;
@@ -24,6 +25,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Carbon::setLocale('id');
+
         // Share $setting with ALL views so admin.layout (and landing) can always access it.
         // Uses cache to avoid querying DB on every partial view render.
         View::composer('*', function ($view) {

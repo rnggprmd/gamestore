@@ -16,7 +16,8 @@
 
     <!-- Favicon -->
     @php
-        $adminSetting = \App\Models\Setting::first();
+        $adminSetting = \Illuminate\Support\Facades\Cache::remember('site_settings_global', 3600, fn() => \App\Models\Setting::first());
+        if (!$adminSetting) $adminSetting = new \App\Models\Setting();
         $adminFaviconUrl = get_image_url($adminSetting->favicon ?? null) ?: (get_image_url($adminSetting->logo ?? null) ?: asset('img/logo gamestore.png'));
         $adminLogoUrl = get_image_url($adminSetting->logo ?? null, asset('img/logo gamestore.png'));
     @endphp
