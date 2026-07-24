@@ -46,7 +46,7 @@ class GameService
     public function getActiveTestimonials()
     {
         return Cache::remember('active_testimonials', self::CACHE_TTL, function () {
-            return Testimonial::active()->get();
+            return Testimonial::active()->latest()->get();
         });
     }
 

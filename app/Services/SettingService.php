@@ -12,28 +12,26 @@ class SettingService
 
     public function get(string $key, $default = null)
     {
-        $settings = $this->getAllCached();
-        return $settings[$key] ?? $default;
+        $setting = $this->getFirstCached();
+        return $setting ? ($setting->$key ?? $default) : $default;
     }
 
-    public function set(string $key, $value, string $type = 'string'): bool
+    public function set(string $key, $value): bool
     {
-        $setting = Setting::updateOrCreate(
-            ['key' => $key],
-            ['value' => $value, 'type' => $type]
-        );
+        $setting = Setting::first() ?? new Setting();
+        $setting->$key = $value;
+        $saved = $setting->save();
 
         // Clear cache after update
         $this->clearCache();
 
-        return $setting->exists;
+        return $saved;
     }
 
     public function getAllCached(): array
     {
-        return Cache::remember(self::CACHE_KEY, self::CACHE_TTL, function () {
-            return Setting::all()->pluck('value', 'key')->toArray();
-        });
+        $setting = $this->getFirstCached();
+        return $setting ? $setting->toArray() : [];
     }
 
     public function getFirstCached(): ?Setting
@@ -47,17 +45,18 @@ class SettingService
     {
         Cache::forget(self::CACHE_KEY);
         Cache::forget(self::CACHE_KEY . '_first');
+        Cache::forget('site_settings_global');
     }
 
     public function incrementWhatsappClicks(): int
     {
-        $setting = Setting::firstOrNew();
-        $setting->increment('whatsapp_clicks');
-        
-        // Clear cache to get updated value
-        $this->clearCache();
-        
-        return $setting->whatsapp_clicks;
+        $setting = Setting::first();
+        if ($setting) {
+            $setting->increment('whatsapp_clicks');
+            $this->clearCache();
+            return $setting->whatsapp_clicks;
+        }
+        return 0;
     }
 
     public function getWhatsappClicks(): int
