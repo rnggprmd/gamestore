@@ -293,7 +293,7 @@
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <!-- Logo -->
             <div class="flex items-center gap-2">
-                <img src="{{ $headerLogoUrl }}" alt="{{ $setting->store_name ?? 'Gamestore' }} Logo" class="w-8 h-8 rounded-full object-contain">
+                <img src="{{ get_image_url($setting->logo ?? null, asset('img/logo gamestore.png')) }}" alt="{{ $setting->store_name ?? 'Gamestore' }} Logo" class="w-8 h-8 rounded-full object-contain">
                 <span class="text-xl font-heading font-bold uppercase tracking-wider">{{ $setting->store_name ?? 'Gamestore' }}</span>
             </div>
             
